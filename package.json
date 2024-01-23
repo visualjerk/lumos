@@ -1,0 +1,7 @@
+{
+  "name": "lumos",
+  "private": true,
+  "devDependencies": {
+    "vitest": "^1.2.1"
+  }
+}

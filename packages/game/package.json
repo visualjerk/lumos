@@ -1,0 +1,7 @@
+{
+  "name": "@lumos/game",
+  "private": true,
+  "scripts": {
+    "test": "vitest"
+  }
+}
