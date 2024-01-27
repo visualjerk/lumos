@@ -1,7 +1,10 @@
 export type Connection = 'triangle' | 'rectangle' | 'circle' | 'star' | 'moon'
 
+export type LocationId = string
+
 export type Location = {
   name: string
+  id: LocationId
   incomingConnection: Connection
   connections: Connection[]
 }

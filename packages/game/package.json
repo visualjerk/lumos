@@ -1,6 +1,7 @@
 {
   "name": "@lumos/game",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
     "test": "vitest"
   }
