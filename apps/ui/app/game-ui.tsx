@@ -1,35 +1,10 @@
 'use client'
-import { Game, Investigator, Location } from '@lumos/game'
+import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
+import { Game, InvestigatorCard } from '@lumos/game'
 import React from 'react'
 
-const locations: Location[] = [
-  {
-    id: '1',
-    name: 'Restaurant',
-    incomingConnection: 'circle',
-    connections: ['triangle'],
-  },
-  {
-    id: '2',
-    name: 'Gang',
-    incomingConnection: 'triangle',
-    connections: ['circle', 'moon', 'square'],
-  },
-  {
-    id: '3',
-    name: 'Abteil 12',
-    incomingConnection: 'moon',
-    connections: ['triangle'],
-  },
-  {
-    id: '4',
-    name: 'Abteil 13',
-    incomingConnection: 'square',
-    connections: ['triangle'],
-  },
-]
-
-const investigator: Investigator = {
+const investigator: InvestigatorCard = {
+  id: 'max',
   name: 'Max',
   baseStats: {
     intelligence: 4,
@@ -38,26 +13,27 @@ const investigator: Investigator = {
   },
   health: 8,
 }
-
-const game = new Game()
-
-game.addLocation(locations[0], { x: 4, y: 3 })
-game.addLocation(locations[1], { x: 6, y: 3 })
-game.addLocation(locations[2], { x: 5, y: 2 })
-game.addLocation(locations[3], { x: 7, y: 2 })
-game.addInvestigator(investigator, locations[0])
+const scenario = MisteryOfTheHogwartsExpress
+const game = new Game(scenario, [investigator])
 
 export default function GameUI() {
   return (
     <div className="grid grid-cols-10 grid-rows-6 gap-10">
-      {game.layout.map(([locationId, { x, y }]) => (
+      {game.locations.map((location) => (
         <div
-          key={locationId}
-          className={'w-32 h-32 bg-gray-200 flex items-center justify-center'}
-          style={{ gridColumn: x, gridRow: y }}
+          key={location.id}
+          className={'w-32 h-32 bg-gray-200 p-2'}
+          style={{
+            gridColumn: location.position[0],
+            gridRow: location.position[1],
+          }}
         >
-          {game.getLocation(locationId).name}
-          {game.getInvestigatorAtLocation(locationId) !== null && <div>👤</div>}
+          <div>{location.name}</div>
+          {location.state.investigators.map((investigator) => (
+            <div key={investigator.id} className=" text-purple-500">
+              {investigator.name}
+            </div>
+          ))}
         </div>
       ))}
     </div>

@@ -17,6 +17,9 @@ importers:
       '@lumos/game':
         specifier: workspace:*
         version: link:../../packages/game
+      '@lumos/scenarios':
+        specifier: workspace:*
+        version: link:../../packages/scenarios
       next:
         specifier: 14.1.0
         version: 14.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -56,6 +59,12 @@ importers:
         version: 5.3.3
 
   packages/game: {}
+
+  packages/scenarios:
+    dependencies:
+      '@lumos/game':
+        specifier: workspace:*
+        version: link:../game
 
 packages:
 

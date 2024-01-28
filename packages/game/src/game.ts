@@ -1,6 +1,5 @@
-import { InvestigatorCard } from './card/investigator-card'
-import { LocationCard } from './card/location-card'
-import { Scenario } from './scenario/scenario'
+import { LocationCard, InvestigatorCard } from './card'
+import { Scenario } from './scenario'
 
 export type LocationState = {
   revealed: boolean
@@ -15,6 +14,16 @@ export class LocationStates extends Map<LocationCard, LocationState> {
         { revealed: false, investigators: [] },
       ])
     )
+  }
+
+  mutate(location: LocationCard, mutation: Partial<LocationState>) {
+    const state = this.get(location)
+
+    if (!state) {
+      throw new Error('Location not found')
+    }
+
+    Object.assign(state, mutation)
   }
 }
 
@@ -46,10 +55,18 @@ export class Game {
     this.locationStates = new LocationStates(scenario.locationCards)
     this.investigatorStates = new InvestigatorStates(investigatorCards)
 
-    this.locationStates.set(scenario.startLocation, {
+    this.locationStates.mutate(scenario.startLocation, {
       revealed: true,
       investigators: investigatorCards,
     })
+  }
+
+  get locations() {
+    return this.scenario.locationCards.map((location) => ({
+      ...location,
+      position: this.scenario.layout.get(location.id)!,
+      state: this.locationStates.get(location)!,
+    }))
   }
 
   // moveInvestigator(investigator: Investigator, location: Location) {

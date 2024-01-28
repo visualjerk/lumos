@@ -1,0 +1,11 @@
+{
+  "name": "@lumos/scenarios",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@lumos/game": "workspace:*"
+  }
+}

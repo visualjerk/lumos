@@ -1,6 +1,16 @@
 export type LocationId = string
 
-export type Connection = 'triangle' | 'square' | 'circle' | 'star' | 'moon'
+export type Connection =
+  | 'triangle'
+  | 'square'
+  | 'circle'
+  | 'star'
+  | 'moon'
+  | 'heart'
+  | 'diamond'
+  | 'cross'
+  | 'pentagram'
+  | 'hexagram'
 
 export type LocationCard = {
   id: LocationId
