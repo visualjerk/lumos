@@ -13,13 +13,13 @@ const SECOND_LOCATION: Location = {
   id: '2',
   name: 'Second Floor',
   incomingConnection: 'moon',
-  connections: ['circle', 'rectangle'],
+  connections: ['circle', 'square'],
 }
 
 const THIRD_LOCATION: Location = {
   id: '3',
   name: 'Second Floor',
-  incomingConnection: 'rectangle',
+  incomingConnection: 'square',
   connections: ['moon'],
 }
 

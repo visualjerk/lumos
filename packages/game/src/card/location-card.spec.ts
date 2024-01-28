@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { Location, isConnected } from './location'
+import { LocationCard, isConnected } from './location-card'
 
 describe('Location', () => {
   it('isConnected', () => {
-    const firstLocation: Location = {
+    const firstLocation: LocationCard = {
       id: '1',
       name: 'Great Hall',
       incomingConnection: 'circle',
-      connections: ['moon', 'rectangle'],
+      connections: ['moon', 'square'],
     }
-    const secondLocation: Location = {
+    const secondLocation: LocationCard = {
       id: '2',
       name: 'Second Floor',
       incomingConnection: 'moon',
-      connections: ['circle', 'rectangle'],
+      connections: ['circle', 'square'],
     }
-    const thirdLocation: Location = {
+    const thirdLocation: LocationCard = {
       id: '3',
       name: 'Room 42',
       incomingConnection: 'star',
