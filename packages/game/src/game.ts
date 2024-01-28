@@ -22,16 +22,6 @@ export class LocationStates extends Map<LocationId, LocationState> {
     )
   }
 
-  mutate(locationId: LocationId, mutation: Partial<LocationState>) {
-    const state = this.get(locationId)
-
-    if (!state) {
-      throw new Error('Location not found')
-    }
-
-    Object.assign(state, mutation)
-  }
-
   addInvestigator(locationId: LocationId, investigatorId: InvestigatorId) {
     const state = this.get(locationId)
 
