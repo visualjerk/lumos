@@ -1,4 +1,4 @@
-type InvestigatorId = string
+export type InvestigatorId = string
 
 export type BaseStats = {
   strength: number

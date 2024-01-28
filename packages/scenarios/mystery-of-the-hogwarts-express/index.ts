@@ -30,7 +30,7 @@ const BoardRestaurant: LocationCard = {
 
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [Aisle3, Compartment34, Compartment35, BoardRestaurant],
-  startLocation: Compartment34,
+  startLocation: Compartment34.id,
   layout: new Map([
     [Aisle3.id, [4, 2]],
     [Compartment34.id, [3, 3]],
