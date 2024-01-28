@@ -1,4 +1,4 @@
-export type Connection = 'triangle' | 'rectangle' | 'circle' | 'star' | 'moon'
+export type Connection = 'triangle' | 'square' | 'circle' | 'star' | 'moon'
 
 export type LocationId = string
 

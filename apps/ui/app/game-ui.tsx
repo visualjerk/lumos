@@ -13,7 +13,7 @@ const locations: Location[] = [
     id: '2',
     name: 'Gang',
     incomingConnection: 'triangle',
-    connections: ['circle', 'moon', 'rectangle'],
+    connections: ['circle', 'moon', 'square'],
   },
   {
     id: '3',
@@ -24,7 +24,7 @@ const locations: Location[] = [
   {
     id: '4',
     name: 'Abteil 13',
-    incomingConnection: 'rectangle',
+    incomingConnection: 'square',
     connections: ['triangle'],
   },
 ]
