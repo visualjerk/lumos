@@ -65,11 +65,21 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
   }
 }
 
-export type MoveAction = {
+export type Phase = 'investigation' | 'cleanup'
+
+export type GameState = {
+  phase: Phase
+}
+
+export type Action = {
+  type: string
+  execute: () => void
+}
+
+export type MoveAction = Action & {
   type: 'move'
   investigatorId: InvestigatorId
   locationId: LocationId
-  execute: () => void
 }
 
 export type GameObserver = (game: Game) => void
@@ -77,15 +87,19 @@ export type GameObserver = (game: Game) => void
 export class Game {
   private scenario: Scenario
   private locationStates: LocationStates
-  private investigators: InvestigatorCard[]
+  private investigatorCards: InvestigatorCard[]
   private investigatorStates: InvestigatorStates
+  private gameState: GameState
   private observers: GameObserver[] = []
 
   constructor(scenario: Scenario, investigatorCards: InvestigatorCard[]) {
     this.scenario = scenario
     this.locationStates = new LocationStates(scenario.locationCards)
-    this.investigators = investigatorCards
+    this.investigatorCards = investigatorCards
     this.investigatorStates = new InvestigatorStates(investigatorCards)
+    this.gameState = {
+      phase: 'investigation',
+    }
 
     investigatorCards.forEach((investigator) => {
       this.locationStates.addInvestigator(
@@ -95,12 +109,51 @@ export class Game {
     })
   }
 
+  get investigators() {
+    return this.investigatorCards.map((investigator) => ({
+      ...investigator,
+      state: this.investigatorStates.get(investigator.id),
+      actions: this.getInvestigatorActions(investigator.id),
+    }))
+  }
+
+  getInvestigatorActions(_investigatorId: InvestigatorId): Action[] {
+    const actions: Action[] = []
+
+    if (this.gameState.phase === 'investigation') {
+      actions.push({
+        type: 'endInvestigationPhase',
+        execute: () => this.endInvestigationPhase(),
+      })
+    } else if (this.gameState.phase === 'cleanup') {
+      actions.push({
+        type: 'endCleanupPhase',
+        execute: () => this.endCleanupPhase(),
+      })
+    }
+
+    return actions
+  }
+
+  endInvestigationPhase() {
+    this.gameState.phase = 'cleanup'
+    this.onChange(this)
+  }
+
+  endCleanupPhase() {
+    this.gameState.phase = 'investigation'
+    this.onChange(this)
+  }
+
   get locations() {
     return this.scenario.locationCards.map((location) => ({
       ...location,
       position: this.scenario.layout.get(location.id)!,
       state: this.locationStates.get(location.id)!,
-      actions: this.getLocationActions(location.id, this.investigators[0].id),
+      actions: this.getLocationActions(
+        location.id,
+        this.investigatorCards[0].id
+      ),
       investigators: this.locationStates
         .get(location.id)!
         .investigatorIds.map((investigatorId) =>
@@ -116,7 +169,7 @@ export class Game {
   }
 
   private getInvestigator(investigatorId: InvestigatorId) {
-    return this.investigators.find(
+    return this.investigatorCards.find(
       (investigator) => investigator.id === investigatorId
     )!
   }
@@ -136,6 +189,10 @@ export class Game {
     investigatorId: InvestigatorId
   ): MoveAction[] {
     const actions: MoveAction[] = []
+
+    if (this.gameState.phase !== 'investigation') {
+      return actions
+    }
 
     const currentLocation = this.getInvestigatorLocation(investigatorId)
     const location = this.getLocation(locationId)
