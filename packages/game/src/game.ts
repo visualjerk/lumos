@@ -180,11 +180,12 @@ export class Game {
     this.onChange(this)
   }
 
-  addObserver(observer: GameObserver) {
+  subscribe(observer: GameObserver) {
     this.observers.push(observer)
+    return () => this.unsubscribe(observer)
   }
 
-  removeObserver(observer: GameObserver) {
+  unsubscribe(observer: GameObserver) {
     const index = this.observers.indexOf(observer)
 
     if (index === -1) {

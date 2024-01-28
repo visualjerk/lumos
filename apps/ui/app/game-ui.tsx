@@ -24,7 +24,8 @@ export default function GameUI() {
     )
   }
   useEffect(() => {
-    game.addObserver(handleChange)
+    const unsubscribe = game.subscribe(handleChange)
+    return unsubscribe
   }, [])
 
   return (
