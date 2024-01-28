@@ -27,17 +27,12 @@ export default function GameUI() {
     game.addObserver(handleChange)
   }, [])
 
-  function moveInvestigator(locationId: string) {
-    game.moveInvestigator(investigator.id, locationId)
-  }
-
   return (
     <div className="grid grid-cols-10 grid-rows-6 gap-10">
       {game.locations.map((location) => (
         <div
           key={location.id}
-          onClick={() => moveInvestigator(location.id)}
-          className={'w-32 h-32 bg-gray-200 p-2 cursor-pointer'}
+          className={'w-32 h-32 bg-gray-200 p-2'}
           style={{
             gridColumn: location.position[0],
             gridRow: location.position[1],
@@ -48,6 +43,11 @@ export default function GameUI() {
             <div key={investigator.id} className=" text-purple-500">
               {investigator.name}
             </div>
+          ))}
+          {location.actions.map((action, index) => (
+            <button key={index} onClick={() => action.execute()}>
+              {action.type}
+            </button>
           ))}
         </div>
       ))}

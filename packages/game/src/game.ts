@@ -76,6 +76,13 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
   }
 }
 
+export type MoveAction = {
+  type: 'move'
+  investigatorId: InvestigatorId
+  locationId: LocationId
+  execute: () => void
+}
+
 export type GameObserver = (game: Game) => void
 
 export class Game {
@@ -102,6 +109,7 @@ export class Game {
       ...location,
       position: this.scenario.layout.get(location.id)!,
       state: this.locationStates.get(location.id)!,
+      actions: this.getLocationActions(location.id, this.investigators[0].id),
       investigators: this.locationStates
         .get(location.id)!
         .investigatorIds.map((investigatorId) =>
@@ -111,7 +119,9 @@ export class Game {
   }
 
   private getLocation(locationId: LocationId) {
-    return this.locations.find((location) => location.id === locationId)!
+    return this.scenario.locationCards.find(
+      (location) => location.id === locationId
+    )!
   }
 
   private getInvestigator(investigatorId: InvestigatorId) {
@@ -121,12 +131,40 @@ export class Game {
   }
 
   private getInvestigatorLocation(investigatorId: InvestigatorId) {
-    return this.locations.find((location) =>
-      location.state.investigatorIds.includes(investigatorId)
-    )!
+    let location: LocationCard | undefined
+    this.locationStates.forEach((state, locationId) => {
+      if (state.investigatorIds.includes(investigatorId)) {
+        location = this.getLocation(locationId)
+      }
+    })
+    return location!
   }
 
-  moveInvestigator(investigatorId: InvestigatorId, locationId: LocationId) {
+  getLocationActions(
+    locationId: LocationId,
+    investigatorId: InvestigatorId
+  ): MoveAction[] {
+    const actions: MoveAction[] = []
+
+    const currentLocation = this.getInvestigatorLocation(investigatorId)
+    const location = this.getLocation(locationId)
+
+    if (isConnected(currentLocation, location)) {
+      actions.push({
+        type: 'move',
+        investigatorId,
+        locationId,
+        execute: () => this.moveInvestigator(investigatorId, locationId),
+      })
+    }
+
+    return actions
+  }
+
+  private moveInvestigator(
+    investigatorId: InvestigatorId,
+    locationId: LocationId
+  ) {
     const currentLocation = this.getInvestigatorLocation(investigatorId)
     const location = this.getLocation(locationId)
 
