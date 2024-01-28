@@ -41,6 +41,7 @@ export class LocationStates extends Map<LocationId, LocationState> {
       throw new Error('Location not found')
     }
 
+    state.revealed = true
     state.investigatorIds.push(investigatorId)
   }
 
@@ -98,9 +99,11 @@ export class Game {
     this.investigators = investigatorCards
     this.investigatorStates = new InvestigatorStates(investigatorCards)
 
-    this.locationStates.mutate(scenario.startLocation, {
-      revealed: true,
-      investigatorIds: investigatorCards.map((investigator) => investigator.id),
+    investigatorCards.forEach((investigator) => {
+      this.locationStates.addInvestigator(
+        scenario.startLocation,
+        investigator.id
+      )
     })
   }
 
