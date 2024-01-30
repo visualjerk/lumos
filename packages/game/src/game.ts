@@ -65,12 +65,6 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
   }
 }
 
-export type Phase = 'investigation' | 'cleanup'
-
-export type GameState = {
-  phase: Phase
-}
-
 export type Action = {
   type: string
   execute: () => void
@@ -82,117 +76,69 @@ export type MoveAction = Action & {
   locationId: LocationId
 }
 
-export type GameObserver = (game: Game) => void
+export type GameContext = {
+  scenario: Scenario
+  locationStates: LocationStates
+  investigatorCards: InvestigatorCard[]
+  investigatorStates: InvestigatorStates
+}
 
-export class Game {
-  private scenario: Scenario
-  private locationStates: LocationStates
-  private investigatorCards: InvestigatorCard[]
-  private investigatorStates: InvestigatorStates
-  private gameState: GameState
-  private observers: GameObserver[] = []
+export type PhaseActionReturn = {
+  nextPhase?: Phase
+  newContext?: GameContext
+}
 
-  constructor(scenario: Scenario, investigatorCards: InvestigatorCard[]) {
-    this.scenario = scenario
-    this.locationStates = new LocationStates(scenario.locationCards)
-    this.investigatorCards = investigatorCards
-    this.investigatorStates = new InvestigatorStates(investigatorCards)
-    this.gameState = {
-      phase: 'investigation',
-    }
+export type PhaseAction = {
+  type: string
+  locationId?: LocationId
+  investigatorId?: InvestigatorId
+  execute: () => PhaseActionReturn
+}
 
-    investigatorCards.forEach((investigator) => {
-      this.locationStates.addInvestigator(
-        scenario.startLocation,
-        investigator.id
-      )
+export type PhaseType = 'investigation' | 'cleanup'
+
+export type Phase = {
+  type: PhaseType
+  actions: PhaseAction[]
+}
+
+export class InvestigationPhase implements Phase {
+  type = 'investigation' as const
+
+  constructor(private context: GameContext) {}
+
+  get actions() {
+    const actions: PhaseAction[] = []
+
+    // TODO: add current investigator
+    const investigatorId = this.context.investigatorCards[0].id
+
+    actions.push({
+      type: 'endInvestigationPhase',
+      investigatorId,
+      execute: () => {
+        return {
+          nextPhase: new CleanupPhase(this.context),
+        }
+      },
     })
-  }
 
-  get investigators() {
-    return this.investigatorCards.map((investigator) => ({
-      ...investigator,
-      state: this.investigatorStates.get(investigator.id),
-      actions: this.getInvestigatorActions(investigator.id),
-    }))
-  }
-
-  getInvestigatorActions(_investigatorId: InvestigatorId): Action[] {
-    const actions: Action[] = []
-
-    if (this.gameState.phase === 'investigation') {
-      actions.push({
-        type: 'endInvestigationPhase',
-        execute: () => this.endInvestigationPhase(),
-      })
-    } else if (this.gameState.phase === 'cleanup') {
-      actions.push({
-        type: 'endCleanupPhase',
-        execute: () => this.endCleanupPhase(),
-      })
-    }
+    this.context.locationStates.forEach((state, locationId) => {
+      const locationActions = this.getLocationActions(
+        locationId,
+        investigatorId
+      )
+      actions.push(...locationActions)
+    })
 
     return actions
-  }
-
-  endInvestigationPhase() {
-    this.gameState.phase = 'cleanup'
-    this.onChange(this)
-  }
-
-  endCleanupPhase() {
-    this.gameState.phase = 'investigation'
-    this.onChange(this)
-  }
-
-  get locations() {
-    return this.scenario.locationCards.map((location) => ({
-      ...location,
-      position: this.scenario.layout.get(location.id)!,
-      state: this.locationStates.get(location.id)!,
-      actions: this.getLocationActions(
-        location.id,
-        this.investigatorCards[0].id
-      ),
-      investigators: this.locationStates
-        .get(location.id)!
-        .investigatorIds.map((investigatorId) =>
-          this.getInvestigator(investigatorId)
-        ),
-    }))
-  }
-
-  private getLocation(locationId: LocationId) {
-    return this.scenario.locationCards.find(
-      (location) => location.id === locationId
-    )!
-  }
-
-  private getInvestigator(investigatorId: InvestigatorId) {
-    return this.investigatorCards.find(
-      (investigator) => investigator.id === investigatorId
-    )!
-  }
-
-  private getInvestigatorLocation(investigatorId: InvestigatorId) {
-    let location: LocationCard | undefined
-    this.locationStates.forEach((state, locationId) => {
-      if (state.investigatorIds.includes(investigatorId)) {
-        location = this.getLocation(locationId)
-      }
-    })
-    return location!
   }
 
   getLocationActions(
     locationId: LocationId,
     investigatorId: InvestigatorId
-  ): MoveAction[] {
-    const actions: MoveAction[] = []
-
-    if (this.gameState.phase !== 'investigation') {
-      return actions
-    }
+  ): PhaseAction[] {
+    const actions: PhaseAction[] = []
 
     const currentLocation = this.getInvestigatorLocation(investigatorId)
     const location = this.getLocation(locationId)
@@ -202,7 +148,13 @@ export class Game {
         type: 'move',
         investigatorId,
         locationId,
-        execute: () => this.moveInvestigator(investigatorId, locationId),
+        execute: () => {
+          const newContext = this.moveInvestigator(investigatorId, locationId)
+
+          return {
+            newContext,
+          }
+        },
       })
     }
 
@@ -212,17 +164,153 @@ export class Game {
   private moveInvestigator(
     investigatorId: InvestigatorId,
     locationId: LocationId
-  ) {
+  ): GameContext {
     const currentLocation = this.getInvestigatorLocation(investigatorId)
     const location = this.getLocation(locationId)
 
-    if (!isConnected(currentLocation, location)) {
-      throw new Error('Locations are not connected')
+    const newContext = {
+      ...this.context,
+    }
+    newContext.locationStates.removeInvestigator(
+      currentLocation.id,
+      investigatorId
+    )
+    newContext.locationStates.addInvestigator(location.id, investigatorId)
+
+    return newContext
+  }
+
+  private getLocation(locationId: LocationId) {
+    return this.context.scenario.locationCards.find(
+      (location) => location.id === locationId
+    )!
+  }
+
+  private getInvestigatorLocation(investigatorId: InvestigatorId) {
+    let location: LocationCard | undefined
+    this.context.locationStates.forEach((state, locationId) => {
+      if (state.investigatorIds.includes(investigatorId)) {
+        location = this.getLocation(locationId)
+      }
+    })
+    return location!
+  }
+}
+
+export class CleanupPhase implements Phase {
+  type = 'cleanup' as const
+
+  constructor(private context: GameContext) {}
+
+  get actions() {
+    const actions: PhaseAction[] = []
+
+    actions.push({
+      type: 'endCleanupPhase',
+      // TODO: add current investigator
+      investigatorId: this.context.investigatorCards[0].id,
+      execute: () => {
+        return {
+          nextPhase: new InvestigationPhase(this.context),
+        }
+      },
+    })
+
+    return actions
+  }
+}
+
+export type GameObserver = (game: Game) => void
+
+export class Game {
+  private context: GameContext
+  private phase: Phase
+  private scenario: Scenario
+  private locationStates: LocationStates
+  private investigatorCards: InvestigatorCard[]
+  private investigatorStates: InvestigatorStates
+  private observers: GameObserver[] = []
+
+  constructor(scenario: Scenario, investigatorCards: InvestigatorCard[]) {
+    this.scenario = scenario
+    this.locationStates = new LocationStates(scenario.locationCards)
+    this.investigatorCards = investigatorCards
+    this.investigatorStates = new InvestigatorStates(investigatorCards)
+
+    investigatorCards.forEach((investigator) => {
+      this.locationStates.addInvestigator(
+        scenario.startLocation,
+        investigator.id
+      )
+    })
+
+    this.context = {
+      scenario,
+      locationStates: this.locationStates,
+      investigatorCards,
+      investigatorStates: this.investigatorStates,
     }
 
-    this.locationStates.removeInvestigator(currentLocation.id, investigatorId)
-    this.locationStates.addInvestigator(location.id, investigatorId)
+    this.phase = new InvestigationPhase(this.context)
+  }
+
+  get investigators() {
+    return this.investigatorCards.map((investigator) => ({
+      ...investigator,
+      state: this.investigatorStates.get(investigator.id),
+      actions: this.getInvestigatorActions(),
+    }))
+  }
+
+  private getInvestigatorActions(): Action[] {
+    return this.phase.actions
+      .filter(
+        (action) => action.investigatorId != null && action.locationId == null
+      )
+      .map((action) => ({
+        ...action,
+        execute: () => this.executePhaseAction(action),
+      }))
+  }
+
+  get locations() {
+    return this.scenario.locationCards.map((location) => ({
+      ...location,
+      position: this.scenario.layout.get(location.id)!,
+      state: this.locationStates.get(location.id)!,
+      actions: this.getLocationActions(location.id),
+      investigators: this.locationStates
+        .get(location.id)!
+        .investigatorIds.map((investigatorId) =>
+          this.getInvestigator(investigatorId)
+        ),
+    }))
+  }
+
+  private getLocationActions(locationId: LocationId): Action[] {
+    return this.phase.actions
+      .filter((action) => action.locationId === locationId)
+      .map((action) => ({
+        ...action,
+        execute: () => this.executePhaseAction(action),
+      }))
+  }
+
+  private executePhaseAction(action: PhaseAction) {
+    const { nextPhase, newContext } = action.execute()
+    if (nextPhase) {
+      this.phase = nextPhase
+    }
+    if (newContext) {
+      this.context = newContext
+    }
     this.onChange(this)
+  }
+
+  private getInvestigator(investigatorId: InvestigatorId) {
+    return this.investigatorCards.find(
+      (investigator) => investigator.id === investigatorId
+    )!
   }
 
   subscribe(observer: GameObserver) {
