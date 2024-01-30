@@ -225,39 +225,30 @@ export type GameObserver = (game: Game) => void
 export class Game {
   private context: GameContext
   private phase: Phase
-  private scenario: Scenario
-  private locationStates: LocationStates
-  private investigatorCards: InvestigatorCard[]
-  private investigatorStates: InvestigatorStates
   private observers: GameObserver[] = []
 
   constructor(scenario: Scenario, investigatorCards: InvestigatorCard[]) {
-    this.scenario = scenario
-    this.locationStates = new LocationStates(scenario.locationCards)
-    this.investigatorCards = investigatorCards
-    this.investigatorStates = new InvestigatorStates(investigatorCards)
+    const locationStates = new LocationStates(scenario.locationCards)
+    const investigatorStates = new InvestigatorStates(investigatorCards)
 
     investigatorCards.forEach((investigator) => {
-      this.locationStates.addInvestigator(
-        scenario.startLocation,
-        investigator.id
-      )
+      locationStates.addInvestigator(scenario.startLocation, investigator.id)
     })
 
     this.context = {
       scenario,
-      locationStates: this.locationStates,
+      locationStates,
       investigatorCards,
-      investigatorStates: this.investigatorStates,
+      investigatorStates,
     }
 
     this.phase = new InvestigationPhase(this.context)
   }
 
   get investigators() {
-    return this.investigatorCards.map((investigator) => ({
+    return this.context.investigatorCards.map((investigator) => ({
       ...investigator,
-      state: this.investigatorStates.get(investigator.id),
+      state: this.context.investigatorStates.get(investigator.id),
       actions: this.getInvestigatorActions(),
     }))
   }
@@ -274,12 +265,12 @@ export class Game {
   }
 
   get locations() {
-    return this.scenario.locationCards.map((location) => ({
+    return this.context.scenario.locationCards.map((location) => ({
       ...location,
-      position: this.scenario.layout.get(location.id)!,
-      state: this.locationStates.get(location.id)!,
+      position: this.context.scenario.layout.get(location.id)!,
+      state: this.context.locationStates.get(location.id)!,
       actions: this.getLocationActions(location.id),
-      investigators: this.locationStates
+      investigators: this.context.locationStates
         .get(location.id)!
         .investigatorIds.map((investigatorId) =>
           this.getInvestigator(investigatorId)
@@ -308,7 +299,7 @@ export class Game {
   }
 
   private getInvestigator(investigatorId: InvestigatorId) {
-    return this.investigatorCards.find(
+    return this.context.investigatorCards.find(
       (investigator) => investigator.id === investigatorId
     )!
   }
