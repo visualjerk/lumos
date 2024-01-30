@@ -1,6 +1,6 @@
 'use client'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import { Game, InvestigatorCard } from '@lumos/game'
+import { InvestigatorCard, createGame, Game } from '@lumos/game'
 import React, { useEffect, useState } from 'react'
 
 const investigator: InvestigatorCard = {
@@ -16,17 +16,12 @@ const investigator: InvestigatorCard = {
 
 export default function GameUI() {
   const [game, setGame] = useState(
-    new Game(MisteryOfTheHogwartsExpress, [investigator])
+    createGame(MisteryOfTheHogwartsExpress, [investigator])
   )
-  function handleChange(newGame: Game) {
-    setGame(
-      Object.assign(Object.create(Object.getPrototypeOf(newGame)), newGame)
-    )
-  }
   useEffect(() => {
-    const unsubscribe = game.subscribe(handleChange)
+    const unsubscribe = game.subscribe(setGame)
     return unsubscribe
-  }, [])
+  }, [game])
 
   return (
     <div className="flex flex-col">
