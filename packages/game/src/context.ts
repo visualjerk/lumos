@@ -89,3 +89,42 @@ function getInvestigator(context: Context, investigatorId: InvestigatorId) {
     (investigator) => investigator.id === investigatorId
   )!
 }
+
+export function moveInvestigator(
+  context: Context,
+  investigatorId: InvestigatorId,
+  locationId: LocationId
+): Context {
+  const currentLocation = getInvestigatorLocation(context, investigatorId)
+  const location = getLocation(context, locationId)
+
+  const newContext = {
+    ...context,
+  }
+  newContext.locationStates.removeInvestigator(
+    currentLocation.id,
+    investigatorId
+  )
+  newContext.locationStates.addInvestigator(location.id, investigatorId)
+
+  return newContext
+}
+
+export function getLocation(context: Context, locationId: LocationId) {
+  return context.scenario.locationCards.find(
+    (location) => location.id === locationId
+  )!
+}
+
+export function getInvestigatorLocation(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
+  let location: LocationCard | undefined
+  context.locationStates.forEach((state, locationId) => {
+    if (state.investigatorIds.includes(investigatorId)) {
+      location = getLocation(context, locationId)
+    }
+  })
+  return location!
+}

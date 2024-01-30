@@ -1,4 +1,9 @@
-import { Context } from './context'
+import {
+  Context,
+  getInvestigatorLocation,
+  getLocation,
+  moveInvestigator,
+} from './context'
 import { LocationCard, InvestigatorId, LocationId, isConnected } from './card'
 
 export type PhaseActionReturn = {
@@ -52,8 +57,8 @@ export function createInvestigationPhase(context: Context): Phase {
   ): PhaseAction[] {
     const actions: PhaseAction[] = []
 
-    const currentLocation = getInvestigatorLocation(investigatorId)
-    const location = getLocation(locationId)
+    const currentLocation = getInvestigatorLocation(context, investigatorId)
+    const location = getLocation(context, locationId)
 
     if (isConnected(currentLocation, location)) {
       actions.push({
@@ -61,7 +66,11 @@ export function createInvestigationPhase(context: Context): Phase {
         investigatorId,
         locationId,
         execute: () => {
-          const newContext = moveInvestigator(investigatorId, locationId)
+          const newContext = moveInvestigator(
+            context,
+            investigatorId,
+            locationId
+          )
 
           return {
             newContext,
@@ -71,41 +80,6 @@ export function createInvestigationPhase(context: Context): Phase {
     }
 
     return actions
-  }
-
-  function moveInvestigator(
-    investigatorId: InvestigatorId,
-    locationId: LocationId
-  ): Context {
-    const currentLocation = getInvestigatorLocation(investigatorId)
-    const location = getLocation(locationId)
-
-    const newContext = {
-      ...context,
-    }
-    newContext.locationStates.removeInvestigator(
-      currentLocation.id,
-      investigatorId
-    )
-    newContext.locationStates.addInvestigator(location.id, investigatorId)
-
-    return newContext
-  }
-
-  function getLocation(locationId: LocationId) {
-    return context.scenario.locationCards.find(
-      (location) => location.id === locationId
-    )!
-  }
-
-  function getInvestigatorLocation(investigatorId: InvestigatorId) {
-    let location: LocationCard | undefined
-    context.locationStates.forEach((state, locationId) => {
-      if (state.investigatorIds.includes(investigatorId)) {
-        location = getLocation(locationId)
-      }
-    })
-    return location!
   }
 
   return {
