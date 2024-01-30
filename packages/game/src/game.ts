@@ -5,13 +5,9 @@ import {
   InvestigatorStates,
   LocationState,
   LocationStates,
+  getLocationInvestigators,
 } from './context'
-import {
-  LocationCard,
-  InvestigatorCard,
-  InvestigatorId,
-  LocationId,
-} from './card'
+import { LocationCard, InvestigatorCard, LocationId } from './card'
 import { Position, Scenario } from './scenario'
 
 export type Action = {
@@ -65,11 +61,7 @@ function createGameFromContext(context: Context, phase: Phase): Game {
       position: context.scenario.layout.get(location.id)!,
       state: context.locationStates.get(location.id)!,
       actions: getLocationActions(location.id),
-      investigators: context.locationStates
-        .get(location.id)!
-        .investigatorIds.map((investigatorId) =>
-          getInvestigator(investigatorId)
-        ),
+      investigators: getLocationInvestigators(context, location.id),
     })
   )
 
@@ -94,12 +86,6 @@ function createGameFromContext(context: Context, phase: Phase): Game {
     }
 
     onChange(createGameFromContext(context, phase))
-  }
-
-  function getInvestigator(investigatorId: InvestigatorId) {
-    return context.investigatorCards.find(
-      (investigator) => investigator.id === investigatorId
-    )!
   }
 
   const observers: GameObserver[] = []

@@ -70,3 +70,22 @@ export type Context = {
   investigatorCards: InvestigatorCard[]
   investigatorStates: InvestigatorStates
 }
+
+export function getLocationInvestigators(
+  context: Context,
+  locationId: LocationId
+): InvestigatorCard[] {
+  const state = context.locationStates.get(locationId)
+
+  if (!state) {
+    throw new Error('Location not found')
+  }
+
+  return state.investigatorIds.map((id) => getInvestigator(context, id))
+}
+
+function getInvestigator(context: Context, investigatorId: InvestigatorId) {
+  return context.investigatorCards.find(
+    (investigator) => investigator.id === investigatorId
+  )!
+}
