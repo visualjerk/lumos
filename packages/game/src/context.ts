@@ -71,6 +71,25 @@ export type Context = {
   investigatorStates: InvestigatorStates
 }
 
+export function createInitialContext(
+  scenario: Scenario,
+  investigatorCards: InvestigatorCard[]
+): Context {
+  const locationStates = new LocationStates(scenario.locationCards)
+  const investigatorStates = new InvestigatorStates(investigatorCards)
+
+  investigatorCards.forEach((investigator) => {
+    locationStates.addInvestigator(scenario.startLocation, investigator.id)
+  })
+
+  return {
+    scenario,
+    locationStates,
+    investigatorCards,
+    investigatorStates,
+  }
+}
+
 export function getLocationInvestigators(
   context: Context,
   locationId: LocationId

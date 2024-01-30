@@ -43,7 +43,7 @@ export default function GameUI() {
             key={location.id}
             className={
               'w-32 h-32 bg-gray-200 p-2 ' +
-              (location.state.revealed === true ? 'bg-gray-200' : 'bg-gray-400')
+              (location.revealed === true ? 'bg-gray-200' : 'bg-gray-400')
             }
             style={{
               gridColumn: location.position[0],

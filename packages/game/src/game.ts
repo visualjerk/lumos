@@ -1,10 +1,7 @@
 import { Phase, PhaseAction, createInvestigationPhase } from './phase'
 import {
   Context,
-  InvestigatorState,
-  InvestigatorStates,
-  LocationState,
-  LocationStates,
+  createInitialContext,
   getLocationInvestigators,
 } from './context'
 import { LocationCard, InvestigatorCard, LocationId } from './card'
@@ -18,13 +15,13 @@ export type Action = {
 export type GameObserver = (game: Game) => void
 
 export type GameInvestigator = InvestigatorCard & {
-  state: InvestigatorState
+  currentHealth: number
   actions: Action[]
 }
 
 export type GameLocation = LocationCard & {
   position: Position
-  state: LocationState
+  revealed: boolean
   actions: Action[]
   investigators: InvestigatorCard[]
 }
@@ -39,7 +36,7 @@ function createGameFromContext(context: Context, phase: Phase): Game {
   const investigators: GameInvestigator[] = context.investigatorCards.map(
     (investigator) => ({
       ...investigator,
-      state: context.investigatorStates.get(investigator.id)!,
+      ...context.investigatorStates.get(investigator.id)!,
       actions: getInvestigatorActions(),
     })
   )
@@ -58,8 +55,8 @@ function createGameFromContext(context: Context, phase: Phase): Game {
   const locations: GameLocation[] = context.scenario.locationCards.map(
     (location) => ({
       ...location,
+      ...context.locationStates.get(location.id)!,
       position: context.scenario.layout.get(location.id)!,
-      state: context.locationStates.get(location.id)!,
       actions: getLocationActions(location.id),
       investigators: getLocationInvestigators(context, location.id),
     })
@@ -120,20 +117,7 @@ export function createGame(
   scenario: Scenario,
   investigatorCards: InvestigatorCard[]
 ): Game {
-  const locationStates = new LocationStates(scenario.locationCards)
-  const investigatorStates = new InvestigatorStates(investigatorCards)
-
-  investigatorCards.forEach((investigator) => {
-    locationStates.addInvestigator(scenario.startLocation, investigator.id)
-  })
-
-  const context: Context = {
-    scenario,
-    locationStates,
-    investigatorCards,
-    investigatorStates,
-  }
-
+  const context = createInitialContext(scenario, investigatorCards)
   const phase = createInvestigationPhase(context)
 
   return createGameFromContext(context, phase)
