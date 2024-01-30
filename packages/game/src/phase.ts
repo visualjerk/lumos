@@ -4,7 +4,7 @@ import {
   getLocation,
   moveInvestigator,
 } from './context'
-import { LocationCard, InvestigatorId, LocationId, isConnected } from './card'
+import { InvestigatorId, LocationId, isConnected } from './card'
 
 export type PhaseActionReturn = {
   nextPhase?: Phase
