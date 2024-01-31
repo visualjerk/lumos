@@ -21,33 +21,6 @@ export class LocationStates extends Map<LocationId, LocationState> {
       ])
     )
   }
-
-  addInvestigator(locationId: LocationId, investigatorId: InvestigatorId) {
-    const state = this.get(locationId)
-
-    if (!state) {
-      throw new Error('Location not found')
-    }
-
-    state.revealed = true
-    state.investigatorIds.push(investigatorId)
-  }
-
-  removeInvestigator(locationId: LocationId, investigatorId: InvestigatorId) {
-    const state = this.get(locationId)
-
-    if (!state) {
-      throw new Error('Location not found')
-    }
-
-    const index = state.investigatorIds.indexOf(investigatorId)
-
-    if (index === -1) {
-      throw new Error('Investigator not found')
-    }
-
-    state.investigatorIds.splice(index, 1)
-  }
 }
 
 export type InvestigatorState = {
@@ -81,7 +54,9 @@ export function createInitialContext(
   const investigatorStates = new InvestigatorStates(investigatorCards)
 
   investigatorCards.forEach((investigator) => {
-    locationStates.addInvestigator(scenario.startLocation, investigator.id)
+    locationStates
+      .get(scenario.startLocation)!
+      .investigatorIds.push(investigator.id)
   })
 
   return {
@@ -117,18 +92,22 @@ export function moveInvestigator(
   locationId: LocationId
 ): Context {
   const currentLocation = getInvestigatorLocation(context, investigatorId)
-  const location = getLocation(context, locationId)
+  const currentLocationState = context.locationStates.get(currentLocation.id)
+  const locationState = context.locationStates.get(locationId)
 
-  const newContext = {
-    ...context,
+  if (!currentLocationState) {
+    throw new Error('Current location not found')
   }
-  newContext.locationStates.removeInvestigator(
-    currentLocation.id,
-    investigatorId
-  )
-  newContext.locationStates.addInvestigator(location.id, investigatorId)
 
-  return newContext
+  if (!locationState) {
+    throw new Error('Location not found')
+  }
+
+  currentLocationState.investigatorIds =
+    currentLocationState!.investigatorIds.filter((id) => id !== investigatorId)
+  locationState.investigatorIds.push(investigatorId)
+
+  return context
 }
 
 export function getLocation(context: Context, locationId: LocationId) {
