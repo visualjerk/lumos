@@ -1,6 +1,6 @@
 'use client'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import { InvestigatorCard, createGame, Game } from '@lumos/game'
+import { InvestigatorCard, createGame } from '@lumos/game'
 import React, { useEffect, useState } from 'react'
 
 const investigator: InvestigatorCard = {
@@ -30,29 +30,40 @@ export default function GameUI() {
           <div key={investigator.id}>
             <div className="text-purple-500">{investigator.name}</div>
             <div>Clues: {investigator.clues}</div>
-            {investigator.actions.map((action, index) => (
-              <button key={index} onClick={() => action.execute()}>
-                {action.type}
-              </button>
-            ))}
+            <div>Intelligence: {investigator.baseStats.intelligence}</div>
+            <div className="flex flex-row gap-3">
+              {investigator.actions.map((action, index) => (
+                <button
+                  key={index}
+                  onClick={() => action.execute()}
+                  className="p-1 bg-gray-200"
+                >
+                  {action.type}
+                </button>
+              ))}
+            </div>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-10 grid-rows-6 gap-10">
+      <div className="grid grid-cols-11 grid-rows-11 gap-10">
         {game.locations.map((location) => (
           <div
             key={location.id}
             className={
-              'w-32 h-32 bg-gray-200 p-2 ' +
+              'h-40 bg-gray-200 p-2 ' +
               (location.revealed === true ? 'bg-gray-200' : 'bg-gray-400')
             }
             style={{
-              gridColumn: location.position[0],
-              gridRow: location.position[1],
+              gridColumn: `${location.position[0]} / span 2`,
+              gridRow: `${location.position[1]} / span 2`,
             }}
           >
             <div>{location.name}</div>
-            {location.revealed === true && <div>Clues {location.clues}</div>}
+            {location.revealed === true && (
+              <div>
+                Clues {location.clues} Shroud {location.shroud}
+              </div>
+            )}
             {location.investigators.map((investigator) => (
               <div key={investigator.id} className=" text-purple-500">
                 {investigator.name}

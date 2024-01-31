@@ -76,11 +76,11 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],
-    [Compartment24.id, [1, 3]],
-    [Compartment25.id, [2, 3]],
-    [Aisle3.id, [4, 2]],
-    [Compartment34.id, [3, 3]],
-    [Compartment35.id, [4, 3]],
-    [BoardRestaurant.id, [5, 2]],
+    [Compartment24.id, [1, 4]],
+    [Compartment25.id, [3, 4]],
+    [Aisle3.id, [6, 2]],
+    [Compartment34.id, [5, 4]],
+    [Compartment35.id, [7, 4]],
+    [BoardRestaurant.id, [8, 2]],
   ]),
 }

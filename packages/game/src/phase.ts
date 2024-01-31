@@ -1,6 +1,7 @@
 import {
   Context,
   collectClue,
+  getInvestigator,
   getInvestigatorLocation,
   getLocation,
   moveInvestigator,
@@ -19,7 +20,11 @@ export type PhaseAction = {
   execute: () => PhaseActionReturn
 }
 
-export type PhaseType = 'investigation' | 'cleanup'
+export type PhaseType =
+  | 'investigation'
+  | 'cleanup'
+  | 'startSkillCheck'
+  | 'commitSkillCheck'
 
 export type Phase = {
   type: PhaseType
@@ -89,10 +94,12 @@ export function createInvestigationPhase(context: Context): Phase {
           investigatorId,
           locationId,
           execute: () => {
-            const newContext = collectClue(context, investigatorId, locationId)
-
             return {
-              newContext,
+              nextPhase: createStartInvestigationSkillCheck(context, {
+                investigatorId,
+                locationId,
+                skillModifier: 0,
+              }),
             }
           },
         })
@@ -106,6 +113,122 @@ export function createInvestigationPhase(context: Context): Phase {
     type: 'investigation',
     actions: getActions(),
     applyContext: (context) => createInvestigationPhase(context),
+  }
+}
+
+type InvestigationContext = {
+  locationId: LocationId
+  investigatorId: InvestigatorId
+  skillModifier: number
+}
+
+export function createStartInvestigationSkillCheck(
+  context: Context,
+  investigationContext: InvestigationContext
+): Phase {
+  function getActions() {
+    const actions: PhaseAction[] = []
+
+    actions.push({
+      type: 'commitSkillCheck',
+      investigatorId: investigationContext.investigatorId,
+      execute: () => {
+        return {
+          nextPhase: createCommitInvestigationSkillCheck(
+            context,
+            investigationContext
+          ),
+        }
+      },
+    })
+
+    actions.push({
+      type: 'decreaseSkillCheck',
+      investigatorId: investigationContext.investigatorId,
+      execute: () => {
+        investigationContext.skillModifier--
+        return {
+          nextPhase: createStartInvestigationSkillCheck(
+            context,
+            investigationContext
+          ),
+        }
+      },
+    })
+
+    actions.push({
+      type: 'increaseSkillCheck',
+      investigatorId: investigationContext.investigatorId,
+      execute: () => {
+        investigationContext.skillModifier++
+        return {
+          nextPhase: createStartInvestigationSkillCheck(
+            context,
+            investigationContext
+          ),
+        }
+      },
+    })
+
+    return actions
+  }
+
+  return {
+    type: 'startSkillCheck',
+    actions: getActions(),
+    applyContext: (context) =>
+      createStartInvestigationSkillCheck(context, investigationContext),
+  }
+}
+
+export function createCommitInvestigationSkillCheck(
+  context: Context,
+  investigationContext: InvestigationContext
+): Phase {
+  function getActions() {
+    const actions: PhaseAction[] = []
+
+    actions.push({
+      type: 'endSkillCheck',
+      investigatorId: investigationContext.investigatorId,
+      execute: () => {
+        const investigator = getInvestigator(
+          context,
+          investigationContext.investigatorId
+        )
+        const location = getLocation(context, investigationContext.locationId)
+
+        const totalSkill =
+          investigator.baseStats.intelligence +
+          investigationContext.skillModifier
+
+        if (totalSkill < location.shroud) {
+          return {
+            nextPhase: createInvestigationPhase(context),
+          }
+        }
+
+        const newContext = collectClue(
+          context,
+          investigationContext.investigatorId,
+          investigationContext.locationId
+        )
+
+        return {
+          newContext,
+          nextPhase: createInvestigationPhase(newContext),
+        }
+      },
+    })
+
+    return actions
+  }
+
+  return {
+    type: 'commitSkillCheck',
+    actions: getActions(),
+    applyContext: (context) =>
+      createCommitInvestigationSkillCheck(context, investigationContext),
   }
 }
 

@@ -1,8 +1,6 @@
 import { LocationId } from '../card/location-card'
 
-export const MAX_COORDINATE = 6
-
-export type Coordinate = 1 | 2 | 3 | 4 | 5 | 6
+export type Coordinate = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 export type Position = [x: Coordinate, y: Coordinate]
 

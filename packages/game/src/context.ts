@@ -80,7 +80,10 @@ export function getLocationInvestigators(
   return investigatorCards
 }
 
-function getInvestigator(context: Context, investigatorId: InvestigatorId) {
+export function getInvestigator(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
   return context.investigatorCards.find(
     (investigator) => investigator.id === investigatorId
   )!
