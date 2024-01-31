@@ -29,6 +29,7 @@ export default function GameUI() {
         {game.investigators.map((investigator) => (
           <div key={investigator.id}>
             <div className="text-purple-500">{investigator.name}</div>
+            <div>Clues: {investigator.clues}</div>
             {investigator.actions.map((action, index) => (
               <button key={index} onClick={() => action.execute()}>
                 {action.type}
@@ -51,6 +52,7 @@ export default function GameUI() {
             }}
           >
             <div>{location.name}</div>
+            {location.revealed === true && <div>Clues {location.clues}</div>}
             {location.investigators.map((investigator) => (
               <div key={investigator.id} className=" text-purple-500">
                 {investigator.name}

@@ -7,6 +7,8 @@ const FIRST_LOCATION: LocationCard = {
   name: 'Great Hall',
   incomingConnection: 'circle',
   connections: ['moon'],
+  initialClues: 1,
+  shroud: 2,
 }
 
 const SECOND_LOCATION: LocationCard = {
@@ -14,6 +16,8 @@ const SECOND_LOCATION: LocationCard = {
   name: 'Second Floor',
   incomingConnection: 'moon',
   connections: ['circle', 'square'],
+  initialClues: 1,
+  shroud: 2,
 }
 
 const THIRD_LOCATION: LocationCard = {
@@ -21,6 +25,8 @@ const THIRD_LOCATION: LocationCard = {
   name: 'Second Floor',
   incomingConnection: 'square',
   connections: ['moon'],
+  initialClues: 1,
+  shroud: 2,
 }
 
 const INVESTIGATOR = {

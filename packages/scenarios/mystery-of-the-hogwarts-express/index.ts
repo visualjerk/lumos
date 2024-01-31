@@ -5,6 +5,8 @@ const Aisle2: LocationCard = {
   name: 'Aisle 2',
   incomingConnection: 'moon',
   connections: ['diamond', 'heart', 'circle'],
+  initialClues: 1,
+  shroud: 2,
 }
 
 const Compartment24: LocationCard = {
@@ -12,6 +14,8 @@ const Compartment24: LocationCard = {
   name: 'Compartment 24',
   incomingConnection: 'diamond',
   connections: ['moon'],
+  initialClues: 3,
+  shroud: 3,
 }
 
 const Compartment25: LocationCard = {
@@ -19,6 +23,8 @@ const Compartment25: LocationCard = {
   name: 'Compartment 25',
   incomingConnection: 'heart',
   connections: ['moon'],
+  initialClues: 4,
+  shroud: 2,
 }
 
 const Aisle3: LocationCard = {
@@ -26,6 +32,8 @@ const Aisle3: LocationCard = {
   name: 'Aisle 3',
   incomingConnection: 'circle',
   connections: ['moon', 'square', 'star', 'triangle'],
+  initialClues: 1,
+  shroud: 0,
 }
 
 const Compartment34: LocationCard = {
@@ -33,6 +41,8 @@ const Compartment34: LocationCard = {
   name: 'Compartment 34',
   incomingConnection: 'square',
   connections: ['circle'],
+  initialClues: 3,
+  shroud: 2,
 }
 
 const Compartment35: LocationCard = {
@@ -40,6 +50,8 @@ const Compartment35: LocationCard = {
   name: 'Compartment 35',
   incomingConnection: 'star',
   connections: ['circle'],
+  initialClues: 2,
+  shroud: 2,
 }
 
 const BoardRestaurant: LocationCard = {
@@ -47,6 +59,8 @@ const BoardRestaurant: LocationCard = {
   name: 'Board Restaurant',
   incomingConnection: 'triangle',
   connections: ['circle'],
+  initialClues: 4,
+  shroud: 3,
 }
 
 export const MisteryOfTheHogwartsExpress: Scenario = {

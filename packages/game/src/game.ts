@@ -15,6 +15,7 @@ export type Action = {
 export type GameObserver = (game: Game) => void
 
 export type GameInvestigator = InvestigatorCard & {
+  clues: number
   currentHealth: number
   actions: Action[]
 }
@@ -22,6 +23,7 @@ export type GameInvestigator = InvestigatorCard & {
 export type GameLocation = LocationCard & {
   position: Position
   revealed: boolean
+  clues: number
   actions: Action[]
   investigators: InvestigatorCard[]
 }

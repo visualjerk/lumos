@@ -17,6 +17,8 @@ export type LocationCard = {
   name: string
   incomingConnection: Connection
   connections: Connection[]
+  initialClues: number
+  shroud: number
 }
 
 export function isConnected(

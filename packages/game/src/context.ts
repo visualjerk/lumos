@@ -8,6 +8,7 @@ import { Scenario } from './scenario'
 
 export type LocationState = {
   revealed: boolean
+  clues: number
   investigatorIds: InvestigatorId[]
 }
 
@@ -16,7 +17,7 @@ export class LocationStates extends Map<LocationId, LocationState> {
     super(
       locations.map((location) => [
         location.id,
-        { revealed: false, investigatorIds: [] },
+        { revealed: false, investigatorIds: [], clues: location.initialClues },
       ])
     )
   }
@@ -51,6 +52,7 @@ export class LocationStates extends Map<LocationId, LocationState> {
 
 export type InvestigatorState = {
   currentHealth: number
+  clues: number
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
@@ -58,7 +60,7 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
     super(
       investigators.map((investigator) => [
         investigator.id,
-        { currentHealth: investigator.health },
+        { currentHealth: investigator.health, clues: 0 },
       ])
     )
   }
@@ -146,4 +148,34 @@ export function getInvestigatorLocation(
     }
   })
   return location!
+}
+
+export function collectClue(
+  context: Context,
+  investigatorId: InvestigatorId,
+  locationId: LocationId
+): Context {
+  const investigator = context.investigatorStates.get(investigatorId)
+  const location = context.locationStates.get(locationId)
+
+  if (!investigator) {
+    throw new Error('Investigator not found')
+  }
+
+  if (!location) {
+    throw new Error('Location not found')
+  }
+
+  if (!location.revealed) {
+    throw new Error('Location not revealed')
+  }
+
+  if (location.clues === 0) {
+    throw new Error('Location has no clues')
+  }
+
+  location.clues--
+  investigator.clues++
+
+  return context
 }

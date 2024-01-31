@@ -1,5 +1,6 @@
 import {
   Context,
+  collectClue,
   getInvestigatorLocation,
   getLocation,
   moveInvestigator,
@@ -77,6 +78,25 @@ export function createInvestigationPhase(context: Context): Phase {
           }
         },
       })
+    }
+
+    if (currentLocation.id === locationId) {
+      const locationState = context.locationStates.get(locationId)
+
+      if (locationState && locationState.clues > 0) {
+        actions.push({
+          type: 'investigate',
+          investigatorId,
+          locationId,
+          execute: () => {
+            const newContext = collectClue(context, investigatorId, locationId)
+
+            return {
+              newContext,
+            }
+          },
+        })
+      }
     }
 
     return actions
