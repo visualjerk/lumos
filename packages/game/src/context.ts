@@ -9,7 +9,6 @@ import { Scenario } from './scenario'
 export type LocationState = {
   revealed: boolean
   clues: number
-  investigatorIds: InvestigatorId[]
 }
 
 export class LocationStates extends Map<LocationId, LocationState> {
@@ -26,14 +25,15 @@ export class LocationStates extends Map<LocationId, LocationState> {
 export type InvestigatorState = {
   currentHealth: number
   clues: number
+  currentLocation: LocationId
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  constructor(investigators: InvestigatorCard[]) {
+  constructor(investigators: InvestigatorCard[], currentLocation: LocationId) {
     super(
       investigators.map((investigator) => [
         investigator.id,
-        { currentHealth: investigator.health, clues: 0 },
+        { currentHealth: investigator.health, clues: 0, currentLocation },
       ])
     )
   }
@@ -51,13 +51,11 @@ export function createInitialContext(
   investigatorCards: InvestigatorCard[]
 ): Context {
   const locationStates = new LocationStates(scenario.locationCards)
-  const investigatorStates = new InvestigatorStates(investigatorCards)
-
-  investigatorCards.forEach((investigator) => {
-    locationStates
-      .get(scenario.startLocation)!
-      .investigatorIds.push(investigator.id)
-  })
+  const investigatorStates = new InvestigatorStates(
+    investigatorCards,
+    scenario.startLocation
+  )
+  locationStates.get(scenario.startLocation)!.revealed = true
 
   return {
     scenario,
@@ -71,13 +69,15 @@ export function getLocationInvestigators(
   context: Context,
   locationId: LocationId
 ): InvestigatorCard[] {
-  const state = context.locationStates.get(locationId)
+  const investigatorCards: InvestigatorCard[] = []
+  context.investigatorStates.forEach((investigatorState, investigatorId) => {
+    if (investigatorState.currentLocation !== locationId) {
+      return
+    }
+    investigatorCards.push(getInvestigator(context, investigatorId)!)
+  })
 
-  if (!state) {
-    throw new Error('Location not found')
-  }
-
-  return state.investigatorIds.map((id) => getInvestigator(context, id))
+  return investigatorCards
 }
 
 function getInvestigator(context: Context, investigatorId: InvestigatorId) {
@@ -91,21 +91,19 @@ export function moveInvestigator(
   investigatorId: InvestigatorId,
   locationId: LocationId
 ): Context {
-  const currentLocation = getInvestigatorLocation(context, investigatorId)
-  const currentLocationState = context.locationStates.get(currentLocation.id)
+  const investigatorState = context.investigatorStates.get(investigatorId)
   const locationState = context.locationStates.get(locationId)
 
-  if (!currentLocationState) {
-    throw new Error('Current location not found')
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
   }
 
   if (!locationState) {
     throw new Error('Location not found')
   }
 
-  currentLocationState.investigatorIds =
-    currentLocationState!.investigatorIds.filter((id) => id !== investigatorId)
-  locationState.investigatorIds.push(investigatorId)
+  investigatorState.currentLocation = locationId
+  locationState.revealed = true
 
   return context
 }
@@ -120,13 +118,19 @@ export function getInvestigatorLocation(
   context: Context,
   investigatorId: InvestigatorId
 ) {
-  let location: LocationCard | undefined
-  context.locationStates.forEach((state, locationId) => {
-    if (state.investigatorIds.includes(investigatorId)) {
-      location = getLocation(context, locationId)
-    }
-  })
-  return location!
+  const investigator = context.investigatorStates.get(investigatorId)
+
+  if (!investigator) {
+    throw new Error('Investigator not found')
+  }
+
+  const location = getLocation(context, investigator.currentLocation)
+
+  if (!location) {
+    throw new Error('Location not found')
+  }
+
+  return location
 }
 
 export function collectClue(
