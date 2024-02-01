@@ -1,15 +1,14 @@
 import { Phase, PhaseAction, createInvestigationPhase } from './phase'
-import {
-  Context,
-  createInitialContext,
-  getLocationInvestigators,
-} from './context'
-import { LocationCard, InvestigatorCard, LocationId } from './card'
+import { createInitialContext } from './context'
+import { LocationCard, InvestigatorCard } from './card'
 import { Position, Scenario } from './scenario'
 
-export type Action = {
-  type: string
+export type GameAction = Omit<PhaseAction, 'execute'> & {
   execute: () => void
+}
+
+export type GamePhase = Omit<Phase, 'actions'> & {
+  actions: GameAction[]
 }
 
 export type GameObserver = (game: Game) => void
@@ -17,76 +16,23 @@ export type GameObserver = (game: Game) => void
 export type GameInvestigator = InvestigatorCard & {
   clues: number
   currentHealth: number
-  actions: Action[]
+  actions: GameAction[]
 }
 
 export type GameLocation = LocationCard & {
   position: Position
   revealed: boolean
   clues: number
-  actions: Action[]
+  actions: GameAction[]
   investigators: InvestigatorCard[]
 }
 
 export type Game = {
-  investigators: GameInvestigator[]
-  locations: GameLocation[]
+  phase: GamePhase
   subscribe: (observer: GameObserver) => () => void
 }
 
-function createGameFromContext(context: Context, phase: Phase): Game {
-  const investigators: GameInvestigator[] = context.investigatorCards.map(
-    (investigator) => ({
-      ...investigator,
-      ...context.investigatorStates.get(investigator.id)!,
-      actions: getInvestigatorActions(),
-    })
-  )
-
-  function getInvestigatorActions(): Action[] {
-    return phase.actions
-      .filter(
-        (action) => action.investigatorId != null && action.locationId == null
-      )
-      .map((action) => ({
-        ...action,
-        execute: () => executePhaseAction(action),
-      }))
-  }
-
-  const locations: GameLocation[] = context.scenario.locationCards.map(
-    (location) => ({
-      ...location,
-      ...context.locationStates.get(location.id)!,
-      position: context.scenario.layout.get(location.id)!,
-      actions: getLocationActions(location.id),
-      investigators: getLocationInvestigators(context, location.id),
-    })
-  )
-
-  function getLocationActions(locationId: LocationId): Action[] {
-    return phase.actions
-      .filter((action) => action.locationId === locationId)
-      .map((action) => ({
-        ...action,
-        execute: () => executePhaseAction(action),
-      }))
-  }
-
-  function executePhaseAction(action: PhaseAction) {
-    const { nextPhase, newContext } = action.execute()
-
-    if (nextPhase) {
-      phase = nextPhase
-    }
-    if (newContext) {
-      context = newContext
-      phase = phase.applyContext(newContext)
-    }
-
-    onChange(createGameFromContext(context, phase))
-  }
-
+function createGameFromPhase(phase: Phase): Game {
   const observers: GameObserver[] = []
 
   function subscribe(observer: GameObserver) {
@@ -108,9 +54,19 @@ function createGameFromContext(context: Context, phase: Phase): Game {
     observers.forEach((observer) => observer(game))
   }
 
+  function executePhaseAction(action: PhaseAction) {
+    const nextPhase = action.execute()
+    onChange(createGameFromPhase(nextPhase))
+  }
+
   return {
-    investigators,
-    locations,
+    phase: {
+      ...phase,
+      actions: phase.actions.map((action) => ({
+        ...action,
+        execute: () => executePhaseAction(action),
+      })),
+    },
     subscribe,
   }
 }
@@ -122,5 +78,5 @@ export function createGame(
   const context = createInitialContext(scenario, investigatorCards)
   const phase = createInvestigationPhase(context)
 
-  return createGameFromContext(context, phase)
+  return createGameFromPhase(phase)
 }

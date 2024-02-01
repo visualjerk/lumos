@@ -8,10 +8,7 @@ import {
 } from './context'
 import { InvestigatorId, LocationId, isConnected } from './card'
 
-export type PhaseActionReturn = {
-  nextPhase?: Phase
-  newContext?: Context
-}
+export type PhaseActionReturn = Phase
 
 export type PhaseAction = {
   type: string
@@ -29,7 +26,7 @@ export type PhaseType =
 export type Phase = {
   type: PhaseType
   actions: PhaseAction[]
-  applyContext: (context: Context) => Phase
+  context: Context
 }
 
 export function createInvestigationPhase(context: Context): Phase {
@@ -42,11 +39,7 @@ export function createInvestigationPhase(context: Context): Phase {
     actions.push({
       type: 'endInvestigationPhase',
       investigatorId,
-      execute: () => {
-        return {
-          nextPhase: createCleanupPhase(context),
-        }
-      },
+      execute: () => createCleanupPhase(context),
     })
 
     context.locationStates.forEach((state, locationId) => {
@@ -78,9 +71,7 @@ export function createInvestigationPhase(context: Context): Phase {
             locationId
           )
 
-          return {
-            newContext,
-          }
+          return createInvestigationPhase(newContext)
         },
       })
     }
@@ -93,15 +84,12 @@ export function createInvestigationPhase(context: Context): Phase {
           type: 'investigate',
           investigatorId,
           locationId,
-          execute: () => {
-            return {
-              nextPhase: createStartInvestigationSkillCheck(context, {
-                investigatorId,
-                locationId,
-                skillModifier: 0,
-              }),
-            }
-          },
+          execute: () =>
+            createStartInvestigationSkillCheck(context, {
+              investigatorId,
+              locationId,
+              skillModifier: 0,
+            }),
         })
       }
     }
@@ -111,8 +99,8 @@ export function createInvestigationPhase(context: Context): Phase {
 
   return {
     type: 'investigation',
+    context,
     actions: getActions(),
-    applyContext: (context) => createInvestigationPhase(context),
   }
 }
 
@@ -132,14 +120,8 @@ export function createStartInvestigationSkillCheck(
     actions.push({
       type: 'commitSkillCheck',
       investigatorId: investigationContext.investigatorId,
-      execute: () => {
-        return {
-          nextPhase: createCommitInvestigationSkillCheck(
-            context,
-            investigationContext
-          ),
-        }
-      },
+      execute: () =>
+        createCommitInvestigationSkillCheck(context, investigationContext),
     })
 
     actions.push({
@@ -147,12 +129,7 @@ export function createStartInvestigationSkillCheck(
       investigatorId: investigationContext.investigatorId,
       execute: () => {
         investigationContext.skillModifier--
-        return {
-          nextPhase: createStartInvestigationSkillCheck(
-            context,
-            investigationContext
-          ),
-        }
+        return createStartInvestigationSkillCheck(context, investigationContext)
       },
     })
 
@@ -161,12 +138,7 @@ export function createStartInvestigationSkillCheck(
       investigatorId: investigationContext.investigatorId,
       execute: () => {
         investigationContext.skillModifier++
-        return {
-          nextPhase: createStartInvestigationSkillCheck(
-            context,
-            investigationContext
-          ),
-        }
+        return createStartInvestigationSkillCheck(context, investigationContext)
       },
     })
 
@@ -175,9 +147,8 @@ export function createStartInvestigationSkillCheck(
 
   return {
     type: 'startSkillCheck',
+    context,
     actions: getActions(),
-    applyContext: (context) =>
-      createStartInvestigationSkillCheck(context, investigationContext),
   }
 }
 
@@ -203,9 +174,7 @@ export function createCommitInvestigationSkillCheck(
           investigationContext.skillModifier
 
         if (totalSkill < location.shroud) {
-          return {
-            nextPhase: createInvestigationPhase(context),
-          }
+          return createInvestigationPhase(context)
         }
 
         const newContext = collectClue(
@@ -214,10 +183,7 @@ export function createCommitInvestigationSkillCheck(
           investigationContext.locationId
         )
 
-        return {
-          newContext,
-          nextPhase: createInvestigationPhase(newContext),
-        }
+        return createInvestigationPhase(newContext)
       },
     })
 
@@ -226,9 +192,8 @@ export function createCommitInvestigationSkillCheck(
 
   return {
     type: 'commitSkillCheck',
+    context,
     actions: getActions(),
-    applyContext: (context) =>
-      createCommitInvestigationSkillCheck(context, investigationContext),
   }
 }
 
@@ -239,16 +204,12 @@ export function createCleanupPhase(context: Context): Phase {
     type: 'endCleanupPhase',
     // TODO: add current investigator
     investigatorId: context.investigatorCards[0].id,
-    execute: () => {
-      return {
-        nextPhase: createInvestigationPhase(context),
-      }
-    },
+    execute: () => createInvestigationPhase(context),
   })
 
   return {
     type: 'cleanup',
     actions,
-    applyContext: (context) => createCleanupPhase(context),
+    context,
   }
 }
