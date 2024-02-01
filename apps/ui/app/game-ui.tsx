@@ -16,12 +16,14 @@ const investigator: InvestigatorCard = {
 }
 
 export default function GameUI() {
-  const { investigators, locations } = useGame(MisteryOfTheHogwartsExpress, [
-    investigator,
-  ])
+  const { investigators, locations, phase } = useGame(
+    MisteryOfTheHogwartsExpress,
+    [investigator]
+  )
 
   return (
     <div className="flex flex-col">
+      <div className="text-2xl ">Phase: {phase.type}</div>
       <div className="flex flex-row">
         {investigators.map((investigator) => (
           <div key={investigator.id}>

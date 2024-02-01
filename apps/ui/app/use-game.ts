@@ -69,5 +69,6 @@ export function useGame(
   return {
     investigators,
     locations,
+    phase,
   }
 }
