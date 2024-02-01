@@ -17,19 +17,21 @@ export type PhaseAction = {
   execute: () => PhaseActionReturn
 }
 
-export type PhaseType =
-  | 'investigation'
-  | 'cleanup'
-  | 'startSkillCheck'
-  | 'commitSkillCheck'
+export type Phase =
+  | InvestigationPhase
+  | CleanupPhase
+  | StartInvestigationSkillCheckPhase
+  | CommitInvestigationSkillCheckPhase
 
-export type Phase = {
-  type: PhaseType
+export type CreatePhase<Type extends string> = {
+  type: Type
   actions: PhaseAction[]
   context: Context
 }
 
-export function createInvestigationPhase(context: Context): Phase {
+export type InvestigationPhase = CreatePhase<'investigation'>
+
+export function createInvestigationPhase(context: Context): InvestigationPhase {
   function getActions() {
     const actions: PhaseAction[] = []
 
@@ -110,10 +112,15 @@ type InvestigationContext = {
   skillModifier: number
 }
 
+export type StartInvestigationSkillCheckPhase =
+  CreatePhase<'startInvestigationSkillCheck'> & {
+    investigationContext: InvestigationContext
+  }
+
 export function createStartInvestigationSkillCheck(
   context: Context,
   investigationContext: InvestigationContext
-): Phase {
+): StartInvestigationSkillCheckPhase {
   function getActions() {
     const actions: PhaseAction[] = []
 
@@ -146,16 +153,22 @@ export function createStartInvestigationSkillCheck(
   }
 
   return {
-    type: 'startSkillCheck',
+    type: 'startInvestigationSkillCheck',
     context,
+    investigationContext,
     actions: getActions(),
   }
 }
 
+export type CommitInvestigationSkillCheckPhase =
+  CreatePhase<'commitInvestigationSkillCheck'> & {
+    investigationContext: InvestigationContext
+  }
+
 export function createCommitInvestigationSkillCheck(
   context: Context,
   investigationContext: InvestigationContext
-): Phase {
+): CommitInvestigationSkillCheckPhase {
   function getActions() {
     const actions: PhaseAction[] = []
 
@@ -191,13 +204,16 @@ export function createCommitInvestigationSkillCheck(
   }
 
   return {
-    type: 'commitSkillCheck',
+    type: 'commitInvestigationSkillCheck',
     context,
+    investigationContext,
     actions: getActions(),
   }
 }
 
-export function createCleanupPhase(context: Context): Phase {
+export type CleanupPhase = CreatePhase<'cleanup'>
+
+export function createCleanupPhase(context: Context): CleanupPhase {
   const actions: PhaseAction[] = []
 
   actions.push({

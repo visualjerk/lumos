@@ -1,31 +1,19 @@
 import { Phase, PhaseAction, createInvestigationPhase } from './phase'
 import { createInitialContext } from './context'
-import { LocationCard, InvestigatorCard } from './card'
-import { Position, Scenario } from './scenario'
+import { InvestigatorCard } from './card'
+import { Scenario } from './scenario'
+
+type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any
+  ? Omit<T, Prop> & { [K in Prop]: PropType }
+  : never
 
 export type GameAction = Omit<PhaseAction, 'execute'> & {
   execute: () => void
 }
 
-export type GamePhase = Omit<Phase, 'actions'> & {
-  actions: GameAction[]
-}
+export type GamePhase = ReplacePropInUnion<Phase, 'actions', GameAction[]>
 
 export type GameObserver = (game: Game) => void
-
-export type GameInvestigator = InvestigatorCard & {
-  clues: number
-  currentHealth: number
-  actions: GameAction[]
-}
-
-export type GameLocation = LocationCard & {
-  position: Position
-  revealed: boolean
-  clues: number
-  actions: GameAction[]
-  investigators: InvestigatorCard[]
-}
 
 export type Game = {
   phase: GamePhase

@@ -24,6 +24,12 @@ export default function GameUI() {
   return (
     <div className="flex flex-col">
       <div className="text-2xl ">Phase: {phase.type}</div>
+      {(phase.type === 'startInvestigationSkillCheck' ||
+        phase.type === 'commitInvestigationSkillCheck') && (
+        <div className="flex flex-row gap-3">
+          Modifier: {phase.investigationContext.skillModifier}
+        </div>
+      )}
       <div className="flex flex-row">
         {investigators.map((investigator) => (
           <div key={investigator.id}>
