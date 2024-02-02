@@ -1,11 +1,11 @@
 'use client'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import { InvestigatorCard } from '@lumos/game'
+import { Investigator } from '@lumos/game'
 import React from 'react'
 import { useGame } from './use-game'
 import { SkillCheckResult } from './skill-check-result'
 
-const investigator: InvestigatorCard = {
+const investigator: Investigator = {
   id: 'isabel-brimble',
   name: 'Isabel Brimble',
   baseStats: {

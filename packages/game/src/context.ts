@@ -1,9 +1,5 @@
-import {
-  InvestigatorCard,
-  InvestigatorId,
-  LocationCard,
-  LocationId,
-} from './card'
+import { LocationCard, LocationId } from './location'
+import { Investigator, InvestigatorId } from './investigator'
 import { Scenario } from './scenario'
 
 export type LocationState = {
@@ -29,7 +25,7 @@ export type InvestigatorState = {
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  constructor(investigators: InvestigatorCard[], currentLocation: LocationId) {
+  constructor(investigators: Investigator[], currentLocation: LocationId) {
     super(
       investigators.map((investigator) => [
         investigator.id,
@@ -46,17 +42,17 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
 export type Context = {
   scenario: Scenario
   locationStates: LocationStates
-  investigatorCards: InvestigatorCard[]
+  investigators: Investigator[]
   investigatorStates: InvestigatorStates
 }
 
 export function createInitialContext(
   scenario: Scenario,
-  investigatorCards: InvestigatorCard[]
+  investigators: Investigator[]
 ): Context {
   const locationStates = new LocationStates(scenario.locationCards)
   const investigatorStates = new InvestigatorStates(
-    investigatorCards,
+    investigators,
     scenario.startLocation
   )
   locationStates.get(scenario.startLocation)!.revealed = true
@@ -64,7 +60,7 @@ export function createInitialContext(
   return {
     scenario,
     locationStates,
-    investigatorCards,
+    investigators,
     investigatorStates,
   }
 }
@@ -72,23 +68,23 @@ export function createInitialContext(
 export function getLocationInvestigators(
   context: Context,
   locationId: LocationId
-): InvestigatorCard[] {
-  const investigatorCards: InvestigatorCard[] = []
+): Investigator[] {
+  const investigators: Investigator[] = []
   context.investigatorStates.forEach((investigatorState, investigatorId) => {
     if (investigatorState.currentLocation !== locationId) {
       return
     }
-    investigatorCards.push(getInvestigator(context, investigatorId)!)
+    investigators.push(getInvestigator(context, investigatorId)!)
   })
 
-  return investigatorCards
+  return investigators
 }
 
 export function getInvestigator(
   context: Context,
   investigatorId: InvestigatorId
 ) {
-  return context.investigatorCards.find(
+  return context.investigators.find(
     (investigator) => investigator.id === investigatorId
   )!
 }

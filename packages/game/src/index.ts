@@ -1,4 +1,5 @@
-export * from './card'
+export * from './location'
+export * from './investigator'
 export * from './scenario'
 export * from './game'
 export * from './context'

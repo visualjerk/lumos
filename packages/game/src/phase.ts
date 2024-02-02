@@ -6,7 +6,8 @@ import {
   getLocation,
   moveInvestigator,
 } from './context'
-import { InvestigatorId, LocationId, isConnected } from './card'
+import { LocationId, isConnected } from './location'
+import { InvestigatorId } from './investigator'
 import { Fate, spinFateWheel } from './fate'
 
 export type PhaseActionReturn = Phase
@@ -37,7 +38,7 @@ export function createInvestigationPhase(context: Context): InvestigationPhase {
     const actions: PhaseAction[] = []
 
     // TODO: add current investigator
-    const investigatorId = context.investigatorCards[0].id
+    const investigatorId = context.investigators[0].id
 
     actions.push({
       type: 'endInvestigationPhase',
@@ -242,7 +243,7 @@ export function createCleanupPhase(context: Context): CleanupPhase {
   actions.push({
     type: 'endCleanupPhase',
     // TODO: add current investigator
-    investigatorId: context.investigatorCards[0].id,
+    investigatorId: context.investigators[0].id,
     execute: () => createInvestigationPhase(context),
   })
 

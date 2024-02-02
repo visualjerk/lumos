@@ -1,6 +1,6 @@
 import { Phase, PhaseAction, createInvestigationPhase } from './phase'
 import { createInitialContext } from './context'
-import { InvestigatorCard } from './card'
+import { Investigator } from './investigator'
 import { Scenario } from './scenario'
 
 type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any
@@ -65,9 +65,9 @@ function createGameFromPhase(phase: Phase): Game {
 
 export function createGame(
   scenario: Scenario,
-  investigatorCards: InvestigatorCard[]
+  investigators: Investigator[]
 ): Game {
-  const context = createInitialContext(scenario, investigatorCards)
+  const context = createInitialContext(scenario, investigators)
   const phase = createInvestigationPhase(context)
 
   return createGameFromPhase(phase)

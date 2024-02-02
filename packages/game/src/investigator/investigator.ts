@@ -6,7 +6,7 @@ export type BaseStats = {
   agility: number
 }
 
-export type InvestigatorCard = {
+export type Investigator = {
   id: InvestigatorId
   name: string
   baseStats: BaseStats
