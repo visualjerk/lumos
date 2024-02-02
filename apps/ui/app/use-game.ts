@@ -49,9 +49,11 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       return {
         ...investigator,
         ...state,
-        cardsInHand: state.cardsInHand.map((id) => ({
+        cardsInHand: state.cardsInHand.map((id, index) => ({
           ...InvestigatorCardCollection.get(id)!,
-          actions: [],
+          actions: phase.actions.filter(
+            (action) => action.handCardIndex === index
+          ),
         })),
         actions: getInvestigatorActions(),
       }
@@ -60,7 +62,10 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
 
   function getInvestigatorActions(): GameAction[] {
     return phase.actions.filter(
-      (action) => action.investigatorId != null && action.locationId == null
+      (action) =>
+        action.investigatorId != null &&
+        action.locationId == null &&
+        action.handCardIndex == null
     )
   }
 

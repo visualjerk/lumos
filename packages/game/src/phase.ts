@@ -2,14 +2,16 @@ import {
   Context,
   canDrawFromDeck,
   collectClue,
+  discardFromHand,
   drawFromDeck,
   getInvestigator,
+  getInvestigatorCardsInHand,
   getInvestigatorLocation,
   getLocation,
   moveInvestigator,
 } from './context'
 import { LocationId, isConnected } from './location'
-import { InvestigatorId, canDraw } from './investigator'
+import { InvestigatorId } from './investigator'
 import { Fate, spinFateWheel } from './fate'
 
 export type PhaseActionReturn = Phase
@@ -18,6 +20,7 @@ export type PhaseAction = {
   type: string
   locationId?: LocationId
   investigatorId?: InvestigatorId
+  handCardIndex?: number
   execute: () => PhaseActionReturn
 }
 
@@ -169,22 +172,27 @@ export function createStartInvestigationSkillCheck(
       },
     })
 
-    actions.push({
-      type: 'decreaseSkillCheck',
-      investigatorId: investigationContext.investigatorId,
-      execute: () => {
-        investigationContext.skillModifier--
-        return createStartInvestigationSkillCheck(context, investigationContext)
-      },
-    })
+    const cardsInHand = getInvestigatorCardsInHand(
+      context,
+      investigationContext.investigatorId
+    )
+    cardsInHand.forEach((card, index) => {
+      actions.push({
+        type: 'play',
+        investigatorId: investigationContext.investigatorId,
+        handCardIndex: index,
+        execute: () => {
+          const skillModifier = card.skillModifier.intelligence ?? 0
+          investigationContext.skillModifier += skillModifier
 
-    actions.push({
-      type: 'increaseSkillCheck',
-      investigatorId: investigationContext.investigatorId,
-      execute: () => {
-        investigationContext.skillModifier++
-        return createStartInvestigationSkillCheck(context, investigationContext)
-      },
+          discardFromHand(context, investigationContext.investigatorId, index)
+
+          return createStartInvestigationSkillCheck(
+            context,
+            investigationContext
+          )
+        },
+      })
     })
 
     return actions

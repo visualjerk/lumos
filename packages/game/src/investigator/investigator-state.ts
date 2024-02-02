@@ -46,11 +46,11 @@ export function draw(state: InvestigatorState): InvestigatorState {
 
 export function discard(
   state: InvestigatorState,
-  card: InvestigatorCardId
+  cardIndex: number
 ): InvestigatorState {
-  const cardIndex = state.cardsInHand.indexOf(card)
+  const card = state.cardsInHand[cardIndex]
 
-  if (cardIndex === -1) {
+  if (card == null) {
     throw new Error('Card not found in hand')
   }
 

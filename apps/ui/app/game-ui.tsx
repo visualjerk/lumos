@@ -39,7 +39,12 @@ export default function GameUI() {
           <div key={investigator.id}>
             <div className="text-purple-500">{investigator.name}</div>
             <div>Clues: {investigator.clues}</div>
-            <div>Intelligence: {investigator.baseSkills.intelligence}</div>
+            <div>
+              Intelligence: {investigator.baseSkills.intelligence}
+              {(phase.type === 'commitInvestigationSkillCheck' ||
+                phase.type === 'startInvestigationSkillCheck') &&
+                `(+${phase.investigationContext.skillModifier})`}
+            </div>
             <div className="flex flex-row gap-3">
               {investigator.actions.map((action, index) => (
                 <button

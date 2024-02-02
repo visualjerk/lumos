@@ -1,9 +1,11 @@
 import { LocationStates, LocationId } from './location'
 import {
   Investigator,
+  InvestigatorCardCollection,
   InvestigatorId,
   InvestigatorStates,
   canDraw,
+  discard,
   draw,
 } from './investigator'
 import { Scenario } from './scenario'
@@ -82,6 +84,25 @@ export function drawFromDeck(
   }
 
   context.investigatorStates.set(investigatorId, draw(investigatorState))
+
+  return context
+}
+
+export function discardFromHand(
+  context: Context,
+  investigatorId: InvestigatorId,
+  cardIndex: number
+): Context {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  context.investigatorStates.set(
+    investigatorId,
+    discard(investigatorState, cardIndex)
+  )
 
   return context
 }
@@ -168,6 +189,17 @@ export function getInvestigatorState(
   investigatorId: InvestigatorId
 ) {
   return context.investigatorStates.get(investigatorId)!
+}
+
+export function getInvestigatorCardsInHand(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
+  const investigatorState = getInvestigatorState(context, investigatorId)
+
+  return investigatorState.cardsInHand.map(
+    (cardId) => InvestigatorCardCollection.get(cardId)!
+  )
 }
 
 export function getLocationState(context: Context, locationId: LocationId) {
