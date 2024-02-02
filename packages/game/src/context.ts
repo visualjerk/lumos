@@ -3,6 +3,8 @@ import {
   Investigator,
   InvestigatorId,
   InvestigatorStates,
+  canDraw,
+  draw,
 } from './investigator'
 import { Scenario } from './scenario'
 
@@ -54,6 +56,34 @@ export function getInvestigator(
   return context.investigators.find(
     (investigator) => investigator.id === investigatorId
   )!
+}
+
+export function canDrawFromDeck(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  return canDraw(investigatorState)
+}
+
+export function drawFromDeck(
+  context: Context,
+  investigatorId: InvestigatorId
+): Context {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  context.investigatorStates.set(investigatorId, draw(investigatorState))
+
+  return context
 }
 
 export function moveInvestigator(

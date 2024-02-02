@@ -1,6 +1,9 @@
 import {
   GameAction,
   Investigator,
+  InvestigatorCard,
+  InvestigatorCardCollection,
+  InvestigatorState,
   LocationCard,
   LocationId,
   Position,
@@ -10,11 +13,15 @@ import {
 } from '@lumos/game'
 import { useEffect, useState } from 'react'
 
-export type GameInvestigator = Investigator & {
-  clues: number
-  currentHealth: number
+export type GameInvestigatorCard = InvestigatorCard & {
   actions: GameAction[]
 }
+
+export type GameInvestigator = Investigator &
+  Omit<InvestigatorState, 'cardsInHand'> & {
+    cardsInHand: GameInvestigatorCard[]
+    actions: GameAction[]
+  }
 
 export type GameLocation = LocationCard & {
   position: Position
@@ -36,11 +43,19 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
   const { context } = phase
 
   const investigators: GameInvestigator[] = context.investigators.map(
-    (investigator) => ({
-      ...investigator,
-      ...context.investigatorStates.get(investigator.id)!,
-      actions: getInvestigatorActions(),
-    })
+    (investigator) => {
+      const state = context.investigatorStates.get(investigator.id)!
+
+      return {
+        ...investigator,
+        ...state,
+        cardsInHand: state.cardsInHand.map((id) => ({
+          ...InvestigatorCardCollection.get(id)!,
+          actions: [],
+        })),
+        actions: getInvestigatorActions(),
+      }
+    }
   )
 
   function getInvestigatorActions(): GameAction[] {

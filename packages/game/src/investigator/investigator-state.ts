@@ -1,10 +1,14 @@
 import type { LocationId } from '../location'
 import type { Investigator, InvestigatorId } from './investigator'
+import type { InvestigatorCardId } from './investigator-card'
 
 export type InvestigatorState = {
   currentHealth: number
   clues: number
   currentLocation: LocationId
+  cardsInHand: InvestigatorCardId[]
+  deck: InvestigatorCardId[]
+  discardPile: InvestigatorCardId[]
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
@@ -16,8 +20,59 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
           currentHealth: investigator.health,
           clues: 0,
           currentLocation,
+          cardsInHand: [],
+          deck: shuffleArray(investigator.baseDeck),
+          discardPile: [],
         },
       ])
     )
   }
+}
+
+export function canDraw(state: InvestigatorState): boolean {
+  return state.deck.length > 0 || state.discardPile.length > 0
+}
+
+export function draw(state: InvestigatorState): InvestigatorState {
+  if (state.deck.length === 0) {
+    state.deck = state.discardPile
+    state.discardPile = []
+  }
+
+  state.cardsInHand.push(state.deck.pop()!)
+
+  return state
+}
+
+export function discard(
+  state: InvestigatorState,
+  card: InvestigatorCardId
+): InvestigatorState {
+  const cardIndex = state.cardsInHand.indexOf(card)
+
+  if (cardIndex === -1) {
+    throw new Error('Card not found in hand')
+  }
+
+  state.cardsInHand.splice(cardIndex, 1)
+  state.discardPile.push(card)
+
+  return state
+}
+
+export function shuffle(state: InvestigatorState): InvestigatorState {
+  state.deck = shuffleArray(state.deck)
+
+  return state
+}
+
+function shuffleArray(array: any[]) {
+  const shuffled = [...array]
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  return shuffled
 }

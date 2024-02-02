@@ -1,13 +1,15 @@
 import {
   Context,
+  canDrawFromDeck,
   collectClue,
+  drawFromDeck,
   getInvestigator,
   getInvestigatorLocation,
   getLocation,
   moveInvestigator,
 } from './context'
 import { LocationId, isConnected } from './location'
-import { InvestigatorId } from './investigator'
+import { InvestigatorId, canDraw } from './investigator'
 import { Fate, spinFateWheel } from './fate'
 
 export type PhaseActionReturn = Phase
@@ -39,6 +41,17 @@ export function createInvestigationPhase(context: Context): InvestigationPhase {
 
     // TODO: add current investigator
     const investigatorId = context.investigators[0].id
+
+    if (canDrawFromDeck(context, investigatorId)) {
+      actions.push({
+        type: 'draw',
+        investigatorId,
+        execute: () => {
+          const newContext = drawFromDeck(context, investigatorId)
+          return createInvestigationPhase(newContext)
+        },
+      })
+    }
 
     actions.push({
       type: 'endInvestigationPhase',

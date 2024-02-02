@@ -1,3 +1,5 @@
+import type { InvestigatorCardId } from './investigator-card'
+
 export type InvestigatorId = string
 
 export type Skills = {
@@ -11,4 +13,5 @@ export type Investigator = {
   name: string
   baseSkills: Skills
   health: number
+  baseDeck: InvestigatorCardId[]
 }

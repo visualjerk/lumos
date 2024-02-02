@@ -4,6 +4,7 @@ import { Investigator } from '@lumos/game'
 import React from 'react'
 import { useGame } from './use-game'
 import { SkillCheckResult } from './skill-check-result'
+import { CardInHand } from './card-in-hand'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -14,6 +15,7 @@ const investigator: Investigator = {
     agility: 3,
   },
   health: 8,
+  baseDeck: ['1', '1', '2', '2', '3'],
 }
 
 export default function GameUI() {
@@ -48,6 +50,13 @@ export default function GameUI() {
                   {action.type}
                 </button>
               ))}
+            </div>
+            <div className="fixed inset-x-0 bottom-0 bg-gray-200 bg-opacity-50 grid place-content-center">
+              <div className="p-4 flex gap-2">
+                {investigator.cardsInHand.map((card) => (
+                  <CardInHand key={card.id} card={card} />
+                ))}
+              </div>
             </div>
           </div>
         ))}
