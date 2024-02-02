@@ -56,11 +56,19 @@ export default function GameUI() {
                 </button>
               ))}
             </div>
-            <div className="fixed inset-x-0 bottom-0 bg-gray-200 bg-opacity-50 grid place-content-center">
+            <div className="fixed inset-x-0 bottom-0 bg-gray-200 bg-opacity-50 flex justify-between">
               <div className="p-4 flex gap-2">
-                {investigator.cardsInHand.map((card) => (
-                  <CardInHand key={card.id} card={card} />
+                Deck {investigator.deck.length}
+              </div>
+              <div className="p-4 flex gap-2">
+                {investigator.cardsInHand.map((card, index) => (
+                  <CardInHand key={index} card={card} />
                 ))}
+              </div>
+              <div className="p-4 bg-gray-400">
+                {investigator.discardPile.at(-1) != null && (
+                  <CardInHand card={investigator.discardPile.at(-1)!} />
+                )}
               </div>
             </div>
           </div>

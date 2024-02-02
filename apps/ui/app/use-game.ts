@@ -18,8 +18,10 @@ export type GameInvestigatorCard = InvestigatorCard & {
 }
 
 export type GameInvestigator = Investigator &
-  Omit<InvestigatorState, 'cardsInHand'> & {
+  Omit<InvestigatorState, 'cardsInHand' | 'deck' | 'discardPile'> & {
     cardsInHand: GameInvestigatorCard[]
+    deck: GameInvestigatorCard[]
+    discardPile: GameInvestigatorCard[]
     actions: GameAction[]
   }
 
@@ -54,6 +56,14 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
           actions: phase.actions.filter(
             (action) => action.handCardIndex === index
           ),
+        })),
+        deck: state.deck.map((id) => ({
+          ...InvestigatorCardCollection.get(id)!,
+          actions: [],
+        })),
+        discardPile: state.discardPile.map((id) => ({
+          ...InvestigatorCardCollection.get(id)!,
+          actions: [],
         })),
         actions: getInvestigatorActions(),
       }
