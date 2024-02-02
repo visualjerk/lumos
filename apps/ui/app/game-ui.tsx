@@ -3,6 +3,7 @@ import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
 import { InvestigatorCard } from '@lumos/game'
 import React from 'react'
 import { useGame } from './use-game'
+import { SkillCheckResult } from './skill-check-result'
 
 const investigator: InvestigatorCard = {
   id: 'isabel-brimble',
@@ -24,10 +25,11 @@ export default function GameUI() {
   return (
     <div className="flex flex-col">
       <div className="text-2xl ">Phase: {phase.type}</div>
-      {(phase.type === 'startInvestigationSkillCheck' ||
-        phase.type === 'commitInvestigationSkillCheck') && (
-        <div className="flex flex-row gap-3">
-          Modifier: {phase.investigationContext.skillModifier}
+      {phase.type === 'commitInvestigationSkillCheck' && (
+        <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+          <div className="bg-white p-4">
+            <SkillCheckResult phase={phase} />
+          </div>
         </div>
       )}
       <div className="flex flex-row">

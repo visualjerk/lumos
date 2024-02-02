@@ -107,7 +107,7 @@ export function createInvestigationPhase(context: Context): InvestigationPhase {
   }
 }
 
-type InvestigationContext = {
+export type InvestigationContext = {
   locationId: LocationId
   investigatorId: InvestigatorId
   skillModifier: number
@@ -184,7 +184,7 @@ export function createStartInvestigationSkillCheck(
   }
 }
 
-type SkillCheckContext = {
+export type SkillCheckContext = {
   skill: number
   difficulty: number
   fate: Fate

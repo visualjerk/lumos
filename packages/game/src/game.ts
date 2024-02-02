@@ -13,6 +13,10 @@ export type GameAction = Omit<PhaseAction, 'execute'> & {
 
 export type GamePhase = ReplacePropInUnion<Phase, 'actions', GameAction[]>
 
+export type GamePhaseOf<TPhase extends Phase> = Omit<TPhase, 'actions'> & {
+  actions: GameAction[]
+}
+
 export type GameObserver = (game: Game) => void
 
 export type Game = {
