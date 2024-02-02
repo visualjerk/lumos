@@ -1,4 +1,4 @@
-import { LocationId } from '../card/location-card'
+import type { LocationId } from './location-card'
 
 export type Coordinate = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 

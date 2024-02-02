@@ -1,6 +1,5 @@
-import { LocationCard, LocationId } from '../card/location-card'
-import { FateWheel } from '../fate'
-import { Layout } from './layout'
+import type { LocationCard, LocationId, Layout } from '../location'
+import type { FateWheel } from '../fate'
 
 export type Scenario = {
   locationCards: LocationCard[]
