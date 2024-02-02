@@ -7,6 +7,7 @@ import {
   moveInvestigator,
 } from './context'
 import { InvestigatorId, LocationId, isConnected } from './card'
+import { Fate, spinFateWheel } from './fate'
 
 export type PhaseActionReturn = Phase
 
@@ -127,8 +128,31 @@ export function createStartInvestigationSkillCheck(
     actions.push({
       type: 'commitSkillCheck',
       investigatorId: investigationContext.investigatorId,
-      execute: () =>
-        createCommitInvestigationSkillCheck(context, investigationContext),
+      execute: () => {
+        const fate = spinFateWheel(context.scenario.fateWheel)
+
+        const investigator = getInvestigator(
+          context,
+          investigationContext.investigatorId
+        )
+        const skill = fate.modifySkillCheck(
+          investigator.baseStats.intelligence +
+            investigationContext.skillModifier
+        )
+
+        const location = getLocation(context, investigationContext.locationId)
+        const difficulty = location.shroud
+
+        return createCommitInvestigationSkillCheck(
+          context,
+          investigationContext,
+          {
+            fate,
+            skill,
+            difficulty,
+          }
+        )
+      },
     })
 
     actions.push({
@@ -160,14 +184,22 @@ export function createStartInvestigationSkillCheck(
   }
 }
 
+type SkillCheckContext = {
+  skill: number
+  difficulty: number
+  fate: Fate
+}
+
 export type CommitInvestigationSkillCheckPhase =
   CreatePhase<'commitInvestigationSkillCheck'> & {
     investigationContext: InvestigationContext
+    skillCheckContext: SkillCheckContext
   }
 
 export function createCommitInvestigationSkillCheck(
   context: Context,
-  investigationContext: InvestigationContext
+  investigationContext: InvestigationContext,
+  skillCheckContext: SkillCheckContext
 ): CommitInvestigationSkillCheckPhase {
   function getActions() {
     const actions: PhaseAction[] = []
@@ -176,17 +208,7 @@ export function createCommitInvestigationSkillCheck(
       type: 'endSkillCheck',
       investigatorId: investigationContext.investigatorId,
       execute: () => {
-        const investigator = getInvestigator(
-          context,
-          investigationContext.investigatorId
-        )
-        const location = getLocation(context, investigationContext.locationId)
-
-        const totalSkill =
-          investigator.baseStats.intelligence +
-          investigationContext.skillModifier
-
-        if (totalSkill < location.shroud) {
+        if (skillCheckContext.skill < skillCheckContext.difficulty) {
           return createInvestigationPhase(context)
         }
 
@@ -207,6 +229,7 @@ export function createCommitInvestigationSkillCheck(
     type: 'commitInvestigationSkillCheck',
     context,
     investigationContext,
+    skillCheckContext,
     actions: getActions(),
   }
 }

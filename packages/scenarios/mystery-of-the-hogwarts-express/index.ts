@@ -1,4 +1,12 @@
-import { LocationCard, Scenario } from '@lumos/game'
+import {
+  LocationCard,
+  Scenario,
+  MinusOne,
+  MinusThree,
+  MinusTwo,
+  PlusOne,
+  Zero,
+} from '@lumos/game'
 
 const Aisle2: LocationCard = {
   id: 'aisle-2',
@@ -83,4 +91,15 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
     [Compartment35.id, [7, 4]],
     [BoardRestaurant.id, [8, 2]],
   ]),
+  fateWheel: [
+    MinusThree,
+    MinusTwo,
+    MinusOne,
+    MinusOne,
+    Zero,
+    Zero,
+    PlusOne,
+    { symbol: 'autoFail', modifySkillCheck: (skill) => 0 },
+    { symbol: 'cultist', modifySkillCheck: (skill) => skill - 3 },
+  ],
 }

@@ -33,7 +33,11 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
     super(
       investigators.map((investigator) => [
         investigator.id,
-        { currentHealth: investigator.health, clues: 0, currentLocation },
+        {
+          currentHealth: investigator.health,
+          clues: 0,
+          currentLocation,
+        },
       ])
     )
   }
@@ -164,4 +168,15 @@ export function collectClue(
   investigator.clues++
 
   return context
+}
+
+export function getInvestigatorState(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
+  return context.investigatorStates.get(investigatorId)!
+}
+
+export function getLocationState(context: Context, locationId: LocationId) {
+  return context.locationStates.get(locationId)!
 }
