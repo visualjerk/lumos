@@ -137,7 +137,7 @@ export function createStartInvestigationSkillCheck(
           investigationContext.investigatorId
         )
         const skill = fate.modifySkillCheck(
-          investigator.baseStats.intelligence +
+          investigator.baseSkills.intelligence +
             investigationContext.skillModifier
         )
 

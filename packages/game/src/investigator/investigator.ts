@@ -1,14 +1,14 @@
 export type InvestigatorId = string
 
-export type BaseStats = {
-  strength: number
+export type Skills = {
   intelligence: number
+  strength: number
   agility: number
 }
 
 export type Investigator = {
   id: InvestigatorId
   name: string
-  baseStats: BaseStats
+  baseSkills: Skills
   health: number
 }

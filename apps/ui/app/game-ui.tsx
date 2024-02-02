@@ -8,7 +8,7 @@ import { SkillCheckResult } from './skill-check-result'
 const investigator: Investigator = {
   id: 'isabel-brimble',
   name: 'Isabel Brimble',
-  baseStats: {
+  baseSkills: {
     intelligence: 4,
     strength: 2,
     agility: 3,
@@ -37,7 +37,7 @@ export default function GameUI() {
           <div key={investigator.id}>
             <div className="text-purple-500">{investigator.name}</div>
             <div>Clues: {investigator.clues}</div>
-            <div>Intelligence: {investigator.baseStats.intelligence}</div>
+            <div>Intelligence: {investigator.baseSkills.intelligence}</div>
             <div className="flex flex-row gap-3">
               {investigator.actions.map((action, index) => (
                 <button

@@ -1,43 +1,10 @@
-import { LocationCard, LocationId } from './location'
-import { Investigator, InvestigatorId } from './investigator'
+import { LocationStates, LocationId } from './location'
+import {
+  Investigator,
+  InvestigatorId,
+  InvestigatorStates,
+} from './investigator'
 import { Scenario } from './scenario'
-
-export type LocationState = {
-  revealed: boolean
-  clues: number
-}
-
-export class LocationStates extends Map<LocationId, LocationState> {
-  constructor(locations: LocationCard[]) {
-    super(
-      locations.map((location) => [
-        location.id,
-        { revealed: false, investigatorIds: [], clues: location.initialClues },
-      ])
-    )
-  }
-}
-
-export type InvestigatorState = {
-  currentHealth: number
-  clues: number
-  currentLocation: LocationId
-}
-
-export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  constructor(investigators: Investigator[], currentLocation: LocationId) {
-    super(
-      investigators.map((investigator) => [
-        investigator.id,
-        {
-          currentHealth: investigator.health,
-          clues: 0,
-          currentLocation,
-        },
-      ])
-    )
-  }
-}
 
 export type Context = {
   scenario: Scenario
