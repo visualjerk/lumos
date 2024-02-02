@@ -28,4 +28,12 @@ export const InvestigatorCardCollection = new Map<
       skillModifier: { agility: 1, strength: 2 },
     },
   ],
+  [
+    '4',
+    {
+      id: '4',
+      name: 'Meditate',
+      skillModifier: { intelligence: 1 },
+    },
+  ],
 ])
