@@ -314,7 +314,15 @@ export function createCleanupPhase(context: Context): CleanupPhase {
 
   actions.push({
     type: 'endCleanupPhase',
-    execute: () => createDoomPhase(context),
+    execute: () => {
+      context.investigators.forEach((investigator) => {
+        if (canDrawFromDeck(context, investigator.id)) {
+          context = drawFromDeck(context, investigator.id)
+        }
+      })
+
+      return createDoomPhase(context)
+    },
   })
 
   return {
