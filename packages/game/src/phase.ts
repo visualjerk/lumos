@@ -191,7 +191,7 @@ export function createStartInvestigationSkillCheck(
     )
     cardsInHand.forEach((card, index) => {
       actions.push({
-        type: 'play',
+        type: 'addToSkillCheck',
         investigatorId: investigationContext.investigatorId,
         handCardIndex: index,
         execute: () => {
