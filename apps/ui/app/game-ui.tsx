@@ -71,7 +71,7 @@ export default function GameUI() {
           ) : (
             <div>{scene.story}</div>
           )}
-          <div>🔮 {doom.treshold}</div>
+          <div>🔮 {scene.clueTreshold}</div>
         </div>
       </div>
       <div className="grid grid-cols-11 grid-rows-11 gap-10">

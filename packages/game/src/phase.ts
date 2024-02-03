@@ -386,6 +386,7 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
       }
 
       context.doomState.doomCardId = nextDoomCardId
+      context.doomState.doom = 0
       return createInvestigatorPhase(context)
     },
   })

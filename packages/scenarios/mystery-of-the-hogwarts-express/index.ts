@@ -75,11 +75,22 @@ const BoardRestaurant: LocationCard = {
 
 const LightsOut: DoomCard = {
   id: 'lights-out',
-  treshold: 3,
+  treshold: 2,
   name: 'Lights Out',
   story:
     'The lights go out and you see flashes of light in the dark through the stained glass windows.',
   consequence: 'The train stops and you hear a scream.',
+  nextDoomCardId: 'dark-shadow',
+}
+
+const DarkShadow: DoomCard = {
+  id: 'dark-shadow',
+  treshold: 2,
+  name: 'Dark Shadow',
+  story:
+    'You see a dark shadow moving in the dark. The clouds outside get darker and darker until no moonlight can be seen.',
+  consequence:
+    'Something dark and sinister gets hold of you. The room gets colder and colder until you can no longer move.',
 }
 
 const AloneInTheDark: SceneCard = {
@@ -113,7 +124,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
     Compartment35,
     BoardRestaurant,
   ],
-  doomCards: [LightsOut],
+  doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
   startLocation: Compartment34.id,
   layout: new Map([
