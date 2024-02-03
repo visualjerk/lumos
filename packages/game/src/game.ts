@@ -1,4 +1,4 @@
-import { Phase, PhaseAction, createInvestigationPhase } from './phase'
+import { Phase, PhaseAction, createInvestigatorPhase } from './phase'
 import { createInitialContext } from './context'
 import { Investigator } from './investigator'
 import { Scenario } from './scenario'
@@ -68,7 +68,7 @@ export function createGame(
   investigators: Investigator[]
 ): Game {
   const context = createInitialContext(scenario, investigators)
-  const phase = createInvestigationPhase(context)
+  const phase = createInvestigatorPhase(context)
 
   return createGameFromPhase(phase)
 }
