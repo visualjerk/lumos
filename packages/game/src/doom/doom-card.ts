@@ -6,4 +6,5 @@ export type DoomCard = {
   name: string
   story: string
   consequence: string
+  nextDoomCardId?: DoomCardId
 }

@@ -89,10 +89,7 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
 
   function getInvestigatorActions(): GameAction[] {
     return phase.actions.filter(
-      (action) =>
-        action.investigatorId != null &&
-        action.locationId == null &&
-        action.handCardIndex == null
+      (action) => action.locationId == null && action.handCardIndex == null
     )
   }
 
@@ -111,7 +108,7 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
   }
 
   const doom: GameDoom = {
-    ...getDoomCard(context, context.doomState.doomCardId),
+    ...getDoomCard(context),
     ...context.doomState,
   }
 

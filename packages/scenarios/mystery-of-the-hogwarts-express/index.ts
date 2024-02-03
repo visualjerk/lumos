@@ -74,7 +74,7 @@ const BoardRestaurant: LocationCard = {
 
 const LightsOut: DoomCard = {
   id: 'lights-out',
-  treshold: 7,
+  treshold: 3,
   name: 'Lights Out',
   story:
     'The lights go out and you see flashes of light in the dark through the stained glass windows.',

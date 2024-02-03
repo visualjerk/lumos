@@ -4,10 +4,12 @@ import {
   collectClue,
   discardFromHand,
   drawFromDeck,
+  getDoomCard,
   getInvestigatorCardsInHand,
   getInvestigatorLocation,
   getInvestigatorSkills,
   getLocation,
+  getNextDoomCardId,
   moveInvestigator,
   playCardFromHand,
 } from './context'
@@ -30,6 +32,9 @@ export type Phase =
   | CleanupPhase
   | StartInvestigationSkillCheckPhase
   | CommitInvestigationSkillCheckPhase
+  | DoomPhase
+  | AdvanceDoomPhase
+  | EndGamePhase
 
 export type CreatePhase<Type extends string> = {
   type: Type
@@ -276,14 +281,73 @@ export function createCleanupPhase(context: Context): CleanupPhase {
 
   actions.push({
     type: 'endCleanupPhase',
-    // TODO: add current investigator
-    investigatorId: context.investigators[0].id,
-    execute: () => createInvestigationPhase(context),
+    execute: () => createDoomPhase(context),
   })
 
   return {
     type: 'cleanup',
     actions,
+    context,
+  }
+}
+
+export type DoomPhase = CreatePhase<'doom'>
+
+export function createDoomPhase(context: Context): DoomPhase {
+  const actions: PhaseAction[] = []
+
+  actions.push({
+    type: 'endDoomPhase',
+    execute: () => {
+      context.doomState.doom++
+
+      if (context.doomState.doom >= getDoomCard(context).treshold) {
+        return createAdvanceDoomPhase(context)
+      }
+
+      return createInvestigationPhase(context)
+    },
+  })
+
+  return {
+    type: 'doom',
+    actions,
+    context,
+  }
+}
+
+export type AdvanceDoomPhase = CreatePhase<'advanceDoom'>
+
+export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
+  const actions: PhaseAction[] = []
+
+  actions.push({
+    type: 'endAdvanceDoomPhase',
+    execute: () => {
+      const nextDoomCardId = getNextDoomCardId(context)
+
+      if (!nextDoomCardId) {
+        return createEndGamePhase(context)
+      }
+
+      context.doomState.doomCardId = nextDoomCardId
+      return createInvestigationPhase(context)
+    },
+  })
+
+  return {
+    type: 'advanceDoom',
+    actions,
+    context,
+  }
+}
+
+export type EndGamePhase = CreatePhase<'endGame'>
+
+export function createEndGamePhase(context: Context): EndGamePhase {
+  return {
+    type: 'endGame',
+    actions: [],
     context,
   }
 }

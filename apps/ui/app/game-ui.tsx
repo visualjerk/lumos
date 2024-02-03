@@ -44,9 +44,13 @@ export default function GameUI() {
             />
           ))}
         </div>
-        <div className="grid gap-2 bg-gray-100 p-3">
+        <div className="grid gap-2 bg-gray-300 p-3">
           <div className="text-lg">{doom.name}</div>
-          <div>{doom.story}</div>
+          {phase.type === 'advanceDoom' || phase.type === 'endGame' ? (
+            <div>🔥 {doom.consequence}</div>
+          ) : (
+            <div>{doom.story}</div>
+          )}
           <div>
             👾 {doom.doom} / {doom.treshold}
           </div>
