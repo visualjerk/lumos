@@ -5,6 +5,7 @@ import React from 'react'
 import { useGame } from './use-game'
 import { SkillCheckResult } from './skill-check-result'
 import InvestigatorArea from './investigator-area'
+import ActionButton from './action-button'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -89,9 +90,9 @@ export default function GameUI() {
               </div>
             ))}
             {location.actions.map((action, index) => (
-              <button key={index} onClick={() => action.execute()}>
+              <ActionButton key={index} onClick={() => action.execute()}>
                 {action.type}
-              </button>
+              </ActionButton>
             ))}
           </div>
         ))}

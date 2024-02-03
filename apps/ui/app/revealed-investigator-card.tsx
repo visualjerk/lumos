@@ -1,5 +1,6 @@
 import { Skills } from '@lumos/game'
 import { GameInvestigatorCard } from './use-game'
+import ActionButton from './action-button'
 
 const SKILL_ICONS: Record<keyof Skills, string> = {
   intelligence: '🧠',
@@ -23,13 +24,9 @@ export default function RevealedInvestigatorCard({
         ))}
       </div>
       {card.actions.map((action, index) => (
-        <button
-          key={index}
-          onClick={() => action.execute()}
-          className="p-1 bg-gray-200"
-        >
+        <ActionButton key={index} onClick={() => action.execute()}>
           {action.type}
-        </button>
+        </ActionButton>
       ))}
     </div>
   )

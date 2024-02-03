@@ -3,6 +3,7 @@ import { GamePhase } from '@lumos/game'
 import React from 'react'
 import { GameInvestigator } from './use-game'
 import RevealedInvestigatorCard from './revealed-investigator-card'
+import ActionButton from './action-button'
 
 export default function InvestigatorArea({
   phase,
@@ -27,13 +28,9 @@ export default function InvestigatorArea({
       </div>
       <div className="flex flex-row gap-3">
         {investigator.actions.map((action, index) => (
-          <button
-            key={index}
-            onClick={() => action.execute()}
-            className="p-1 bg-gray-200"
-          >
+          <ActionButton key={index} onClick={() => action.execute()}>
             {action.type}
-          </button>
+          </ActionButton>
         ))}
       </div>
       <div className="fixed inset-x-0 bottom-0 bg-gray-200 bg-opacity-50 flex justify-between">

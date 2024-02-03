@@ -1,4 +1,5 @@
 import { CommitInvestigationSkillCheckPhase, GamePhaseOf } from '@lumos/game'
+import ActionButton from './action-button'
 
 export function SkillCheckResult({
   phase,
@@ -17,13 +18,9 @@ export function SkillCheckResult({
         <div>Fate: {skillCheckContext.fate.symbol}</div>
       </div>
       {actions.map((action, index) => (
-        <button
-          key={index}
-          onClick={() => action.execute()}
-          className="p-1 bg-gray-200"
-        >
+        <ActionButton key={index} onClick={() => action.execute()}>
           {action.type}
-        </button>
+        </ActionButton>
       ))}
     </div>
   )
