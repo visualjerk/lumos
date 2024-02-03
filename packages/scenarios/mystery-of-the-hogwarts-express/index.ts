@@ -6,6 +6,7 @@ import {
   MinusTwo,
   PlusOne,
   Zero,
+  DoomCard,
 } from '@lumos/game'
 
 const Aisle2: LocationCard = {
@@ -71,6 +72,15 @@ const BoardRestaurant: LocationCard = {
   shroud: 3,
 }
 
+const LightsOut: DoomCard = {
+  id: 'lights-out',
+  treshold: 7,
+  name: 'Lights Out',
+  story:
+    'The lights go out and you see flashes of light in the dark through the stained glass windows.',
+  consequence: 'The train stops and you hear a scream.',
+}
+
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [
     Aisle2,
@@ -81,6 +91,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
     Compartment35,
     BoardRestaurant,
   ],
+  doomCards: [LightsOut],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],

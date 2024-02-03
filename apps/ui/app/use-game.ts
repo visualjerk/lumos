@@ -1,4 +1,6 @@
 import {
+  DoomCard,
+  DoomState,
   GameAction,
   Investigator,
   InvestigatorCard,
@@ -10,10 +12,10 @@ import {
   Scenario,
   Skills,
   createGame,
+  getDoomCard,
   getInvestigatorSkills,
   getLocationInvestigators,
 } from '@lumos/game'
-import { get } from 'http'
 import { useEffect, useState } from 'react'
 
 export type GameInvestigatorCard = InvestigatorCard & {
@@ -40,6 +42,8 @@ export type GameLocation = LocationCard & {
   actions: GameAction[]
   investigators: Investigator[]
 }
+
+export type GameDoom = DoomCard & DoomState
 
 export function useGame(scenario: Scenario, _investigators: Investigator[]) {
   const [game, setGame] = useState(createGame(scenario, _investigators))
@@ -106,9 +110,15 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
     return phase.actions.filter((action) => action.locationId === locationId)
   }
 
+  const doom: GameDoom = {
+    ...getDoomCard(context, context.doomState.doomCardId),
+    ...context.doomState,
+  }
+
   return {
     investigators,
     locations,
     phase,
+    doom,
   }
 }

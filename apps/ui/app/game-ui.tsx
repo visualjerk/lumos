@@ -19,29 +19,38 @@ const investigator: Investigator = {
 }
 
 export default function GameUI() {
-  const { investigators, locations, phase } = useGame(
+  const { investigators, locations, phase, doom } = useGame(
     MisteryOfTheHogwartsExpress,
     [investigator]
   )
 
   return (
-    <div className="flex flex-col">
-      <div className="text-2xl ">Phase: {phase.type}</div>
-      {phase.type === 'commitInvestigationSkillCheck' && (
-        <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
-          <div className="bg-white p-4">
-            <SkillCheckResult phase={phase} />
+    <div className="max-w-screen-lg">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <div className="text-2xl ">Phase: {phase.type}</div>
+          {phase.type === 'commitInvestigationSkillCheck' && (
+            <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+              <div className="bg-white p-4">
+                <SkillCheckResult phase={phase} />
+              </div>
+            </div>
+          )}
+          {investigators.map((investigator) => (
+            <InvestigatorArea
+              key={investigator.id}
+              phase={phase}
+              investigator={investigator}
+            />
+          ))}
+        </div>
+        <div className="grid gap-2 bg-gray-100 p-3">
+          <div className="text-lg">{doom.name}</div>
+          <div>{doom.story}</div>
+          <div>
+            👾 {doom.doom} / {doom.treshold}
           </div>
         </div>
-      )}
-      <div className="flex flex-row">
-        {investigators.map((investigator) => (
-          <InvestigatorArea
-            key={investigator.id}
-            phase={phase}
-            investigator={investigator}
-          />
-        ))}
       </div>
       <div className="grid grid-cols-11 grid-rows-11 gap-10">
         {locations.map((location) => (

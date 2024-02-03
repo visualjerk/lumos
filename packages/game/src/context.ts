@@ -11,9 +11,11 @@ import {
   play,
 } from './investigator'
 import { Scenario } from './scenario'
+import { DoomCard, DoomState } from './doom'
 
 export type Context = {
   scenario: Scenario
+  doomState: DoomState
   locationStates: LocationStates
   investigators: Investigator[]
   investigatorStates: InvestigatorStates
@@ -32,10 +34,15 @@ export function createInitialContext(
 
   return {
     scenario,
+    doomState: { doom: 0, doomCardId: scenario.doomCards[0].id },
     locationStates,
     investigators,
     investigatorStates,
   }
+}
+
+export function getDoomCard(context: Context, doomCardId: string): DoomCard {
+  return context.scenario.doomCards.find((card) => card.id === doomCardId)!
 }
 
 export function getLocationInvestigators(
