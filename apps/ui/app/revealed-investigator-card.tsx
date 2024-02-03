@@ -7,7 +7,11 @@ const SKILL_ICONS: Record<keyof Skills, string> = {
   agility: '🏃',
 }
 
-export function CardInHand({ card }: { card: GameInvestigatorCard }) {
+export default function RevealedInvestigatorCard({
+  card,
+}: {
+  card: GameInvestigatorCard
+}) {
   return (
     <div className="grid gap-3 bg-white p-3 w-36">
       <div>{card.name}</div>

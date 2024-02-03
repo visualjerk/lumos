@@ -4,7 +4,7 @@ import { Investigator } from '@lumos/game'
 import React from 'react'
 import { useGame } from './use-game'
 import { SkillCheckResult } from './skill-check-result'
-import { CardInHand } from './card-in-hand'
+import InvestigatorArea from './investigator-area'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -15,7 +15,7 @@ const investigator: Investigator = {
     agility: 3,
   },
   health: 8,
-  baseDeck: ['1', '1', '2', '2', '3', '4', '4'],
+  baseDeck: ['1', '1', '2', '2', '3', '4', '4', '5', '5'],
 }
 
 export default function GameUI() {
@@ -36,42 +36,11 @@ export default function GameUI() {
       )}
       <div className="flex flex-row">
         {investigators.map((investigator) => (
-          <div key={investigator.id}>
-            <div className="text-purple-500">{investigator.name}</div>
-            <div>Clues: {investigator.clues}</div>
-            <div>
-              Intelligence: {investigator.baseSkills.intelligence}
-              {(phase.type === 'commitInvestigationSkillCheck' ||
-                phase.type === 'startInvestigationSkillCheck') &&
-                `(+${phase.investigationContext.skillModifier})`}
-            </div>
-            <div className="flex flex-row gap-3">
-              {investigator.actions.map((action, index) => (
-                <button
-                  key={index}
-                  onClick={() => action.execute()}
-                  className="p-1 bg-gray-200"
-                >
-                  {action.type}
-                </button>
-              ))}
-            </div>
-            <div className="fixed inset-x-0 bottom-0 bg-gray-200 bg-opacity-50 flex justify-between">
-              <div className="p-4 flex gap-2">
-                Deck {investigator.deck.length}
-              </div>
-              <div className="p-4 flex gap-2">
-                {investigator.cardsInHand.map((card, index) => (
-                  <CardInHand key={index} card={card} />
-                ))}
-              </div>
-              <div className="p-4 bg-gray-400">
-                {investigator.discardPile.at(-1) != null && (
-                  <CardInHand card={investigator.discardPile.at(-1)!} />
-                )}
-              </div>
-            </div>
-          </div>
+          <InvestigatorArea
+            key={investigator.id}
+            phase={phase}
+            investigator={investigator}
+          />
         ))}
       </div>
       <div className="grid grid-cols-11 grid-rows-11 gap-10">

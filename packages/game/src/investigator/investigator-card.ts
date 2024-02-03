@@ -6,4 +6,5 @@ export type InvestigatorCard = {
   id: InvestigatorCardId
   name: string
   skillModifier: Partial<Skills>
+  permanentSkillModifier?: Partial<Skills>
 }

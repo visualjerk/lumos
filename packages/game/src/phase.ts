@@ -4,11 +4,12 @@ import {
   collectClue,
   discardFromHand,
   drawFromDeck,
-  getInvestigator,
   getInvestigatorCardsInHand,
   getInvestigatorLocation,
+  getInvestigatorSkills,
   getLocation,
   moveInvestigator,
+  playCardFromHand,
 } from './context'
 import { LocationId, isConnected } from './location'
 import { InvestigatorId } from './investigator'
@@ -55,6 +56,19 @@ export function createInvestigationPhase(context: Context): InvestigationPhase {
         },
       })
     }
+
+    const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
+    cardsInHand.forEach((card, index) => {
+      actions.push({
+        type: 'play',
+        investigatorId,
+        handCardIndex: index,
+        execute: () => {
+          const newContext = playCardFromHand(context, investigatorId, index)
+          return createInvestigationPhase(newContext)
+        },
+      })
+    })
 
     actions.push({
       type: 'endInvestigationPhase',
@@ -148,13 +162,12 @@ export function createStartInvestigationSkillCheck(
       execute: () => {
         const fate = spinFateWheel(context.scenario.fateWheel)
 
-        const investigator = getInvestigator(
+        const skills = getInvestigatorSkills(
           context,
           investigationContext.investigatorId
         )
         const skill = fate.modifySkillCheck(
-          investigator.baseSkills.intelligence +
-            investigationContext.skillModifier
+          skills.intelligence + investigationContext.skillModifier
         )
 
         const location = getLocation(context, investigationContext.locationId)

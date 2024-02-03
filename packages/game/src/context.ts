@@ -4,9 +4,11 @@ import {
   InvestigatorCardCollection,
   InvestigatorId,
   InvestigatorStates,
+  Skills,
   canDraw,
   discard,
   draw,
+  play,
 } from './investigator'
 import { Scenario } from './scenario'
 
@@ -107,6 +109,25 @@ export function discardFromHand(
   return context
 }
 
+export function playCardFromHand(
+  context: Context,
+  investigatorId: InvestigatorId,
+  cardIndex: number
+): Context {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  context.investigatorStates.set(
+    investigatorId,
+    play(investigatorState, cardIndex)
+  )
+
+  return context
+}
+
 export function moveInvestigator(
   context: Context,
   investigatorId: InvestigatorId,
@@ -202,6 +223,35 @@ export function getInvestigatorCardsInHand(
   )
 }
 
+export function getInvestigatorCardsInPlay(
+  context: Context,
+  investigatorId: InvestigatorId
+) {
+  const investigatorState = getInvestigatorState(context, investigatorId)
+
+  return investigatorState.cardsInPlay.map(
+    (cardId) => InvestigatorCardCollection.get(cardId)!
+  )
+}
+
 export function getLocationState(context: Context, locationId: LocationId) {
   return context.locationStates.get(locationId)!
+}
+
+export function getInvestigatorSkills(
+  context: Context,
+  investigatorId: InvestigatorId
+): Skills {
+  const investigator = getInvestigator(context, investigatorId)
+  const cards = getInvestigatorCardsInPlay(context, investigatorId)
+
+  const skills = { ...investigator.baseSkills }
+  Object.keys(skills).forEach((skill) => {
+    cards.forEach((card) => {
+      skills[skill as keyof Skills] +=
+        card.permanentSkillModifier?.[skill as keyof Skills] ?? 0
+    })
+  })
+
+  return skills
 }

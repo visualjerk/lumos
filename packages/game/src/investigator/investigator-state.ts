@@ -7,6 +7,7 @@ export type InvestigatorState = {
   clues: number
   currentLocation: LocationId
   cardsInHand: InvestigatorCardId[]
+  cardsInPlay: InvestigatorCardId[]
   deck: InvestigatorCardId[]
   discardPile: InvestigatorCardId[]
 }
@@ -21,6 +22,7 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
           clues: 0,
           currentLocation,
           cardsInHand: [],
+          cardsInPlay: [],
           deck: shuffleArray(investigator.baseDeck),
           discardPile: [],
         },
@@ -56,6 +58,22 @@ export function discard(
 
   state.cardsInHand.splice(cardIndex, 1)
   state.discardPile.push(card)
+
+  return state
+}
+
+export function play(
+  state: InvestigatorState,
+  cardIndex: number
+): InvestigatorState {
+  const card = state.cardsInHand[cardIndex]
+
+  if (card == null) {
+    throw new Error('Card not found in hand')
+  }
+
+  state.cardsInHand.splice(cardIndex, 1)
+  state.cardsInPlay.push(card)
 
   return state
 }

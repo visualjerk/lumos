@@ -8,9 +8,12 @@ import {
   LocationId,
   Position,
   Scenario,
+  Skills,
   createGame,
+  getInvestigatorSkills,
   getLocationInvestigators,
 } from '@lumos/game'
+import { get } from 'http'
 import { useEffect, useState } from 'react'
 
 export type GameInvestigatorCard = InvestigatorCard & {
@@ -18,8 +21,13 @@ export type GameInvestigatorCard = InvestigatorCard & {
 }
 
 export type GameInvestigator = Investigator &
-  Omit<InvestigatorState, 'cardsInHand' | 'deck' | 'discardPile'> & {
+  Omit<
+    InvestigatorState,
+    'cardsInHand' | 'cardsInPlay' | 'deck' | 'discardPile'
+  > & {
+    skills: Skills
     cardsInHand: GameInvestigatorCard[]
+    cardsInPlay: GameInvestigatorCard[]
     deck: GameInvestigatorCard[]
     discardPile: GameInvestigatorCard[]
     actions: GameAction[]
@@ -51,11 +59,16 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       return {
         ...investigator,
         ...state,
+        skills: getInvestigatorSkills(context, investigator.id),
         cardsInHand: state.cardsInHand.map((id, index) => ({
           ...InvestigatorCardCollection.get(id)!,
           actions: phase.actions.filter(
             (action) => action.handCardIndex === index
           ),
+        })),
+        cardsInPlay: state.cardsInPlay.map((id) => ({
+          ...InvestigatorCardCollection.get(id)!,
+          actions: [],
         })),
         deck: state.deck.map((id) => ({
           ...InvestigatorCardCollection.get(id)!,
