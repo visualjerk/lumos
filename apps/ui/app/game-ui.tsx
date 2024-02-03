@@ -20,14 +20,14 @@ const investigator: Investigator = {
 }
 
 export default function GameUI() {
-  const { investigators, locations, phase, doom } = useGame(
+  const { investigators, locations, phase, doom, scene } = useGame(
     MisteryOfTheHogwartsExpress,
     [investigator]
   )
 
   return (
     <div className="max-w-screen-lg">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div>
           <div className="text-2xl ">Phase: {phase.type}</div>
           {(phase.type === 'investigator' ||
@@ -61,8 +61,17 @@ export default function GameUI() {
             <div>{doom.story}</div>
           )}
           <div>
-            👾 {doom.doom} / {doom.treshold}
+            ☠️ {doom.doom} / {doom.treshold}
           </div>
+        </div>
+        <div className="grid gap-2 bg-gray-300 p-3">
+          <div className="text-lg">{scene.name}</div>
+          {phase.type === 'advanceScene' || phase.type === 'winGame' ? (
+            <div>🥳 {scene.consequence}</div>
+          ) : (
+            <div>{scene.story}</div>
+          )}
+          <div>🔮 {doom.treshold}</div>
         </div>
       </div>
       <div className="grid grid-cols-11 grid-rows-11 gap-10">
@@ -81,7 +90,7 @@ export default function GameUI() {
             <div>{location.name}</div>
             {location.revealed === true && (
               <div>
-                Clues {location.clues} Shroud {location.shroud}
+                🔮 {location.clues} Shroud {location.shroud}
               </div>
             )}
             {location.investigators.map((investigator) => (

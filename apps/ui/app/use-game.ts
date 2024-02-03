@@ -15,6 +15,7 @@ import {
   getDoomCard,
   getInvestigatorSkills,
   getLocationInvestigators,
+  getSceneCard,
 } from '@lumos/game'
 import { useEffect, useState } from 'react'
 
@@ -112,10 +113,13 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
     ...context.doomState,
   }
 
+  const scene = getSceneCard(context)
+
   return {
     investigators,
     locations,
     phase,
     doom,
+    scene,
   }
 }

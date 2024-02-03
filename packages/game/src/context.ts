@@ -12,10 +12,12 @@ import {
 } from './investigator'
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
+import { SceneCard, SceneState } from './scene'
 
 export type Context = {
   scenario: Scenario
   doomState: DoomState
+  sceneState: SceneState
   locationStates: LocationStates
   investigators: Investigator[]
   investigatorStates: InvestigatorStates
@@ -35,6 +37,7 @@ export function createInitialContext(
   return {
     scenario,
     doomState: { doom: 0, doomCardId: scenario.doomCards[0].id },
+    sceneState: { sceneCardId: scenario.sceneCards[0].id },
     locationStates,
     investigators,
     investigatorStates,
@@ -49,6 +52,24 @@ export function getDoomCard(context: Context): DoomCard {
 
 export function getNextDoomCardId(context: Context): DoomCardId | undefined {
   return getDoomCard(context).nextDoomCardId
+}
+
+export function getSceneCard(context: Context): SceneCard {
+  return context.scenario.sceneCards.find(
+    (card) => card.id === context.sceneState.sceneCardId
+  )!
+}
+
+export function getTotalInvestigatorClues(context: Context): number {
+  let totalClues = 0
+  context.investigatorStates.forEach(({ clues }) => {
+    totalClues += clues
+  })
+  return totalClues
+}
+
+export function getNextSceneCardId(context: Context): string | undefined {
+  return getSceneCard(context).nextSceneCardId
 }
 
 export function getLocationInvestigators(

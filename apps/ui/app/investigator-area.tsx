@@ -15,7 +15,7 @@ export default function InvestigatorArea({
   return (
     <div>
       <div className="text-purple-500">{investigator.name}</div>
-      <div>Clues: {investigator.clues}</div>
+      <div>🔮 {investigator.clues}</div>
       <div>
         Intelligence:{' '}
         <span className="font-semibold">
