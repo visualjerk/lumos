@@ -16,6 +16,7 @@ export default function InvestigatorArea({
     <div>
       <div className="text-purple-500">{investigator.name}</div>
       <div>🔮 {investigator.clues}</div>
+      <div>Health: {investigator.currentHealth}</div>
       <div>
         Intelligence:{' '}
         <span className="font-semibold">

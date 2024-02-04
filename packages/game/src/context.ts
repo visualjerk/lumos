@@ -13,11 +13,17 @@ import {
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
 import { SceneCard, SceneState } from './scene'
+import {
+  EncounterState,
+  draw as drawEncounter,
+  discardCurrent as discardCurrentEncounter,
+} from './encounter'
 
 export type Context = {
   scenario: Scenario
   doomState: DoomState
   sceneState: SceneState
+  encounterState: EncounterState
   locationStates: LocationStates
   investigators: Investigator[]
   investigatorStates: InvestigatorStates
@@ -38,6 +44,12 @@ export function createInitialContext(
     scenario,
     doomState: { doom: 0, doomCardId: scenario.doomCards[0].id },
     sceneState: { sceneCardId: scenario.sceneCards[0].id },
+    encounterState: {
+      deck: scenario.encounterCards.map(({ id }) => id),
+      discardPile: [],
+      currentCardId: null,
+      investigatorId: null,
+    },
     locationStates,
     investigators,
     investigatorStates,
@@ -159,6 +171,22 @@ export function playCardFromHand(
     play(investigatorState, cardIndex)
   )
 
+  return context
+}
+
+export function getEncounterCard(context: Context, encounterCardId: string) {
+  return context.scenario.encounterCards.find(
+    (card) => card.id === encounterCardId
+  )!
+}
+
+export function drawEncounterCard(context: Context): Context {
+  context.encounterState = drawEncounter(context.encounterState)
+  return context
+}
+
+export function discardCurrentEncounterCard(context: Context): Context {
+  context.encounterState = discardCurrentEncounter(context.encounterState)
   return context
 }
 

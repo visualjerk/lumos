@@ -2,9 +2,12 @@ import {
   Context,
   canDrawFromDeck,
   collectClue,
+  discardCurrentEncounterCard,
   discardFromHand,
+  drawEncounterCard,
   drawFromDeck,
   getDoomCard,
+  getEncounterCard,
   getInvestigatorCardsInHand,
   getInvestigatorLocation,
   getInvestigatorSkills,
@@ -40,6 +43,8 @@ export type Phase =
   | AdvanceScenePhase
   | EndGamePhase
   | WinGamePhase
+  | EncounterPhase
+  | HandleEncounterPhase
 
 export type CreatePhase<Type extends string> = {
   type: Type
@@ -360,7 +365,7 @@ export function createDoomPhase(context: Context): DoomPhase {
         return createAdvanceDoomPhase(context)
       }
 
-      return createInvestigatorPhase(context)
+      return createEncounterPhase(context)
     },
   })
 
@@ -387,12 +392,75 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
 
       context.doomState.doomCardId = nextDoomCardId
       context.doomState.doom = 0
-      return createInvestigatorPhase(context)
+      return createEncounterPhase(context)
     },
   })
 
   return {
     type: 'advanceDoom',
+    actions,
+    context,
+  }
+}
+
+export type EncounterPhase = CreatePhase<'encounter'>
+
+export function createEncounterPhase(context: Context): EncounterPhase {
+  const actions: PhaseAction[] = []
+
+  if (
+    context.encounterState.investigatorId !==
+    context.investigators[context.investigators.length - 1].id
+  ) {
+    actions.push({
+      type: 'drawEncounter',
+      // TODO: add current investigator
+      investigatorId: context.investigators[0].id,
+      execute: () => {
+        const newContext = drawEncounterCard(context)
+        newContext.encounterState.investigatorId =
+          newContext.investigators[0].id
+        return handleEncounterPhase(newContext)
+      },
+    })
+  } else {
+    actions.push({
+      type: 'endEncounterPhase',
+      execute: () => {
+        context.encounterState.investigatorId = null
+        return createInvestigatorPhase(context)
+      },
+    })
+  }
+
+  return {
+    type: 'encounter',
+    actions,
+    context,
+  }
+}
+
+export type HandleEncounterPhase = CreatePhase<'handleEncounter'>
+
+export function handleEncounterPhase(context: Context): HandleEncounterPhase {
+  const actions: PhaseAction[] = []
+
+  actions.push({
+    type: 'endHandleEncounterPhase',
+    execute: () => {
+      const encounterCard = getEncounterCard(
+        context,
+        context.encounterState.currentCardId!
+      )
+      let newContext = encounterCard.effect.apply(context)
+      newContext = discardCurrentEncounterCard(newContext)
+
+      return createEncounterPhase(newContext)
+    },
+  })
+
+  return {
+    type: 'handleEncounter',
     actions,
     context,
   }

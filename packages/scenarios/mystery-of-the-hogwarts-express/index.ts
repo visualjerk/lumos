@@ -8,6 +8,7 @@ import {
   Zero,
   DoomCard,
   SceneCard,
+  EncounterCard,
 } from '@lumos/game'
 
 const Aisle2: LocationCard = {
@@ -114,6 +115,19 @@ const StormWyvern: SceneCard = {
     'You find a baby wyvern in a small cage. You free it and open a window, so it can fly away. Its mother seems to be content and flies away as well.',
 }
 
+const FireTrap: EncounterCard = {
+  id: 'fire-trap',
+  name: 'Fire Trap',
+  effect: {
+    apply: (context) => {
+      context.investigatorStates.get(
+        context.encounterState.investigatorId!
+      )!.currentHealth -= 1
+      return context
+    },
+  },
+}
+
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [
     Aisle2,
@@ -126,6 +140,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   ],
   doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
+  encounterCards: [FireTrap, FireTrap, FireTrap],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],

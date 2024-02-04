@@ -39,6 +39,7 @@ export function draw(state: InvestigatorState): InvestigatorState {
   if (state.deck.length === 0) {
     state.deck = state.discardPile
     state.discardPile = []
+    shuffle(state)
   }
 
   state.cardsInHand.push(state.deck.pop()!)
