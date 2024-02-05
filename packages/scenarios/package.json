@@ -3,9 +3,13 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@lumos/game": "workspace:*"
+  },
+  "devDependencies": {
+    "@lumos/tsconfig": "workspace:*"
   }
 }

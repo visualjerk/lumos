@@ -2,6 +2,7 @@
   "name": "lumos",
   "private": true,
   "devDependencies": {
-    "vitest": "^1.2.1"
+    "typescript": "5.3.3",
+    "vitest": "1.2.2"
   }
 }
