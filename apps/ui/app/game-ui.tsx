@@ -3,9 +3,10 @@ import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
 import { INVESTIGATOR_ACTIONS_PER_TURN, Investigator } from '@lumos/game'
 import React from 'react'
 import { useGame } from './use-game'
-import { SkillCheckResult } from './skill-check-result'
+import SkillCheckResult from './skill-check-result'
 import InvestigatorArea from './investigator-area'
 import ActionButton from './action-button'
+import EncounterOverlay from './encounter-overlay'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -42,6 +43,13 @@ export default function GameUI() {
             <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
               <div className="bg-white p-4">
                 <SkillCheckResult phase={phase} />
+              </div>
+            </div>
+          )}
+          {phase.type === 'handleEncounter' && (
+            <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+              <div className="bg-white p-4">
+                <EncounterOverlay phase={phase} />
               </div>
             </div>
           )}

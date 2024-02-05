@@ -1,5 +1,6 @@
 import { InvestigatorId } from '../investigator'
 import { EncounterCardId } from './encounter-card'
+import { shuffleArray } from '../utils'
 
 export type EncounterState = {
   deck: EncounterCardId[]
@@ -26,6 +27,7 @@ export function discardCurrent(state: EncounterState): EncounterState {
   }
 
   state.discardPile.push(state.currentCardId!)
+  state.currentCardId = null
 
   return state
 }
@@ -34,15 +36,4 @@ export function shuffle(state: EncounterState): EncounterState {
   state.deck = shuffleArray(state.deck)
 
   return state
-}
-
-function shuffleArray(array: any[]) {
-  const shuffled = [...array]
-
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-
-  return shuffled
 }
