@@ -23,7 +23,7 @@ export function draw(state: EncounterState): EncounterState {
 
 export function discardCurrent(state: EncounterState): EncounterState {
   if (!state.currentCardId) {
-    throw new Error('No current card to discard')
+    return state
   }
 
   state.discardPile.push(state.currentCardId!)

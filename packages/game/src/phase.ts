@@ -409,6 +409,8 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
 export type EncounterPhase = CreatePhase<'encounter'>
 
 export function createEncounterPhase(context: Context): EncounterPhase {
+  context = discardCurrentEncounterCard(context)
+
   const actions: PhaseAction[] = []
 
   if (
@@ -460,7 +462,6 @@ export function handleEncounterPhase(context: Context): HandleEncounterPhase {
 
       if (effect) {
         context = effect.apply(context)
-        context = discardCurrentEncounterCard(context)
       }
 
       if (skillCheck) {
