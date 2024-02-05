@@ -128,6 +128,26 @@ const FireTrap: EncounterCard = {
   },
 }
 
+const SpikeTrap: EncounterCard = {
+  id: 'spike-trap',
+  name: 'Spike Trap',
+  skillCheck: {
+    skill: 'agility',
+    difficulty: 3,
+    onSuccess: {
+      apply: (context) => context,
+    },
+    onFailure: {
+      apply: (context) => {
+        context.investigatorStates.get(
+          context.encounterState.investigatorId!
+        )!.currentHealth -= 2
+        return context
+      },
+    },
+  },
+}
+
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [
     Aisle2,
@@ -140,7 +160,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   ],
   doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
-  encounterCards: [FireTrap, FireTrap, FireTrap],
+  encounterCards: [FireTrap, SpikeTrap, SpikeTrap],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],

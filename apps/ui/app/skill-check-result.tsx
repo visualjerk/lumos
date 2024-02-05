@@ -1,10 +1,16 @@
-import { CommitInvestigationSkillCheckPhase, GamePhaseOf } from '@lumos/game'
+import {
+  CommitEncounterSkillCheckPhase,
+  CommitInvestigationSkillCheckPhase,
+  GamePhaseOf,
+} from '@lumos/game'
 import ActionButton from './action-button'
 
 export default function SkillCheckResult({
   phase,
 }: {
-  phase: GamePhaseOf<CommitInvestigationSkillCheckPhase>
+  phase: GamePhaseOf<
+    CommitInvestigationSkillCheckPhase | CommitEncounterSkillCheckPhase
+  >
 }) {
   const { skillCheckContext, actions } = phase
   return (

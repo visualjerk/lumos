@@ -39,13 +39,14 @@ export default function GameUI() {
               {INVESTIGATOR_ACTIONS_PER_TURN}
             </div>
           )}
-          {phase.type === 'commitInvestigationSkillCheck' && (
-            <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
-              <div className="bg-white p-4">
-                <SkillCheckResult phase={phase} />
+          {phase.type === 'commitInvestigationSkillCheck' ||
+            (phase.type === 'commitEncounterSkillCheck' && (
+              <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+                <div className="bg-white p-4">
+                  <SkillCheckResult phase={phase} />
+                </div>
               </div>
-            </div>
-          )}
+            ))}
           {phase.type === 'handleEncounter' && (
             <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
               <div className="bg-white p-4">
