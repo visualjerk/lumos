@@ -7,4 +7,8 @@ export * from './phase'
 export * from './fate'
 export * from './doom'
 export * from './scene'
-export { EncounterState, EncounterCard, EncounterCardId } from './encounter'
+export type {
+  EncounterState,
+  EncounterCard,
+  EncounterCardId,
+} from './encounter'
