@@ -425,7 +425,7 @@ export function createEncounterPhase(context: Context): EncounterPhase {
         const newContext = drawEncounterCard(context)
         newContext.encounterState.investigatorId =
           newContext.investigators[0].id
-        return handleEncounterPhase(newContext)
+        return createHandleEncounterPhase(newContext)
       },
     })
   } else {
@@ -447,33 +447,43 @@ export function createEncounterPhase(context: Context): EncounterPhase {
 
 export type HandleEncounterPhase = CreatePhase<'handleEncounter'>
 
-export function handleEncounterPhase(context: Context): HandleEncounterPhase {
+export function createHandleEncounterPhase(
+  context: Context
+): HandleEncounterPhase {
   const actions: PhaseAction[] = []
 
-  actions.push({
-    type: 'endHandleEncounterPhase',
-    execute: () => {
-      const encounterCard = getEncounterCard(
-        context,
-        context.encounterState.currentCardId!
-      )
+  const encounterCard = getEncounterCard(
+    context,
+    context.encounterState.currentCardId!
+  )
 
-      const { effect, skillCheck } = encounterCard
+  const { effect, skillCheck } = encounterCard
 
-      if (effect) {
+  if (effect && !skillCheck) {
+    actions.push({
+      type: 'endHandleEncounterPhase',
+      execute: () => {
         context = effect.apply(context)
-      }
+        return createEncounterPhase(context)
+      },
+    })
+  }
 
-      if (skillCheck) {
-        return encounterSkillCheckPhase(context, {
+  if (skillCheck) {
+    actions.push({
+      type: 'startSkillCheck',
+      execute: () => {
+        if (effect) {
+          context = effect.apply(context)
+        }
+
+        return createEncounterSkillCheckPhase(context, {
           check: skillCheck,
           skillModifier: 0,
         })
-      }
-
-      return createEncounterPhase(context)
-    },
-  })
+      },
+    })
+  }
 
   return {
     type: 'handleEncounter',
@@ -491,31 +501,49 @@ export type EncounterSkillCheckPhase = CreatePhase<'encounterSkillCheck'> & {
   encounterContext: EncounterContext
 }
 
-export function encounterSkillCheckPhase(
+export function createEncounterSkillCheckPhase(
   context: Context,
   encounterContext: EncounterContext
 ): EncounterSkillCheckPhase {
   const actions: PhaseAction[] = []
 
+  const investigatorId = context.encounterState.investigatorId!
+
   actions.push({
     type: 'commitSkillCheck',
-    investigatorId: context.encounterState.investigatorId!,
+    investigatorId,
     execute: () => {
       const fate = spinFateWheel(context.scenario.fateWheel)
-
-      const investigatorId = context.encounterState.investigatorId!
 
       const skills = getInvestigatorSkills(context, investigatorId)
       const skill = fate.modifySkillCheck(
         skills[encounterContext.check.skill] + encounterContext.skillModifier
       )
 
-      return commitEncounterSkillCheckPhase(context, encounterContext, {
+      return createCommitEncounterSkillCheckPhase(context, encounterContext, {
         fate,
         skill,
         difficulty: encounterContext.check.difficulty,
       })
     },
+  })
+
+  const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
+  cardsInHand.forEach((card, index) => {
+    actions.push({
+      type: 'addToSkillCheck',
+      investigatorId: investigatorId,
+      handCardIndex: index,
+      execute: () => {
+        const skillModifier =
+          card.skillModifier[encounterContext.check.skill] ?? 0
+        encounterContext.skillModifier += skillModifier
+
+        discardFromHand(context, investigatorId, index)
+
+        return createEncounterSkillCheckPhase(context, encounterContext)
+      },
+    })
   })
 
   return {
@@ -532,7 +560,7 @@ export type CommitEncounterSkillCheckPhase =
     skillCheckContext: SkillCheckContext
   }
 
-export function commitEncounterSkillCheckPhase(
+export function createCommitEncounterSkillCheckPhase(
   context: Context,
   encounterContext: EncounterContext,
   skillCheckContext: SkillCheckContext
