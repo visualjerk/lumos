@@ -1,12 +1,7 @@
 import { Skills } from '@lumos/game'
 import { GameInvestigatorCard } from './use-game'
 import ActionButton from './action-button'
-
-const SKILL_ICONS: Record<keyof Skills, string> = {
-  intelligence: '🧠',
-  strength: '💪',
-  agility: '🏃',
-}
+import { SKILL_ICONS } from './skill-icons'
 
 export default function RevealedInvestigatorCard({
   card,

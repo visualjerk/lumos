@@ -1,9 +1,10 @@
 'use client'
-import { GamePhase } from '@lumos/game'
+import { GamePhase, Skills } from '@lumos/game'
 import React from 'react'
 import { GameInvestigator } from './use-game'
 import RevealedInvestigatorCard from './revealed-investigator-card'
 import ActionButton from './action-button'
+import { SKILL_ICONS } from './skill-icons'
 
 export default function InvestigatorArea({
   phase,
@@ -13,21 +14,23 @@ export default function InvestigatorArea({
   investigator: GameInvestigator
 }) {
   return (
-    <div>
+    <div className="grid gap-1">
       <div className="text-purple-500">{investigator.name}</div>
-      <div>🔮 {investigator.clues}</div>
-      <div>Health: {investigator.currentHealth}</div>
-      <div>
-        Intelligence:{' '}
-        <span className="font-semibold">
-          {investigator.skills.intelligence}
-        </span>{' '}
-        ({investigator.baseSkills.intelligence})
-        {(phase.type === 'commitInvestigationSkillCheck' ||
-          phase.type === 'startInvestigationSkillCheck') &&
-          ` +${phase.investigationContext.skillModifier}`}
+      <div className="flex gap-3">
+        <div>🔮 {investigator.clues}</div>
+        <div>
+          ❤️ {investigator.currentHealth}/{investigator.health}
+        </div>
       </div>
-      <div className="flex flex-row gap-3">
+      <div className="flex gap-3">
+        {Object.entries(investigator.skills).map(([skill, value]) => (
+          <div key={skill} className="p-1 bg-gray-50">
+            {SKILL_ICONS[skill as keyof Skills]} <strong>{value}</strong> (
+            {investigator.baseSkills[skill as keyof Skills]})
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-3">
         {investigator.actions.map((action, index) => (
           <ActionButton key={index} onClick={() => action.execute()}>
             {action.type}

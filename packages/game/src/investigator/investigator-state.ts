@@ -64,6 +64,30 @@ export function discard(
   return state
 }
 
+export function removeFromHand(
+  state: InvestigatorState,
+  cardIndex: number
+): InvestigatorState {
+  const card = state.cardsInHand[cardIndex]
+
+  if (card == null) {
+    throw new Error('Card not found in hand')
+  }
+
+  state.cardsInHand.splice(cardIndex, 1)
+
+  return state
+}
+
+export function addToDiscardPile(
+  state: InvestigatorState,
+  cardId: InvestigatorCardId
+): InvestigatorState {
+  state.discardPile.push(cardId)
+
+  return state
+}
+
 export function play(
   state: InvestigatorState,
   cardIndex: number

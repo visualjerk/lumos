@@ -160,6 +160,7 @@ export function createInvestigatorPhase(
               investigatorId,
               locationId,
               skillModifier: 0,
+              addedCards: [],
               check: {
                 skill: 'intelligence',
                 difficulty: location.shroud,
@@ -357,6 +358,7 @@ export function createHandleEncounterPhase(
           ).id,
           nextPhase: (context) => createEncounterPhase(context),
           skillModifier: 0,
+          addedCards: [],
         })
       },
     })

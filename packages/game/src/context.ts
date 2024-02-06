@@ -5,10 +5,12 @@ import {
   InvestigatorId,
   InvestigatorStates,
   Skills,
+  addToDiscardPile,
   canDraw,
   discard,
   draw,
   play,
+  removeFromHand,
 } from './investigator'
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
@@ -155,6 +157,44 @@ export function discardFromHand(
   return context
 }
 
+export function removeCardFromHand(
+  context: Context,
+  investigatorId: InvestigatorId,
+  cardIndex: number
+): Context {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  context.investigatorStates.set(
+    investigatorId,
+    removeFromHand(investigatorState, cardIndex)
+  )
+
+  return context
+}
+
+export function addCardToDiscardPile(
+  context: Context,
+  investigatorId: InvestigatorId,
+  cardId: string
+): Context {
+  const investigatorState = context.investigatorStates.get(investigatorId)
+
+  if (!investigatorState) {
+    throw new Error('Investigator not found')
+  }
+
+  context.investigatorStates.set(
+    investigatorId,
+    addToDiscardPile(investigatorState, cardId)
+  )
+
+  return context
+}
+
 export function playCardFromHand(
   context: Context,
   investigatorId: InvestigatorId,
@@ -280,9 +320,7 @@ export function getInvestigatorCardsInHand(
 ) {
   const investigatorState = getInvestigatorState(context, investigatorId)
 
-  return investigatorState.cardsInHand.map(
-    (cardId) => InvestigatorCardCollection.get(cardId)!
-  )
+  return investigatorState.cardsInHand.map(getInvestigatorCard)
 }
 
 export function getInvestigatorCardsInPlay(
@@ -291,9 +329,11 @@ export function getInvestigatorCardsInPlay(
 ) {
   const investigatorState = getInvestigatorState(context, investigatorId)
 
-  return investigatorState.cardsInPlay.map(
-    (cardId) => InvestigatorCardCollection.get(cardId)!
-  )
+  return investigatorState.cardsInPlay.map(getInvestigatorCard)
+}
+
+export function getInvestigatorCard(cardId: string) {
+  return InvestigatorCardCollection.get(cardId)!
 }
 
 export function getLocationState(context: Context, locationId: LocationId) {

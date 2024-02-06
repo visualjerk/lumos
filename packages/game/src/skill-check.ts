@@ -1,11 +1,12 @@
 import {
   Context,
-  discardFromHand,
+  addCardToDiscardPile,
   getInvestigatorCardsInHand,
   getInvestigatorSkills,
+  removeCardFromHand,
 } from './context'
 import { Fate, spinFateWheel } from './fate'
-import { InvestigatorId, Skills } from './investigator'
+import { InvestigatorCardId, InvestigatorId, Skills } from './investigator'
 import { LocationId } from './location'
 import { CreatePhase, Phase, PhaseAction } from './phase'
 
@@ -25,15 +26,13 @@ export type SkillCheckContext = {
   investigatorId: InvestigatorId
   check: SkillCheck
   nextPhase: (context: Context) => Phase
-  // TODO: replace with cards
+  addedCards: InvestigatorCardId[]
   skillModifier: number
 }
 
 export type CommitSkillCheckContext = SkillCheckContext & {
   fate: Fate
   totalSkill: number
-  // TODO: Remove this
-  difficulty: number
 }
 
 export type SkillCheckPhase = CreatePhase<'skillCheck'> & {
@@ -63,7 +62,6 @@ export function createSkillCheckPhase(
         ...skillCheckContext,
         fate,
         totalSkill,
-        difficulty: skillCheckContext.check.difficulty,
       })
     },
   })
@@ -79,7 +77,9 @@ export function createSkillCheckPhase(
           card.skillModifier[skillCheckContext.check.skill] ?? 0
         skillCheckContext.skillModifier += skillModifier
 
-        discardFromHand(context, investigatorId, index)
+        skillCheckContext.addedCards.push(card.id)
+
+        removeCardFromHand(context, investigatorId, index)
 
         return createSkillCheckPhase(context, skillCheckContext)
       },
@@ -110,8 +110,13 @@ export function createCommitSkillCheckPhase(
     type: 'endSkillCheck',
     investigatorId,
     execute: () => {
+      skillCheckContext.addedCards.forEach((cardId) => {
+        addCardToDiscardPile(context, investigatorId, cardId)
+      })
+
       const effect =
         totalSkill < check.difficulty ? check.onFailure : check.onSuccess
+
       return skillCheckContext.nextPhase(effect.apply(context))
     },
   })
