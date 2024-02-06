@@ -1,8 +1,10 @@
-import { LocationStates, LocationId } from './location'
+import { LocationStates, LocationId, LocationCard } from './location'
 import {
   Investigator,
+  InvestigatorCard,
   InvestigatorCardCollection,
   InvestigatorId,
+  InvestigatorState,
   InvestigatorStates,
   Skills,
   addToDiscardPile,
@@ -21,16 +23,6 @@ import {
   discardCurrent as discardCurrentEncounter,
 } from './encounter'
 
-export type Context = {
-  scenario: Scenario
-  doomState: DoomState
-  sceneState: SceneState
-  encounterState: EncounterState
-  locationStates: LocationStates
-  investigators: Investigator[]
-  investigatorStates: InvestigatorStates
-}
-
 export function createInitialContext(
   scenario: Scenario,
   investigators: Investigator[]
@@ -42,11 +34,11 @@ export function createInitialContext(
   )
   locationStates.get(scenario.startLocation)!.revealed = true
 
-  return {
+  return new Context(
     scenario,
-    doomState: { doom: 0, doomCardId: scenario.doomCards[0].id },
-    sceneState: { sceneCardId: scenario.sceneCards[0].id },
-    encounterState: {
+    { doom: 0, doomCardId: scenario.doomCards[0].id },
+    { sceneCardId: scenario.sceneCards[0].id },
+    {
       deck: scenario.encounterCards.map(({ id }) => id),
       discardPile: [],
       currentCardId: null,
@@ -54,27 +46,152 @@ export function createInitialContext(
     },
     locationStates,
     investigators,
-    investigatorStates,
+    investigatorStates
+  )
+}
+
+export class Context {
+  constructor(
+    public scenario: Scenario,
+    public doomState: DoomState,
+    public sceneState: SceneState,
+    public encounterState: EncounterState,
+    public locationStates: LocationStates,
+    public investigators: Investigator[],
+    public investigatorStates: InvestigatorStates
+  ) {}
+
+  getDoomCard(): DoomCard {
+    return getDoomCard(this)
+  }
+
+  getNextDoomCardId(): DoomCardId | undefined {
+    return getNextDoomCardId(this)
+  }
+
+  getSceneCard(): SceneCard {
+    return getSceneCard(this)
+  }
+
+  getTotalInvestigatorClues(): number {
+    return getTotalInvestigatorClues(this)
+  }
+
+  getNextSceneCardId(): string | undefined {
+    return getNextSceneCardId(this)
+  }
+
+  getLocationInvestigators(locationId: LocationId): Investigator[] {
+    return getLocationInvestigators(this, locationId)
+  }
+
+  getInvestigator(investigatorId: InvestigatorId) {
+    return getInvestigator(this, investigatorId)
+  }
+
+  canDrawFromDeck(investigatorId: InvestigatorId) {
+    return canDrawFromDeck(this, investigatorId)
+  }
+
+  drawFromDeck(investigatorId: InvestigatorId): Context {
+    return drawFromDeck(this, investigatorId)
+  }
+
+  discardFromHand(investigatorId: InvestigatorId, cardIndex: number): Context {
+    return discardFromHand(this, investigatorId, cardIndex)
+  }
+
+  removeCardFromHand(
+    investigatorId: InvestigatorId,
+    cardIndex: number
+  ): Context {
+    return removeCardFromHand(this, investigatorId, cardIndex)
+  }
+
+  addCardToDiscardPile(
+    investigatorId: InvestigatorId,
+    cardId: string
+  ): Context {
+    return addCardToDiscardPile(this, investigatorId, cardId)
+  }
+
+  playCardFromHand(investigatorId: InvestigatorId, cardIndex: number): Context {
+    return playCardFromHand(this, investigatorId, cardIndex)
+  }
+
+  getEncounterCard(encounterCardId: string) {
+    return getEncounterCard(this, encounterCardId)
+  }
+
+  drawEncounterCard(): Context {
+    return drawEncounterCard(this)
+  }
+
+  discardCurrentEncounterCard(): Context {
+    return discardCurrentEncounterCard(this)
+  }
+
+  moveInvestigator(
+    investigatorId: InvestigatorId,
+    locationId: LocationId
+  ): Context {
+    return moveInvestigator(this, investigatorId, locationId)
+  }
+
+  getLocation(locationId: LocationId): LocationCard {
+    return getLocation(this, locationId)
+  }
+
+  getInvestigatorLocation(investigatorId: InvestigatorId): LocationCard {
+    return getInvestigatorLocation(this, investigatorId)
+  }
+
+  collectClue(investigatorId: InvestigatorId, locationId: LocationId): Context {
+    return collectClue(this, investigatorId, locationId)
+  }
+
+  getInvestigatorState(investigatorId: InvestigatorId): InvestigatorState {
+    return getInvestigatorState(this, investigatorId)
+  }
+
+  getInvestigatorCardsInHand(
+    investigatorId: InvestigatorId
+  ): InvestigatorCard[] {
+    return getInvestigatorCardsInHand(this, investigatorId)
+  }
+
+  getInvestigatorCardsInPlay(
+    investigatorId: InvestigatorId
+  ): InvestigatorCard[] {
+    return getInvestigatorCardsInPlay(this, investigatorId)
+  }
+
+  getInvestigatorCard(cardId: string): InvestigatorCard {
+    return getInvestigatorCard(cardId)
+  }
+
+  getInvestigatorSkills(investigatorId: InvestigatorId): Skills {
+    return getInvestigatorSkills(this, investigatorId)
   }
 }
 
-export function getDoomCard(context: Context): DoomCard {
+function getDoomCard(context: Context): DoomCard {
   return context.scenario.doomCards.find(
     (card) => card.id === context.doomState.doomCardId
   )!
 }
 
-export function getNextDoomCardId(context: Context): DoomCardId | undefined {
+function getNextDoomCardId(context: Context): DoomCardId | undefined {
   return getDoomCard(context).nextDoomCardId
 }
 
-export function getSceneCard(context: Context): SceneCard {
+function getSceneCard(context: Context): SceneCard {
   return context.scenario.sceneCards.find(
     (card) => card.id === context.sceneState.sceneCardId
   )!
 }
 
-export function getTotalInvestigatorClues(context: Context): number {
+function getTotalInvestigatorClues(context: Context): number {
   let totalClues = 0
   context.investigatorStates.forEach(({ clues }) => {
     totalClues += clues
@@ -82,11 +199,11 @@ export function getTotalInvestigatorClues(context: Context): number {
   return totalClues
 }
 
-export function getNextSceneCardId(context: Context): string | undefined {
+function getNextSceneCardId(context: Context): string | undefined {
   return getSceneCard(context).nextSceneCardId
 }
 
-export function getLocationInvestigators(
+function getLocationInvestigators(
   context: Context,
   locationId: LocationId
 ): Investigator[] {
@@ -101,19 +218,13 @@ export function getLocationInvestigators(
   return investigators
 }
 
-export function getInvestigator(
-  context: Context,
-  investigatorId: InvestigatorId
-) {
+function getInvestigator(context: Context, investigatorId: InvestigatorId) {
   return context.investigators.find(
     (investigator) => investigator.id === investigatorId
   )!
 }
 
-export function canDrawFromDeck(
-  context: Context,
-  investigatorId: InvestigatorId
-) {
+function canDrawFromDeck(context: Context, investigatorId: InvestigatorId) {
   const investigatorState = context.investigatorStates.get(investigatorId)
 
   if (!investigatorState) {
@@ -123,7 +234,7 @@ export function canDrawFromDeck(
   return canDraw(investigatorState)
 }
 
-export function drawFromDeck(
+function drawFromDeck(
   context: Context,
   investigatorId: InvestigatorId
 ): Context {
@@ -138,7 +249,7 @@ export function drawFromDeck(
   return context
 }
 
-export function discardFromHand(
+function discardFromHand(
   context: Context,
   investigatorId: InvestigatorId,
   cardIndex: number
@@ -157,7 +268,7 @@ export function discardFromHand(
   return context
 }
 
-export function removeCardFromHand(
+function removeCardFromHand(
   context: Context,
   investigatorId: InvestigatorId,
   cardIndex: number
@@ -176,7 +287,7 @@ export function removeCardFromHand(
   return context
 }
 
-export function addCardToDiscardPile(
+function addCardToDiscardPile(
   context: Context,
   investigatorId: InvestigatorId,
   cardId: string
@@ -195,7 +306,7 @@ export function addCardToDiscardPile(
   return context
 }
 
-export function playCardFromHand(
+function playCardFromHand(
   context: Context,
   investigatorId: InvestigatorId,
   cardIndex: number
@@ -214,23 +325,23 @@ export function playCardFromHand(
   return context
 }
 
-export function getEncounterCard(context: Context, encounterCardId: string) {
+function getEncounterCard(context: Context, encounterCardId: string) {
   return context.scenario.encounterCards.find(
     (card) => card.id === encounterCardId
   )!
 }
 
-export function drawEncounterCard(context: Context): Context {
+function drawEncounterCard(context: Context): Context {
   context.encounterState = drawEncounter(context.encounterState)
   return context
 }
 
-export function discardCurrentEncounterCard(context: Context): Context {
+function discardCurrentEncounterCard(context: Context): Context {
   context.encounterState = discardCurrentEncounter(context.encounterState)
   return context
 }
 
-export function moveInvestigator(
+function moveInvestigator(
   context: Context,
   investigatorId: InvestigatorId,
   locationId: LocationId
@@ -252,13 +363,13 @@ export function moveInvestigator(
   return context
 }
 
-export function getLocation(context: Context, locationId: LocationId) {
+function getLocation(context: Context, locationId: LocationId) {
   return context.scenario.locationCards.find(
     (location) => location.id === locationId
   )!
 }
 
-export function getInvestigatorLocation(
+function getInvestigatorLocation(
   context: Context,
   investigatorId: InvestigatorId
 ) {
@@ -268,7 +379,7 @@ export function getInvestigatorLocation(
     throw new Error('Investigator not found')
   }
 
-  const location = getLocation(context, investigator.currentLocation)
+  const location = context.getLocation(investigator.currentLocation)
 
   if (!location) {
     throw new Error('Location not found')
@@ -277,7 +388,7 @@ export function getInvestigatorLocation(
   return location
 }
 
-export function collectClue(
+function collectClue(
   context: Context,
   investigatorId: InvestigatorId,
   locationId: LocationId
@@ -307,27 +418,27 @@ export function collectClue(
   return context
 }
 
-export function getInvestigatorState(
+function getInvestigatorState(
   context: Context,
   investigatorId: InvestigatorId
 ) {
   return context.investigatorStates.get(investigatorId)!
 }
 
-export function getInvestigatorCardsInHand(
+function getInvestigatorCardsInHand(
   context: Context,
   investigatorId: InvestigatorId
 ) {
-  const investigatorState = getInvestigatorState(context, investigatorId)
+  const investigatorState = context.getInvestigatorState(investigatorId)
 
   return investigatorState.cardsInHand.map(getInvestigatorCard)
 }
 
-export function getInvestigatorCardsInPlay(
+function getInvestigatorCardsInPlay(
   context: Context,
   investigatorId: InvestigatorId
 ) {
-  const investigatorState = getInvestigatorState(context, investigatorId)
+  const investigatorState = context.getInvestigatorState(investigatorId)
 
   return investigatorState.cardsInPlay.map(getInvestigatorCard)
 }
@@ -336,11 +447,11 @@ export function getInvestigatorCard(cardId: string) {
   return InvestigatorCardCollection.get(cardId)!
 }
 
-export function getLocationState(context: Context, locationId: LocationId) {
+function getLocationState(context: Context, locationId: LocationId) {
   return context.locationStates.get(locationId)!
 }
 
-export function getInvestigatorSkills(
+function getInvestigatorSkills(
   context: Context,
   investigatorId: InvestigatorId
 ): Skills {

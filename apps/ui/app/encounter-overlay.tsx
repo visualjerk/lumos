@@ -1,8 +1,4 @@
-import {
-  GamePhaseOf,
-  HandleEncounterPhase,
-  getEncounterCard,
-} from '@lumos/game'
+import { GamePhaseOf, HandleEncounterPhase } from '@lumos/game'
 import ActionButton from './action-button'
 
 export default function EncounterOverlay({
@@ -11,8 +7,7 @@ export default function EncounterOverlay({
   phase: GamePhaseOf<HandleEncounterPhase>
 }) {
   const { context, actions } = phase
-  const encounter = getEncounterCard(
-    context,
+  const encounter = context.getEncounterCard(
     context.encounterState.currentCardId!
   )
 

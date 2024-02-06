@@ -12,10 +12,6 @@ import {
   Scenario,
   Skills,
   createGame,
-  getDoomCard,
-  getInvestigatorSkills,
-  getLocationInvestigators,
-  getSceneCard,
 } from '@lumos/game'
 import { useEffect, useState } from 'react'
 
@@ -64,7 +60,7 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       return {
         ...investigator,
         ...state,
-        skills: getInvestigatorSkills(context, investigator.id),
+        skills: context.getInvestigatorSkills(investigator.id),
         cardsInHand: state.cardsInHand.map((id, index) => ({
           ...InvestigatorCardCollection.get(id)!,
           actions: phase.actions.filter(
@@ -100,7 +96,7 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       ...context.locationStates.get(location.id)!,
       position: context.scenario.layout.get(location.id)!,
       actions: getLocationActions(location.id),
-      investigators: getLocationInvestigators(context, location.id),
+      investigators: context.getLocationInvestigators(location.id),
     })
   )
 
@@ -109,11 +105,11 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
   }
 
   const doom: GameDoom = {
-    ...getDoomCard(context),
+    ...context.getDoomCard(),
     ...context.doomState,
   }
 
-  const scene = getSceneCard(context)
+  const scene = context.getSceneCard()
 
   return {
     investigators,

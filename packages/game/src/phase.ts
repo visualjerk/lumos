@@ -1,22 +1,4 @@
-import {
-  Context,
-  canDrawFromDeck,
-  collectClue,
-  discardCurrentEncounterCard,
-  drawEncounterCard,
-  drawFromDeck,
-  getDoomCard,
-  getEncounterCard,
-  getInvestigatorCardsInHand,
-  getInvestigatorLocation,
-  getLocation,
-  getNextDoomCardId,
-  getNextSceneCardId,
-  getSceneCard,
-  getTotalInvestigatorClues,
-  moveInvestigator,
-  playCardFromHand,
-} from './context'
+import { Context } from './context'
 import { LocationId, isConnected } from './location'
 import { InvestigatorId } from './investigator'
 import {
@@ -84,19 +66,19 @@ export function createInvestigatorPhase(
       return actions
     }
 
-    if (canDrawFromDeck(context, investigatorId)) {
+    if (context.canDrawFromDeck(investigatorId)) {
       actions.push({
         type: 'draw',
         investigatorId,
         execute: () => {
-          const newContext = drawFromDeck(context, investigatorId)
+          const newContext = context.drawFromDeck(investigatorId)
           investigatorContext.actionsMade++
           return createInvestigatorPhase(newContext, investigatorContext)
         },
       })
     }
 
-    const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
+    const cardsInHand = context.getInvestigatorCardsInHand(investigatorId)
     cardsInHand.forEach((card, index) => {
       if (card.permanentSkillModifier !== undefined) {
         actions.push({
@@ -104,7 +86,7 @@ export function createInvestigatorPhase(
           investigatorId,
           handCardIndex: index,
           execute: () => {
-            const newContext = playCardFromHand(context, investigatorId, index)
+            const newContext = context.playCardFromHand(investigatorId, index)
             investigatorContext.actionsMade++
             return createInvestigatorPhase(newContext, investigatorContext)
           },
@@ -126,8 +108,8 @@ export function createInvestigatorPhase(
   ): PhaseAction[] {
     const actions: PhaseAction[] = []
 
-    const currentLocation = getInvestigatorLocation(context, investigatorId)
-    const location = getLocation(context, locationId)
+    const currentLocation = context.getInvestigatorLocation(investigatorId)
+    const location = context.getLocation(locationId)
 
     if (isConnected(currentLocation, location)) {
       actions.push({
@@ -135,8 +117,7 @@ export function createInvestigatorPhase(
         investigatorId,
         locationId,
         execute: () => {
-          const newContext = moveInvestigator(
-            context,
+          const newContext = context.moveInvestigator(
             investigatorId,
             locationId
           )
@@ -168,15 +149,15 @@ export function createInvestigatorPhase(
                 difficulty: location.shroud,
                 onSuccess: {
                   apply: (context) =>
-                    collectClue(context, investigatorId, locationId),
+                    context.collectClue(investigatorId, locationId),
                 },
                 onFailure: {
                   apply: (context) => context,
                 },
               },
               nextPhase: (context) => {
-                const scene = getSceneCard(context)
-                const totalClues = getTotalInvestigatorClues(context)
+                const scene = context.getSceneCard()
+                const totalClues = context.getTotalInvestigatorClues()
                 if (scene.clueTreshold <= totalClues) {
                   context.investigatorStates.forEach((state) => {
                     state.clues = 0
@@ -212,8 +193,8 @@ export function createCleanupPhase(context: Context): CleanupPhase {
     type: 'endCleanupPhase',
     execute: () => {
       context.investigators.forEach((investigator) => {
-        if (canDrawFromDeck(context, investigator.id)) {
-          context = drawFromDeck(context, investigator.id)
+        if (context.canDrawFromDeck(investigator.id)) {
+          context = context.drawFromDeck(investigator.id)
         }
       })
 
@@ -238,7 +219,7 @@ export function createDoomPhase(context: Context): DoomPhase {
     execute: () => {
       context.doomState.doom++
 
-      if (context.doomState.doom >= getDoomCard(context).treshold) {
+      if (context.doomState.doom >= context.getDoomCard().treshold) {
         return createAdvanceDoomPhase(context)
       }
 
@@ -261,7 +242,7 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
   actions.push({
     type: 'endAdvanceDoomPhase',
     execute: () => {
-      const nextDoomCardId = getNextDoomCardId(context)
+      const nextDoomCardId = context.getNextDoomCardId()
 
       if (!nextDoomCardId) {
         return createEndGamePhase(context)
@@ -283,7 +264,7 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
 export type EncounterPhase = CreatePhase<'encounter'>
 
 export function createEncounterPhase(context: Context): EncounterPhase {
-  context = discardCurrentEncounterCard(context)
+  context = context.discardCurrentEncounterCard()
 
   const actions: PhaseAction[] = []
 
@@ -296,7 +277,7 @@ export function createEncounterPhase(context: Context): EncounterPhase {
       // TODO: add current investigator
       investigatorId: context.investigators[0].id,
       execute: () => {
-        const newContext = drawEncounterCard(context)
+        const newContext = context.drawEncounterCard()
         newContext.encounterState.investigatorId =
           newContext.investigators[0].id
         return createHandleEncounterPhase(newContext)
@@ -326,8 +307,7 @@ export function createHandleEncounterPhase(
 ): HandleEncounterPhase {
   const actions: PhaseAction[] = []
 
-  const encounterCard = getEncounterCard(
-    context,
+  const encounterCard = context.getEncounterCard(
     context.encounterState.currentCardId!
   )
 
@@ -354,8 +334,7 @@ export function createHandleEncounterPhase(
         return createSkillCheckPhase(context, {
           check: skillCheck,
           investigatorId: context.encounterState.investigatorId!,
-          locationId: getInvestigatorLocation(
-            context,
+          locationId: context.getInvestigatorLocation(
             context.encounterState.investigatorId!
           ).id,
           nextPhase: (context) => createEncounterPhase(context),
@@ -386,7 +365,7 @@ export function createAdvanceScenePhase(
   actions.push({
     type: 'endAdvanceScenePhase',
     execute: () => {
-      const nextSceneCardId = getNextSceneCardId(context)
+      const nextSceneCardId = context.getNextSceneCardId()
 
       if (!nextSceneCardId) {
         return createWinGamePhase(context)

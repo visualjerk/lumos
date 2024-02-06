@@ -1,10 +1,4 @@
-import {
-  Context,
-  addCardToDiscardPile,
-  getInvestigatorCardsInHand,
-  getInvestigatorSkills,
-  removeCardFromHand,
-} from './context'
+import { Context } from './context'
 import { Fate, spinFateWheel } from './fate'
 import { InvestigatorCardId, InvestigatorId, Skills } from './investigator'
 import { LocationId } from './location'
@@ -53,7 +47,7 @@ export function createSkillCheckPhase(
     execute: () => {
       const fate = spinFateWheel(context.scenario.fateWheel)
 
-      const skills = getInvestigatorSkills(context, investigatorId)
+      const skills = context.getInvestigatorSkills(investigatorId)
       const totalSkill = fate.modifySkillCheck(
         skills[skillCheckContext.check.skill] + skillCheckContext.skillModifier
       )
@@ -66,7 +60,7 @@ export function createSkillCheckPhase(
     },
   })
 
-  const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
+  const cardsInHand = context.getInvestigatorCardsInHand(investigatorId)
   cardsInHand.forEach((card, index) => {
     const skillModifier = card.skillModifier[skillCheckContext.check.skill]
 
@@ -79,7 +73,7 @@ export function createSkillCheckPhase(
           skillCheckContext.skillModifier += skillModifier
           skillCheckContext.addedCards.push(card.id)
 
-          removeCardFromHand(context, investigatorId, index)
+          context.removeCardFromHand(investigatorId, index)
 
           return createSkillCheckPhase(context, skillCheckContext)
         },
@@ -112,7 +106,7 @@ export function createCommitSkillCheckPhase(
     investigatorId,
     execute: () => {
       skillCheckContext.addedCards.forEach((cardId) => {
-        addCardToDiscardPile(context, investigatorId, cardId)
+        context.addCardToDiscardPile(investigatorId, cardId)
       })
 
       const effect =
