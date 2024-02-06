@@ -118,6 +118,7 @@ const StormWyvern: SceneCard = {
 const FireTrap: EncounterCard = {
   id: 'fire-trap',
   name: 'Fire Trap',
+  description: 'You are caught in a fire trap. Lose 1 health.',
   effect: {
     apply: (context) => {
       context.investigatorStates.get(
@@ -131,6 +132,7 @@ const FireTrap: EncounterCard = {
 const SpikeTrap: EncounterCard = {
   id: 'spike-trap',
   name: 'Spike Trap',
+  description: 'Make an agility check (3). If you fail, lose 2 health.',
   skillCheck: {
     skill: 'agility',
     difficulty: 3,
@@ -151,6 +153,7 @@ const SpikeTrap: EncounterCard = {
 const MindSpikes: EncounterCard = {
   id: 'mind-spikes',
   name: 'Mind Spikes',
+  description: 'Make an intelligence check (3). If you fail, lose 2 health.',
   skillCheck: {
     skill: 'intelligence',
     difficulty: 3,

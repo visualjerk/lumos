@@ -18,9 +18,8 @@ export default function EncounterOverlay({
 
   return (
     <div className="grid gap-3">
-      <div className="flex flex-row gap-3">
-        <div>{encounter.name}</div>
-      </div>
+      <h2 className="text-xl">{encounter.name}</h2>
+      <div>{encounter.description}</div>
       {actions.map((action, index) => (
         <ActionButton key={index} onClick={() => action.execute()}>
           {action.type}
