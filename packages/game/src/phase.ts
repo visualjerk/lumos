@@ -37,8 +37,6 @@ export type PhaseAction = {
 export type Phase =
   | InvestigatorPhase
   | CleanupPhase
-  | StartInvestigationSkillCheckPhase
-  | CommitInvestigationSkillCheckPhase
   | DoomPhase
   | AdvanceDoomPhase
   | AdvanceScenePhase
@@ -46,8 +44,8 @@ export type Phase =
   | WinGamePhase
   | EncounterPhase
   | HandleEncounterPhase
-  | EncounterSkillCheckPhase
-  | CommitEncounterSkillCheckPhase
+  | SkillCheckPhase
+  | CommitSkillCheckPhase
 
 export type CreatePhase<Type extends string> = {
   type: Type
@@ -156,15 +154,35 @@ export function createInvestigatorPhase(
           locationId,
           execute: () => {
             investigatorContext.actionsMade++
-            return createStartInvestigationSkillCheck(
-              context,
-              investigatorContext,
-              {
-                investigatorId,
-                locationId,
-                skillModifier: 0,
-              }
-            )
+
+            return createSkillCheckPhase(context, {
+              investigatorId,
+              locationId,
+              skillModifier: 0,
+              check: {
+                skill: 'intelligence',
+                difficulty: location.shroud,
+                onSuccess: {
+                  apply: (context) =>
+                    collectClue(context, investigatorId, locationId),
+                },
+                onFailure: {
+                  apply: (context) => context,
+                },
+              },
+              nextPhase: (context) => {
+                const scene = getSceneCard(context)
+                const totalClues = getTotalInvestigatorClues(context)
+                if (scene.clueTreshold <= totalClues) {
+                  context.investigatorStates.forEach((state) => {
+                    state.clues = 0
+                  })
+                  return createAdvanceScenePhase(context, investigatorContext)
+                }
+
+                return createInvestigatorPhase(context, investigatorContext)
+              },
+            })
           },
         })
       }
@@ -177,154 +195,6 @@ export function createInvestigatorPhase(
     type: 'investigator',
     context,
     investigatorContext,
-    actions: getActions(),
-  }
-}
-
-export type InvestigationContext = {
-  locationId: LocationId
-  investigatorId: InvestigatorId
-  skillModifier: number
-}
-
-export type StartInvestigationSkillCheckPhase =
-  CreatePhase<'startInvestigationSkillCheck'> & {
-    investigatorContext: InvestigatorContext
-    investigationContext: InvestigationContext
-  }
-
-export function createStartInvestigationSkillCheck(
-  context: Context,
-  investigatorContext: InvestigatorContext,
-  investigationContext: InvestigationContext
-): StartInvestigationSkillCheckPhase {
-  function getActions() {
-    const actions: PhaseAction[] = []
-
-    actions.push({
-      type: 'commitSkillCheck',
-      investigatorId: investigationContext.investigatorId,
-      execute: () => {
-        const fate = spinFateWheel(context.scenario.fateWheel)
-
-        const skills = getInvestigatorSkills(
-          context,
-          investigationContext.investigatorId
-        )
-        const skill = fate.modifySkillCheck(
-          skills.intelligence + investigationContext.skillModifier
-        )
-
-        const location = getLocation(context, investigationContext.locationId)
-        const difficulty = location.shroud
-
-        return createCommitInvestigationSkillCheck(
-          context,
-          investigatorContext,
-          investigationContext,
-          {
-            fate,
-            totalSkill: skill,
-            difficulty,
-          }
-        )
-      },
-    })
-
-    const cardsInHand = getInvestigatorCardsInHand(
-      context,
-      investigationContext.investigatorId
-    )
-    cardsInHand.forEach((card, index) => {
-      actions.push({
-        type: 'addToSkillCheck',
-        investigatorId: investigationContext.investigatorId,
-        handCardIndex: index,
-        execute: () => {
-          const skillModifier = card.skillModifier.intelligence ?? 0
-          investigationContext.skillModifier += skillModifier
-
-          discardFromHand(context, investigationContext.investigatorId, index)
-
-          return createStartInvestigationSkillCheck(
-            context,
-            investigatorContext,
-            investigationContext
-          )
-        },
-      })
-    })
-
-    return actions
-  }
-
-  return {
-    type: 'startInvestigationSkillCheck',
-    context,
-    investigatorContext,
-    investigationContext,
-    actions: getActions(),
-  }
-}
-
-export type SkillCheckContext_DEPRECATED = {
-  totalSkill: number
-  difficulty: number
-  fate: Fate
-}
-
-export type CommitInvestigationSkillCheckPhase =
-  CreatePhase<'commitInvestigationSkillCheck'> & {
-    investigatorContext: InvestigatorContext
-    investigationContext: InvestigationContext
-    skillCheckContext: SkillCheckContext_DEPRECATED
-  }
-
-export function createCommitInvestigationSkillCheck(
-  context: Context,
-  investigatorContext: InvestigatorContext,
-  investigationContext: InvestigationContext,
-  skillCheckContext: SkillCheckContext_DEPRECATED
-): CommitInvestigationSkillCheckPhase {
-  function getActions() {
-    const actions: PhaseAction[] = []
-
-    actions.push({
-      type: 'endSkillCheck',
-      investigatorId: investigationContext.investigatorId,
-      execute: () => {
-        if (skillCheckContext.totalSkill < skillCheckContext.difficulty) {
-          return createInvestigatorPhase(context, investigatorContext)
-        }
-
-        const newContext = collectClue(
-          context,
-          investigationContext.investigatorId,
-          investigationContext.locationId
-        )
-
-        const scene = getSceneCard(newContext)
-        const totalClues = getTotalInvestigatorClues(newContext)
-        if (scene.clueTreshold <= totalClues) {
-          context.investigatorStates.forEach((state) => {
-            state.clues = 0
-          })
-          return createAdvanceScenePhase(newContext, investigatorContext)
-        }
-
-        return createInvestigatorPhase(newContext, investigatorContext)
-      },
-    })
-
-    return actions
-  }
-
-  return {
-    type: 'commitInvestigationSkillCheck',
-    context,
-    investigatorContext,
-    investigationContext,
-    skillCheckContext,
     actions: getActions(),
   }
 }
@@ -477,13 +347,14 @@ export function createHandleEncounterPhase(
           context = effect.apply(context)
         }
 
-        return createEncounterSkillCheckPhase(context, {
+        return createSkillCheckPhase(context, {
           check: skillCheck,
           investigatorId: context.encounterState.investigatorId!,
           locationId: getInvestigatorLocation(
             context,
             context.encounterState.investigatorId!
           ).id,
+          nextPhase: (context) => createEncounterPhase(context),
           skillModifier: 0,
         })
       },
@@ -501,6 +372,7 @@ export type SkillCheckContext = {
   locationId: LocationId
   investigatorId: InvestigatorId
   check: SkillCheck
+  nextPhase: (context: Context) => Phase
   // TODO: replace with cards
   skillModifier: number
 }
@@ -512,14 +384,14 @@ export type CommitSkillCheckContext = SkillCheckContext & {
   difficulty: number
 }
 
-export type EncounterSkillCheckPhase = CreatePhase<'encounterSkillCheck'> & {
+export type SkillCheckPhase = CreatePhase<'skillCheck'> & {
   skillCheckContext: SkillCheckContext
 }
 
-export function createEncounterSkillCheckPhase(
+export function createSkillCheckPhase(
   context: Context,
   skillCheckContext: SkillCheckContext
-): EncounterSkillCheckPhase {
+): SkillCheckPhase {
   const actions: PhaseAction[] = []
 
   const { investigatorId } = skillCheckContext
@@ -535,7 +407,7 @@ export function createEncounterSkillCheckPhase(
         skills[skillCheckContext.check.skill] + skillCheckContext.skillModifier
       )
 
-      return createCommitEncounterSkillCheckPhase(context, {
+      return createCommitSkillCheckPhase(context, {
         ...skillCheckContext,
         fate,
         totalSkill,
@@ -557,48 +429,43 @@ export function createEncounterSkillCheckPhase(
 
         discardFromHand(context, investigatorId, index)
 
-        return createEncounterSkillCheckPhase(context, skillCheckContext)
+        return createSkillCheckPhase(context, skillCheckContext)
       },
     })
   })
 
   return {
-    type: 'encounterSkillCheck',
+    type: 'skillCheck',
     actions,
     context,
     skillCheckContext,
   }
 }
 
-export type CommitEncounterSkillCheckPhase =
-  CreatePhase<'commitEncounterSkillCheck'> & {
-    skillCheckContext: CommitSkillCheckContext
-  }
+export type CommitSkillCheckPhase = CreatePhase<'commitSkillCheck'> & {
+  skillCheckContext: CommitSkillCheckContext
+}
 
-export function createCommitEncounterSkillCheckPhase(
+export function createCommitSkillCheckPhase(
   context: Context,
   skillCheckContext: CommitSkillCheckContext
-): CommitEncounterSkillCheckPhase {
+): CommitSkillCheckPhase {
   const actions: PhaseAction[] = []
 
-  const { check, investigatorId } = skillCheckContext
+  const { check, investigatorId, totalSkill } = skillCheckContext
 
   actions.push({
     type: 'endSkillCheck',
     investigatorId,
     execute: () => {
-      if (skillCheckContext.totalSkill < check.difficulty) {
-        context = check.onFailure.apply(context)
-        return createEncounterPhase(context)
-      }
-
-      context = check.onSuccess.apply(context)
-      return createEncounterPhase(context)
+      const effect =
+        totalSkill < check.difficulty ? check.onFailure : check.onSuccess
+      return skillCheckContext.nextPhase(effect.apply(context))
     },
   })
 
   return {
-    type: 'commitEncounterSkillCheck',
+    type: 'commitSkillCheck',
     actions,
     context,
     skillCheckContext,

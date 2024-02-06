@@ -31,22 +31,19 @@ export default function GameUI() {
       <div className="grid grid-cols-3 gap-3">
         <div>
           <div className="text-2xl ">Phase: {phase.type}</div>
-          {(phase.type === 'investigator' ||
-            phase.type === 'commitInvestigationSkillCheck' ||
-            phase.type === 'startInvestigationSkillCheck') && (
+          {phase.type === 'investigator' && (
             <div>
               Actions: {phase.investigatorContext.actionsMade} /{' '}
               {INVESTIGATOR_ACTIONS_PER_TURN}
             </div>
           )}
-          {phase.type === 'commitInvestigationSkillCheck' ||
-            (phase.type === 'commitEncounterSkillCheck' && (
-              <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
-                <div className="bg-white p-4">
-                  <SkillCheckResult phase={phase} />
-                </div>
+          {phase.type === 'commitSkillCheck' && (
+            <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+              <div className="bg-white p-4">
+                <SkillCheckResult phase={phase} />
               </div>
-            ))}
+            </div>
+          )}
           {phase.type === 'handleEncounter' && (
             <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
               <div className="bg-white p-4">
