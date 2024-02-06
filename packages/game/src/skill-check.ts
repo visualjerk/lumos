@@ -68,22 +68,23 @@ export function createSkillCheckPhase(
 
   const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
   cardsInHand.forEach((card, index) => {
-    actions.push({
-      type: 'addToSkillCheck',
-      investigatorId: investigatorId,
-      handCardIndex: index,
-      execute: () => {
-        const skillModifier =
-          card.skillModifier[skillCheckContext.check.skill] ?? 0
-        skillCheckContext.skillModifier += skillModifier
+    const skillModifier = card.skillModifier[skillCheckContext.check.skill]
 
-        skillCheckContext.addedCards.push(card.id)
+    if (skillModifier !== undefined) {
+      actions.push({
+        type: 'addToSkillCheck',
+        investigatorId: investigatorId,
+        handCardIndex: index,
+        execute: () => {
+          skillCheckContext.skillModifier += skillModifier
+          skillCheckContext.addedCards.push(card.id)
 
-        removeCardFromHand(context, investigatorId, index)
+          removeCardFromHand(context, investigatorId, index)
 
-        return createSkillCheckPhase(context, skillCheckContext)
-      },
-    })
+          return createSkillCheckPhase(context, skillCheckContext)
+        },
+      })
+    }
   })
 
   return {
