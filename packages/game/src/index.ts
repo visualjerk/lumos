@@ -7,6 +7,7 @@ export * from './phase'
 export * from './fate'
 export * from './doom'
 export * from './scene'
+export * from './skill-check'
 export type {
   EncounterState,
   EncounterCard,
