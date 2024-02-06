@@ -17,9 +17,11 @@ export default function SkillCheckResult({
     <div className="grid gap-3">
       <div className="flex flex-row gap-3">
         <div>
-          {skillCheckContext.skill < skillCheckContext.difficulty ? '❌' : '✅'}
+          {skillCheckContext.totalSkill < skillCheckContext.difficulty
+            ? '❌'
+            : '✅'}
         </div>
-        <div>Skill: {skillCheckContext.skill}</div>
+        <div>Skill: {skillCheckContext.totalSkill}</div>
         <div>Difficulty: {skillCheckContext.difficulty}</div>
         <div>Fate: {skillCheckContext.fate.symbol}</div>
       </div>
