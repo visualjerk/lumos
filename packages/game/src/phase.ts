@@ -98,16 +98,18 @@ export function createInvestigatorPhase(
 
     const cardsInHand = getInvestigatorCardsInHand(context, investigatorId)
     cardsInHand.forEach((card, index) => {
-      actions.push({
-        type: 'play',
-        investigatorId,
-        handCardIndex: index,
-        execute: () => {
-          const newContext = playCardFromHand(context, investigatorId, index)
-          investigatorContext.actionsMade++
-          return createInvestigatorPhase(newContext, investigatorContext)
-        },
-      })
+      if (card.permanentSkillModifier !== undefined) {
+        actions.push({
+          type: 'play',
+          investigatorId,
+          handCardIndex: index,
+          execute: () => {
+            const newContext = playCardFromHand(context, investigatorId, index)
+            investigatorContext.actionsMade++
+            return createInvestigatorPhase(newContext, investigatorContext)
+          },
+        })
+      }
     })
 
     context.locationStates.forEach((state, locationId) => {
