@@ -5,13 +5,20 @@ export type LocationState = {
   clues: number
 }
 
-export class LocationStates extends Map<LocationId, LocationState> {
-  constructor(locations: LocationCard[]) {
-    super(
-      locations.map((location) => [
-        location.id,
-        { revealed: false, investigatorIds: [], clues: location.initialClues },
-      ])
-    )
-  }
+export class LocationStates extends Map<LocationId, LocationState> {}
+
+export function createInitialLocationStates(
+  locations: LocationCard[],
+  startLocation: LocationId
+): LocationStates {
+  return new LocationStates(
+    locations.map((location) => [
+      location.id,
+      {
+        revealed: location.id === startLocation,
+        investigatorIds: [],
+        clues: location.initialClues,
+      },
+    ])
+  )
 }

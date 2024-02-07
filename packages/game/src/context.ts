@@ -1,4 +1,9 @@
-import { LocationStates, LocationId, LocationCard } from './location'
+import {
+  LocationStates,
+  LocationId,
+  LocationCard,
+  createInitialLocationStates,
+} from './location'
 import {
   Investigator,
   InvestigatorCard,
@@ -18,14 +23,16 @@ export function createInitialContext(
   scenario: Scenario,
   investigators: Investigator[]
 ): Context {
-  const locationStates = new LocationStates(scenario.locationCards)
+  const encounterState = createInitialEncounterState(
+    scenario.encounterCards.map(({ id }) => id)
+  )
+  const locationStates = createInitialLocationStates(
+    scenario.locationCards,
+    scenario.startLocation
+  )
   const investigatorStates = createInitialInvestigatorStates(
     investigators,
     scenario.startLocation
-  )
-  locationStates.get(scenario.startLocation)!.revealed = true
-  const encounterState = createInitialEncounterState(
-    scenario.encounterCards.map(({ id }) => id)
   )
 
   return new Context(
