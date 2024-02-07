@@ -8,8 +8,4 @@ export * from './fate'
 export * from './doom'
 export * from './scene'
 export * from './skill-check'
-export type {
-  EncounterState,
-  EncounterCard,
-  EncounterCardId,
-} from './encounter'
+export * from './encounter'

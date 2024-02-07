@@ -1,23 +1,9 @@
-import { Context } from './context'
-import { Fate, spinFateWheel } from './fate'
-import { InvestigatorCardId, InvestigatorId, Skills } from './investigator'
-import { LocationId } from './location'
-import { CreatePhase, Phase, PhaseAction } from './phase'
-
-export type SkillCheck = {
-  skill: keyof Skills
-  difficulty: number
-  onSuccess: Effect
-  onFailure: Effect
-}
-
-export type EffectContext = {
-  investigatorId: InvestigatorId
-}
-
-export type Effect = {
-  apply: (context: Context, effectContext: EffectContext) => Context
-}
+import { Context } from '../context'
+import { Fate, spinFateWheel } from '../fate'
+import { InvestigatorCardId, InvestigatorId } from '../investigator'
+import { LocationId } from '../location'
+import { CreatePhase, Phase, PhaseAction } from '../phase'
+import { SkillCheck } from './skill-check'
 
 export type SkillCheckContext = {
   locationId: LocationId
@@ -26,11 +12,6 @@ export type SkillCheckContext = {
   nextPhase: (context: Context) => Phase
   addedCards: InvestigatorCardId[]
   skillModifier: number
-}
-
-export type CommitSkillCheckContext = SkillCheckContext & {
-  fate: Fate
-  totalSkill: number
 }
 
 export type SkillCheckPhase = CreatePhase<'skillCheck'> & {
@@ -92,6 +73,11 @@ export function createSkillCheckPhase(
     context,
     skillCheckContext,
   }
+}
+
+export type CommitSkillCheckContext = SkillCheckContext & {
+  fate: Fate
+  totalSkill: number
 }
 
 export type CommitSkillCheckPhase = CreatePhase<'commitSkillCheck'> & {
