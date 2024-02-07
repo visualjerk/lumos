@@ -1,7 +1,7 @@
 import { Effect, SkillCheck } from '../skill-check'
 import { Skills } from './investigator'
 
-export type InvestigatorCardId = string
+export type InvestigatorCardId = `ic${number}`
 
 export type InvestigatorCardBase = {
   id: InvestigatorCardId

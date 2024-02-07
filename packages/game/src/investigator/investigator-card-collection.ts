@@ -1,6 +1,6 @@
 import { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
-export function getInvestigatorCard(cardId: string) {
+export function getInvestigatorCard(cardId: InvestigatorCardId) {
   return InvestigatorCardCollection.get(cardId)!
 }
 
@@ -9,9 +9,9 @@ export const InvestigatorCardCollection = new Map<
   InvestigatorCard
 >([
   [
-    '1',
+    'ic1',
     {
-      id: '1',
+      id: 'ic1',
       type: 'effect',
       name: 'Force Of Will',
       description: 'Draw 2 cards.',
@@ -25,9 +25,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    '2',
+    'ic2',
     {
-      id: '2',
+      id: 'ic2',
       type: 'skill',
       name: 'Lightning Strike',
       description: '',
@@ -35,9 +35,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    '3',
+    'ic3',
     {
-      id: '3',
+      id: 'ic3',
       type: 'skill',
       name: 'Boar Strength',
       description: '',
@@ -45,9 +45,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    '4',
+    'ic4',
     {
-      id: '4',
+      id: 'ic4',
       type: 'effect',
       name: 'Meditate',
       description: 'Heal 2 damage.',
@@ -61,9 +61,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    '5',
+    'ic5',
     {
-      id: '5',
+      id: 'ic5',
       type: 'permanent',
       name: 'Serenity',
       description: '+1 to intelligence checks.',
@@ -72,9 +72,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    '6',
+    'ic6',
     {
-      id: '6',
+      id: 'ic6',
       type: 'effect',
       name: 'Lumos',
       description:
