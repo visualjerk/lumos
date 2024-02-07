@@ -111,13 +111,19 @@ function createInitialInvestigatorState(
   )
 }
 
-export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  constructor(investigators: Investigator[], currentLocation: LocationId) {
-    super(
-      investigators.map((investigator) => [
-        investigator.id,
-        createInitialInvestigatorState(investigator, currentLocation),
-      ])
-    )
-  }
+export class InvestigatorStates extends Map<
+  InvestigatorId,
+  InvestigatorState
+> {}
+
+export function createInitialInvestigatorStates(
+  investigators: Investigator[],
+  currentLocation: LocationId
+): InvestigatorStates {
+  return new InvestigatorStates(
+    investigators.map((investigator) => [
+      investigator.id,
+      createInitialInvestigatorState(investigator, currentLocation),
+    ])
+  )
 }

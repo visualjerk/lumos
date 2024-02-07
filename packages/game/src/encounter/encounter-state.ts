@@ -2,38 +2,40 @@ import { InvestigatorId } from '../investigator'
 import { EncounterCardId } from './encounter-card'
 import { shuffleArray } from '../utils'
 
-export type EncounterState = {
+export class EncounterState {
+  constructor(
+    public deck: EncounterCardId[],
+    public discardPile: EncounterCardId[],
+    public currentCardId: EncounterCardId | null,
+    public investigatorId: InvestigatorId | null
+  ) {}
+
+  draw() {
+    if (this.deck.length === 0) {
+      this.deck = this.discardPile
+      this.discardPile = []
+      this.shuffle()
+    }
+
+    this.currentCardId = this.deck.pop()!
+  }
+
+  discardCurrent() {
+    if (!this.currentCardId) {
+      return
+    }
+
+    this.discardPile.push(this.currentCardId!)
+    this.currentCardId = null
+  }
+
+  shuffle() {
+    this.deck = shuffleArray(this.deck)
+  }
+}
+
+export function createInitialEncounterState(
   deck: EncounterCardId[]
-  discardPile: EncounterCardId[]
-  currentCardId: EncounterCardId | null
-  investigatorId: InvestigatorId | null
-}
-
-export function draw(state: EncounterState): EncounterState {
-  if (state.deck.length === 0) {
-    state.deck = state.discardPile
-    state.discardPile = []
-    shuffle(state)
-  }
-
-  state.currentCardId = state.deck.pop()!
-
-  return state
-}
-
-export function discardCurrent(state: EncounterState): EncounterState {
-  if (!state.currentCardId) {
-    return state
-  }
-
-  state.discardPile.push(state.currentCardId!)
-  state.currentCardId = null
-
-  return state
-}
-
-export function shuffle(state: EncounterState): EncounterState {
-  state.deck = shuffleArray(state.deck)
-
-  return state
+): EncounterState {
+  return new EncounterState(shuffleArray(deck), [], null, null)
 }

@@ -6,38 +6,33 @@ import {
   InvestigatorState,
   InvestigatorStates,
   Skills,
+  createInitialInvestigatorStates,
   getInvestigatorCard,
 } from './investigator'
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
 import { SceneCard, SceneState } from './scene'
-import {
-  EncounterState,
-  draw as drawEncounter,
-  discardCurrent as discardCurrentEncounter,
-} from './encounter'
+import { EncounterState, createInitialEncounterState } from './encounter'
 
 export function createInitialContext(
   scenario: Scenario,
   investigators: Investigator[]
 ): Context {
   const locationStates = new LocationStates(scenario.locationCards)
-  const investigatorStates = new InvestigatorStates(
+  const investigatorStates = createInitialInvestigatorStates(
     investigators,
     scenario.startLocation
   )
   locationStates.get(scenario.startLocation)!.revealed = true
+  const encounterState = createInitialEncounterState(
+    scenario.encounterCards.map(({ id }) => id)
+  )
 
   return new Context(
     scenario,
     { doom: 0, doomCardId: scenario.doomCards[0].id },
     { sceneCardId: scenario.sceneCards[0].id },
-    {
-      deck: scenario.encounterCards.map(({ id }) => id),
-      discardPile: [],
-      currentCardId: null,
-      investigatorId: null,
-    },
+    encounterState,
     locationStates,
     investigators,
     investigatorStates
@@ -105,16 +100,6 @@ export class Context {
     return this.scenario.encounterCards.find(
       (card) => card.id === encounterCardId
     )!
-  }
-
-  drawEncounterCard(): Context {
-    this.encounterState = drawEncounter(this.encounterState)
-    return this
-  }
-
-  discardCurrentEncounterCard(): Context {
-    this.encounterState = discardCurrentEncounter(this.encounterState)
-    return this
   }
 
   moveInvestigator(

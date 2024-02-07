@@ -277,7 +277,7 @@ export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
 export type EncounterPhase = CreatePhase<'encounter'>
 
 export function createEncounterPhase(context: Context): EncounterPhase {
-  context = context.discardCurrentEncounterCard()
+  context.encounterState.discardCurrent()
 
   const actions: PhaseAction[] = []
 
@@ -290,10 +290,9 @@ export function createEncounterPhase(context: Context): EncounterPhase {
       // TODO: add current investigator
       investigatorId: context.investigators[0].id,
       execute: () => {
-        const newContext = context.drawEncounterCard()
-        newContext.encounterState.investigatorId =
-          newContext.investigators[0].id
-        return createHandleEncounterPhase(newContext)
+        context.encounterState.draw()
+        context.encounterState.investigatorId = context.investigators[0].id
+        return createHandleEncounterPhase(context)
       },
     })
   } else {
