@@ -121,9 +121,9 @@ const FireTrap: EncounterCard = {
   description: 'You are caught in a fire trap. Lose 1 health.',
   effect: {
     apply: (context) => {
-      context.investigatorStates.get(
-        context.encounterState.investigatorId!
-      )!.currentHealth -= 1
+      context
+        .getInvestigatorState(context.encounterState.investigatorId!)
+        .addDamage(1)
       return context
     },
   },
@@ -141,9 +141,9 @@ const SpikeTrap: EncounterCard = {
     },
     onFailure: {
       apply: (context) => {
-        context.investigatorStates.get(
-          context.encounterState.investigatorId!
-        )!.currentHealth -= 2
+        context
+          .getInvestigatorState(context.encounterState.investigatorId!)
+          .addDamage(2)
         return context
       },
     },
@@ -162,9 +162,9 @@ const MindSpikes: EncounterCard = {
     },
     onFailure: {
       apply: (context) => {
-        context.investigatorStates.get(
-          context.encounterState.investigatorId!
-        )!.currentHealth -= 2
+        context
+          .getInvestigatorState(context.encounterState.investigatorId!)
+          .addDamage(2)
         return context
       },
     },

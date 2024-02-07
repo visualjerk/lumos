@@ -19,7 +19,7 @@ export default function InvestigatorArea({
       <div className="flex gap-3">
         <div>🔮 {investigator.clues}</div>
         <div>
-          ❤️ {investigator.currentHealth}/{investigator.health}
+          🔥 {investigator.damage} / ❤️ {investigator.health}
         </div>
       </div>
       <div className="flex gap-3">

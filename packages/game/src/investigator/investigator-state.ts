@@ -6,7 +6,7 @@ import type { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
 export class InvestigatorState {
   constructor(
-    public currentHealth: number,
+    public damage: number,
     public clues: number,
     public currentLocation: LocationId,
     public cardsInHand: InvestigatorCardId[],
@@ -14,6 +14,10 @@ export class InvestigatorState {
     public deck: InvestigatorCardId[],
     public discardPile: InvestigatorCardId[]
   ) {}
+
+  addDamage(amount: number) {
+    this.damage += amount
+  }
 
   canDraw(): boolean {
     return this.deck.length > 0 || this.discardPile.length > 0
@@ -87,7 +91,7 @@ function createInitialInvestigatorState(
   currentLocation: LocationId
 ): InvestigatorState {
   return new InvestigatorState(
-    investigator.health,
+    0,
     0,
     currentLocation,
     [],
