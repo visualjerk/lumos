@@ -18,7 +18,7 @@ const investigator: Investigator = {
     agility: 3,
   },
   health: 8,
-  baseDeck: ['1', '1', '2', '2', '3', '4', '4', '5', '5'],
+  baseDeck: ['1', '1', '2', '2', '3', '4', '4', '5', '5', '6', '6'],
 }
 
 export default function GameUI() {

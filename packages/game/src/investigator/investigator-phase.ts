@@ -69,9 +69,28 @@ export function createInvestigatorPhase(
           investigatorId,
           handCardIndex: index,
           execute: () => {
-            context = card.effect.apply(context, { investigatorId })
+            if (card.effect) {
+              context = card.effect.apply(context, {
+                investigatorId,
+                locationId: investigatorState.currentLocation,
+              })
+            }
+
             investigatorState.discard(index)
             investigatorContext.actionsMade++
+
+            if (card.skillCheck) {
+              return createSkillCheckPhase(context, {
+                investigatorId,
+                locationId: investigatorState.currentLocation,
+                skillModifier: 0,
+                addedCards: [],
+                check: card.skillCheck,
+                nextPhase: (context) =>
+                  createInvestigatorPhase(context, investigatorContext),
+              })
+            }
+
             return createInvestigatorPhase(context, investigatorContext)
           },
         })

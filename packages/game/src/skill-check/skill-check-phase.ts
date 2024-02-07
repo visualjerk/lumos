@@ -12,6 +12,7 @@ export type SkillCheckContext = {
   nextPhase: (context: Context) => Phase
   addedCards: InvestigatorCardId[]
   skillModifier: number
+  difficulty: number
 }
 
 export type SkillCheckPhase = CreatePhase<'skillCheck'> & {
@@ -20,12 +21,16 @@ export type SkillCheckPhase = CreatePhase<'skillCheck'> & {
 
 export function createSkillCheckPhase(
   context: Context,
-  skillCheckContext: SkillCheckContext
+  skillCheckContext: Omit<SkillCheckContext, 'difficulty'>
 ): SkillCheckPhase {
   const actions: PhaseAction[] = []
 
-  const { investigatorId } = skillCheckContext
+  const { investigatorId, locationId, check } = skillCheckContext
   const investigatorState = context.getInvestigatorState(investigatorId)
+  const difficulty =
+    check.difficulty instanceof Function
+      ? check.difficulty(context, { investigatorId, locationId })
+      : check.difficulty
 
   actions.push({
     type: 'commitSkillCheck',
@@ -42,6 +47,7 @@ export function createSkillCheckPhase(
         ...skillCheckContext,
         fate,
         totalSkill,
+        difficulty,
       })
     },
   })
@@ -71,7 +77,10 @@ export function createSkillCheckPhase(
     type: 'skillCheck',
     actions,
     context,
-    skillCheckContext,
+    skillCheckContext: {
+      ...skillCheckContext,
+      difficulty,
+    },
   }
 }
 
@@ -90,7 +99,8 @@ export function createCommitSkillCheckPhase(
 ): CommitSkillCheckPhase {
   const actions: PhaseAction[] = []
 
-  const { check, investigatorId, totalSkill } = skillCheckContext
+  const { check, investigatorId, locationId, totalSkill, difficulty } =
+    skillCheckContext
   const investigatorState = context.getInvestigatorState(investigatorId)
 
   actions.push({
@@ -101,11 +111,10 @@ export function createCommitSkillCheckPhase(
         investigatorState.addToDiscardPile(cardId)
       })
 
-      const effect =
-        totalSkill < check.difficulty ? check.onFailure : check.onSuccess
+      const effect = totalSkill < difficulty ? check.onFailure : check.onSuccess
 
       return skillCheckContext.nextPhase(
-        effect.apply(context, { investigatorId })
+        effect.apply(context, { investigatorId, locationId })
       )
     },
   })

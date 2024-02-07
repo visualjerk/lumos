@@ -11,7 +11,7 @@ export default function SkillCheckOverlay({
   investigator: GameInvestigator
 }) {
   const { skillCheckContext, actions } = phase
-  const { check, addedCards, skillModifier } = skillCheckContext
+  const { check, addedCards, skillModifier, difficulty } = skillCheckContext
   const cards = addedCards.map((cardId) => getInvestigatorCard(cardId))
 
   const filteredActions = actions.filter(
@@ -25,7 +25,7 @@ export default function SkillCheckOverlay({
         <div>
           Skill: {investigator.skills[check.skill]} + {skillModifier}
         </div>
-        <div>Difficulty: {check.difficulty}</div>
+        <div>Difficulty: {difficulty}</div>
       </div>
       <div className="flex gap-3 bg-gray-50 p-3">
         {cards.map((card, index) => (

@@ -71,4 +71,30 @@ export const InvestigatorCardCollection = new Map<
       permanentSkillModifier: { intelligence: 1 },
     },
   ],
+  [
+    '6',
+    {
+      id: '6',
+      type: 'effect',
+      name: 'Lumos',
+      description:
+        'Make an investigation check. If you succeed, discover 2 clues.',
+      skillModifier: { intelligence: 1 },
+      skillCheck: {
+        skill: 'intelligence',
+        difficulty: (context, { locationId }) =>
+          context.getLocation(locationId).shroud,
+        onSuccess: {
+          apply: (context, { investigatorId, locationId }) => {
+            context.collectClue(investigatorId, locationId)
+            context.collectClue(investigatorId, locationId)
+            return context
+          },
+        },
+        onFailure: {
+          apply: (context) => context,
+        },
+      },
+    },
+  ],
 ])

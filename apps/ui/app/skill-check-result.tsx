@@ -12,15 +12,15 @@ export default function SkillCheckResult({
   phase: GamePhaseOf<CommitSkillCheckPhase>
 }) {
   const { skillCheckContext, actions } = phase
-  const { addedCards, totalSkill, check, fate } = skillCheckContext
+  const { addedCards, totalSkill, fate, difficulty } = skillCheckContext
   const cards = addedCards.map((cardId) => getInvestigatorCard(cardId))
 
   return (
     <div className="grid gap-3">
       <div className="flex flex-row gap-3">
-        <div>{totalSkill < check.difficulty ? '❌' : '✅'}</div>
+        <div>{totalSkill < difficulty ? '❌' : '✅'}</div>
         <div>Skill: {totalSkill}</div>
-        <div>Difficulty: {check.difficulty}</div>
+        <div>Difficulty: {difficulty}</div>
         <div>Fate: {fate.symbol}</div>
       </div>
       <div className="flex gap-3 bg-gray-50 p-3">

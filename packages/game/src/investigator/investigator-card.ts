@@ -1,4 +1,4 @@
-import { Effect } from '..'
+import { Effect, SkillCheck } from '../skill-check'
 import { Skills } from './investigator'
 
 export type InvestigatorCardId = string
@@ -21,7 +21,8 @@ export type PermanentCard = InvestigatorCardBase & {
 
 export type EffectCard = InvestigatorCardBase & {
   type: 'effect'
-  effect: Effect
+  effect?: Effect
+  skillCheck?: SkillCheck
 }
 
 export type InvestigatorCard = SkillCard | PermanentCard | EffectCard
