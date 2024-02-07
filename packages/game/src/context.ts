@@ -205,8 +205,10 @@ export class Context {
     const skills = { ...investigator.baseSkills }
     Object.keys(skills).forEach((skill) => {
       cards.forEach((card) => {
-        skills[skill as keyof Skills] +=
-          card.permanentSkillModifier?.[skill as keyof Skills] ?? 0
+        if (card.type === 'permanent') {
+          skills[skill as keyof Skills] +=
+            card.permanentSkillModifier[skill as keyof Skills] ?? 0
+        }
       })
     })
 

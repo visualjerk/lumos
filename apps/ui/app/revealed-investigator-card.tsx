@@ -9,7 +9,7 @@ export default function RevealedInvestigatorCard({
   card: GameInvestigatorCard
 }) {
   return (
-    <div className="grid gap-3 bg-white p-3 w-36">
+    <div className="flex flex-col gap-3 bg-white p-3 w-36">
       <div>{card.name}</div>
       <div className="flex flex-row gap-3">
         {Object.entries(card.skillModifier).map(([skill, value]) => (
@@ -18,6 +18,7 @@ export default function RevealedInvestigatorCard({
           </div>
         ))}
       </div>
+      <div className="text-sm">{card.description}</div>
       {card.actions.map((action, index) => (
         <ActionButton key={index} onClick={() => action.execute()}>
           {action.type}

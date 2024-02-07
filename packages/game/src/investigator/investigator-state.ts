@@ -19,11 +19,21 @@ export class InvestigatorState {
     this.damage += amount
   }
 
+  removeDamage(amount: number) {
+    this.damage = Math.max(this.damage - amount, 0)
+  }
+
   canDraw(): boolean {
     return this.deck.length > 0 || this.discardPile.length > 0
   }
 
-  draw() {
+  draw(count = 1) {
+    for (let i = 0; i < count; i++) {
+      this.drawOne()
+    }
+  }
+
+  private drawOne() {
     if (!this.canDraw()) {
       return
     }

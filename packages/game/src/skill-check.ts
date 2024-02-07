@@ -11,8 +11,12 @@ export type SkillCheck = {
   onFailure: Effect
 }
 
+export type EffectContext = {
+  investigatorId: InvestigatorId
+}
+
 export type Effect = {
-  apply: (context: Context) => Context
+  apply: (context: Context, effectContext: EffectContext) => Context
 }
 
 export type SkillCheckContext = {
@@ -114,7 +118,9 @@ export function createCommitSkillCheckPhase(
       const effect =
         totalSkill < check.difficulty ? check.onFailure : check.onSuccess
 
-      return skillCheckContext.nextPhase(effect.apply(context))
+      return skillCheckContext.nextPhase(
+        effect.apply(context, { investigatorId })
+      )
     },
   })
 

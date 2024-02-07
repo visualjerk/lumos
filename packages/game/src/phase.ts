@@ -81,13 +81,27 @@ export function createInvestigatorPhase(
 
     const cardsInHand = investigatorState.getCardsInHand()
     cardsInHand.forEach((card, index) => {
-      if (card.permanentSkillModifier !== undefined) {
+      if (card.type === 'permanent') {
         actions.push({
           type: 'play',
           investigatorId,
           handCardIndex: index,
           execute: () => {
             investigatorState.play(index)
+            investigatorContext.actionsMade++
+            return createInvestigatorPhase(context, investigatorContext)
+          },
+        })
+      }
+
+      if (card.type === 'effect') {
+        actions.push({
+          type: 'play',
+          investigatorId,
+          handCardIndex: index,
+          execute: () => {
+            context = card.effect.apply(context, { investigatorId })
+            investigatorState.discard(index)
             investigatorContext.actionsMade++
             return createInvestigatorPhase(context, investigatorContext)
           },
@@ -316,7 +330,9 @@ export function createHandleEncounterPhase(
     actions.push({
       type: 'endHandleEncounterPhase',
       execute: () => {
-        context = effect.apply(context)
+        context = effect.apply(context, {
+          investigatorId: context.encounterState.investigatorId!,
+        })
         return createEncounterPhase(context)
       },
     })
@@ -327,7 +343,9 @@ export function createHandleEncounterPhase(
       type: 'startSkillCheck',
       execute: () => {
         if (effect) {
-          context = effect.apply(context)
+          context = effect.apply(context, {
+            investigatorId: context.encounterState.investigatorId!,
+          })
         }
 
         return createSkillCheckPhase(context, {
