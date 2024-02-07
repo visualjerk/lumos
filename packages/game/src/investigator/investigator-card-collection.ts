@@ -1,5 +1,9 @@
 import { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
+export function getInvestigatorCard(cardId: string) {
+  return InvestigatorCardCollection.get(cardId)!
+}
+
 export const InvestigatorCardCollection = new Map<
   InvestigatorCardId,
   InvestigatorCard

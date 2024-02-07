@@ -1,16 +1,100 @@
+import { getInvestigatorCard } from './investigator-card-collection'
 import type { LocationId } from '../location'
 import { shuffleArray } from '../utils'
 import type { Investigator, InvestigatorId } from './investigator'
-import type { InvestigatorCardId } from './investigator-card'
+import type { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
-export type InvestigatorState = {
-  currentHealth: number
-  clues: number
+export class InvestigatorState {
+  constructor(
+    public currentHealth: number,
+    public clues: number,
+    public currentLocation: LocationId,
+    public cardsInHand: InvestigatorCardId[],
+    public cardsInPlay: InvestigatorCardId[],
+    public deck: InvestigatorCardId[],
+    public discardPile: InvestigatorCardId[]
+  ) {}
+
+  canDraw(): boolean {
+    return this.deck.length > 0 || this.discardPile.length > 0
+  }
+
+  draw() {
+    if (!this.canDraw()) {
+      return
+    }
+
+    if (this.deck.length === 0) {
+      this.deck = this.discardPile
+      this.discardPile = []
+      this.shuffle()
+    }
+
+    this.cardsInHand.push(this.deck.pop()!)
+  }
+
+  discard(cardIndex: number) {
+    const card = this.cardsInHand[cardIndex]
+
+    if (card == null) {
+      throw new Error('Card not found in hand')
+    }
+
+    this.cardsInHand.splice(cardIndex, 1)
+    this.discardPile.push(card)
+  }
+
+  removeFromHand(cardIndex: number) {
+    const card = this.cardsInHand[cardIndex]
+
+    if (card == null) {
+      throw new Error('Card not found in hand')
+    }
+
+    this.cardsInHand.splice(cardIndex, 1)
+  }
+
+  addToDiscardPile(cardId: InvestigatorCardId) {
+    this.discardPile.push(cardId)
+  }
+
+  play(cardIndex: number) {
+    const card = this.cardsInHand[cardIndex]
+
+    if (card == null) {
+      throw new Error('Card not found in hand')
+    }
+
+    this.cardsInHand.splice(cardIndex, 1)
+    this.cardsInPlay.push(card)
+  }
+
+  shuffle() {
+    this.deck = shuffleArray(this.deck)
+  }
+
+  getCardsInHand(): InvestigatorCard[] {
+    return this.cardsInHand.map((cardId) => getInvestigatorCard(cardId))
+  }
+
+  getCardsInPlay(): InvestigatorCard[] {
+    return this.cardsInPlay.map((cardId) => getInvestigatorCard(cardId))
+  }
+}
+
+function createInitialInvestigatorState(
+  investigator: Investigator,
   currentLocation: LocationId
-  cardsInHand: InvestigatorCardId[]
-  cardsInPlay: InvestigatorCardId[]
-  deck: InvestigatorCardId[]
-  discardPile: InvestigatorCardId[]
+): InvestigatorState {
+  return new InvestigatorState(
+    investigator.health,
+    0,
+    currentLocation,
+    [],
+    [],
+    shuffleArray(investigator.baseDeck),
+    []
+  )
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
@@ -18,94 +102,8 @@ export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
     super(
       investigators.map((investigator) => [
         investigator.id,
-        {
-          currentHealth: investigator.health,
-          clues: 0,
-          currentLocation,
-          cardsInHand: [],
-          cardsInPlay: [],
-          deck: shuffleArray(investigator.baseDeck),
-          discardPile: [],
-        },
+        createInitialInvestigatorState(investigator, currentLocation),
       ])
     )
   }
-}
-
-export function canDraw(state: InvestigatorState): boolean {
-  return state.deck.length > 0 || state.discardPile.length > 0
-}
-
-export function draw(state: InvestigatorState): InvestigatorState {
-  if (state.deck.length === 0) {
-    state.deck = state.discardPile
-    state.discardPile = []
-    shuffle(state)
-  }
-
-  state.cardsInHand.push(state.deck.pop()!)
-
-  return state
-}
-
-export function discard(
-  state: InvestigatorState,
-  cardIndex: number
-): InvestigatorState {
-  const card = state.cardsInHand[cardIndex]
-
-  if (card == null) {
-    throw new Error('Card not found in hand')
-  }
-
-  state.cardsInHand.splice(cardIndex, 1)
-  state.discardPile.push(card)
-
-  return state
-}
-
-export function removeFromHand(
-  state: InvestigatorState,
-  cardIndex: number
-): InvestigatorState {
-  const card = state.cardsInHand[cardIndex]
-
-  if (card == null) {
-    throw new Error('Card not found in hand')
-  }
-
-  state.cardsInHand.splice(cardIndex, 1)
-
-  return state
-}
-
-export function addToDiscardPile(
-  state: InvestigatorState,
-  cardId: InvestigatorCardId
-): InvestigatorState {
-  state.discardPile.push(cardId)
-
-  return state
-}
-
-export function play(
-  state: InvestigatorState,
-  cardIndex: number
-): InvestigatorState {
-  const card = state.cardsInHand[cardIndex]
-
-  if (card == null) {
-    throw new Error('Card not found in hand')
-  }
-
-  state.cardsInHand.splice(cardIndex, 1)
-  state.cardsInPlay.push(card)
-
-  return state
-}
-
-export function shuffle(state: InvestigatorState): InvestigatorState {
-  state.deck = shuffleArray(state.deck)
-
-  return state
 }

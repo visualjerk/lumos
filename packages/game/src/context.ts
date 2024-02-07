@@ -2,17 +2,11 @@ import { LocationStates, LocationId, LocationCard } from './location'
 import {
   Investigator,
   InvestigatorCard,
-  InvestigatorCardCollection,
   InvestigatorId,
   InvestigatorState,
   InvestigatorStates,
   Skills,
-  addToDiscardPile,
-  canDraw,
-  discard,
-  draw,
-  play,
-  removeFromHand,
+  getInvestigatorCard,
 } from './investigator'
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
@@ -107,94 +101,6 @@ export class Context {
     )!
   }
 
-  canDrawFromDeck(investigatorId: InvestigatorId) {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    return canDraw(investigatorState)
-  }
-
-  drawFromDeck(investigatorId: InvestigatorId): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    this.investigatorStates.set(investigatorId, draw(investigatorState))
-
-    return this
-  }
-
-  discardFromHand(investigatorId: InvestigatorId, cardIndex: number): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    this.investigatorStates.set(
-      investigatorId,
-      discard(investigatorState, cardIndex)
-    )
-
-    return this
-  }
-
-  removeCardFromHand(
-    investigatorId: InvestigatorId,
-    cardIndex: number
-  ): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    this.investigatorStates.set(
-      investigatorId,
-      removeFromHand(investigatorState, cardIndex)
-    )
-
-    return this
-  }
-
-  addCardToDiscardPile(
-    investigatorId: InvestigatorId,
-    cardId: string
-  ): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    this.investigatorStates.set(
-      investigatorId,
-      addToDiscardPile(investigatorState, cardId)
-    )
-
-    return this
-  }
-
-  playCardFromHand(investigatorId: InvestigatorId, cardIndex: number): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    this.investigatorStates.set(
-      investigatorId,
-      play(investigatorState, cardIndex)
-    )
-
-    return this
-  }
-
   getEncounterCard(encounterCardId: string) {
     return this.scenario.encounterCards.find(
       (card) => card.id === encounterCardId
@@ -281,21 +187,11 @@ export class Context {
   }
 
   getInvestigatorState(investigatorId: InvestigatorId): InvestigatorState {
-    return this.investigatorStates.get(investigatorId)!
-  }
-
-  getInvestigatorCardsInHand(
-    investigatorId: InvestigatorId
-  ): InvestigatorCard[] {
-    const investigatorState = this.getInvestigatorState(investigatorId)
-    return investigatorState.cardsInHand.map(getInvestigatorCard)
-  }
-
-  getInvestigatorCardsInPlay(
-    investigatorId: InvestigatorId
-  ): InvestigatorCard[] {
-    const investigatorState = this.getInvestigatorState(investigatorId)
-    return investigatorState.cardsInPlay.map(getInvestigatorCard)
+    const investigator = this.investigatorStates.get(investigatorId)
+    if (!investigator) {
+      throw new Error('Investigator not found')
+    }
+    return investigator
   }
 
   getInvestigatorCard(cardId: string): InvestigatorCard {
@@ -304,7 +200,7 @@ export class Context {
 
   getInvestigatorSkills(investigatorId: InvestigatorId): Skills {
     const investigator = this.getInvestigator(investigatorId)
-    const cards = this.getInvestigatorCardsInPlay(investigatorId)
+    const cards = this.getInvestigatorState(investigatorId).getCardsInPlay()
 
     const skills = { ...investigator.baseSkills }
     Object.keys(skills).forEach((skill) => {
@@ -316,8 +212,4 @@ export class Context {
 
     return skills
   }
-}
-
-export function getInvestigatorCard(cardId: string) {
-  return InvestigatorCardCollection.get(cardId)!
 }

@@ -40,6 +40,7 @@ export function createSkillCheckPhase(
   const actions: PhaseAction[] = []
 
   const { investigatorId } = skillCheckContext
+  const investigatorState = context.getInvestigatorState(investigatorId)
 
   actions.push({
     type: 'commitSkillCheck',
@@ -60,7 +61,7 @@ export function createSkillCheckPhase(
     },
   })
 
-  const cardsInHand = context.getInvestigatorCardsInHand(investigatorId)
+  const cardsInHand = investigatorState.getCardsInHand()
   cardsInHand.forEach((card, index) => {
     const skillModifier = card.skillModifier[skillCheckContext.check.skill]
 
@@ -73,7 +74,7 @@ export function createSkillCheckPhase(
           skillCheckContext.skillModifier += skillModifier
           skillCheckContext.addedCards.push(card.id)
 
-          context.removeCardFromHand(investigatorId, index)
+          investigatorState.removeFromHand(index)
 
           return createSkillCheckPhase(context, skillCheckContext)
         },
@@ -100,13 +101,14 @@ export function createCommitSkillCheckPhase(
   const actions: PhaseAction[] = []
 
   const { check, investigatorId, totalSkill } = skillCheckContext
+  const investigatorState = context.getInvestigatorState(investigatorId)
 
   actions.push({
     type: 'endSkillCheck',
     investigatorId,
     execute: () => {
       skillCheckContext.addedCards.forEach((cardId) => {
-        context.addCardToDiscardPile(investigatorId, cardId)
+        investigatorState.addToDiscardPile(cardId)
       })
 
       const effect =

@@ -55,6 +55,7 @@ export function createInvestigatorPhase(
 
     // TODO: add current investigator
     const investigatorId = context.investigators[0].id
+    const investigatorState = context.getInvestigatorState(investigatorId)
 
     actions.push({
       type: 'endInvestigationPhase',
@@ -66,19 +67,19 @@ export function createInvestigatorPhase(
       return actions
     }
 
-    if (context.canDrawFromDeck(investigatorId)) {
+    if (investigatorState.canDraw()) {
       actions.push({
         type: 'draw',
         investigatorId,
         execute: () => {
-          const newContext = context.drawFromDeck(investigatorId)
+          investigatorState.draw()
           investigatorContext.actionsMade++
-          return createInvestigatorPhase(newContext, investigatorContext)
+          return createInvestigatorPhase(context, investigatorContext)
         },
       })
     }
 
-    const cardsInHand = context.getInvestigatorCardsInHand(investigatorId)
+    const cardsInHand = investigatorState.getCardsInHand()
     cardsInHand.forEach((card, index) => {
       if (card.permanentSkillModifier !== undefined) {
         actions.push({
@@ -86,9 +87,9 @@ export function createInvestigatorPhase(
           investigatorId,
           handCardIndex: index,
           execute: () => {
-            const newContext = context.playCardFromHand(investigatorId, index)
+            investigatorState.play(index)
             investigatorContext.actionsMade++
-            return createInvestigatorPhase(newContext, investigatorContext)
+            return createInvestigatorPhase(context, investigatorContext)
           },
         })
       }
@@ -193,9 +194,7 @@ export function createCleanupPhase(context: Context): CleanupPhase {
     type: 'endCleanupPhase',
     execute: () => {
       context.investigators.forEach((investigator) => {
-        if (context.canDrawFromDeck(investigator.id)) {
-          context = context.drawFromDeck(investigator.id)
-        }
+        context.getInvestigatorState(investigator.id).draw()
       })
 
       return createDoomPhase(context)
