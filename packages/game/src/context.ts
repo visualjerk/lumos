@@ -127,6 +127,18 @@ export class Context {
     return this.enemyStates.filter((enemy) => enemy.location === locationId)
   }
 
+  getEngagedEnemies(investigatorId: InvestigatorId): EnemyState[] {
+    return this.enemyStates.filter(
+      (enemy) => enemy.engagedInvestigator === investigatorId
+    )
+  }
+
+  getReadyEngangedEnemy(
+    investigatorId: InvestigatorId
+  ): EnemyState | undefined {
+    return this.getEngagedEnemies(investigatorId).find((enemy) => enemy.ready)
+  }
+
   getEnemyCard(cardId: EncounterCardId): EnemyCard {
     // TODO: Ensure this is really an enemy card
     return this.scenario.encounterCards.find(
@@ -153,6 +165,14 @@ export class Context {
     locationState.revealed = true
 
     return this
+  }
+
+  moveEngagedEnemies(investigatorId: InvestigatorId, locationId: LocationId) {
+    const engagedEnemies = this.getEngagedEnemies(investigatorId)
+
+    engagedEnemies.forEach((enemy) => {
+      enemy.location = locationId
+    })
   }
 
   getLocation(locationId: LocationId): LocationCard {

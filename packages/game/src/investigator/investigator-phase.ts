@@ -3,7 +3,8 @@ import { LocationId, isConnected } from '../location'
 import { InvestigatorId } from './investigator'
 import { createSkillCheckPhase } from '../skill-check'
 import { createDoomPhase } from '../doom'
-import { CreatePhase, PhaseAction, createWinGamePhase } from '../phase'
+import { CreatePhase, Phase, PhaseAction, createWinGamePhase } from '../phase'
+import { createEnemyAttackPhase } from '../enemy'
 
 export type InvestigatorContext = {
   actionsMade: number
@@ -19,11 +20,20 @@ export function createInvestigatorPhase(
   context: Context,
   investigatorContext: InvestigatorContext = { actionsMade: 0 }
 ): InvestigatorPhase {
+  // TODO: add current investigator
+  const investigatorId = context.investigators[0].id
+
+  function executeAction(nextPhase: (context: Context) => Phase) {
+    investigatorContext.actionsMade++
+
+    return createEnemyAttackPhase(context, {
+      investigatorId,
+      nextPhase,
+    })
+  }
+
   function getActions() {
     const actions: PhaseAction[] = []
-
-    // TODO: add current investigator
-    const investigatorId = context.investigators[0].id
     const investigatorState = context.getInvestigatorState(investigatorId)
 
     actions.push({
@@ -40,11 +50,11 @@ export function createInvestigatorPhase(
       actions.push({
         type: 'draw',
         investigatorId,
-        execute: () => {
-          investigatorState.draw()
-          investigatorContext.actionsMade++
-          return createInvestigatorPhase(context, investigatorContext)
-        },
+        execute: () =>
+          executeAction((context) => {
+            investigatorState.draw()
+            return createInvestigatorPhase(context, investigatorContext)
+          }),
       })
     }
 
@@ -55,11 +65,11 @@ export function createInvestigatorPhase(
           type: 'play',
           investigatorId,
           handCardIndex: index,
-          execute: () => {
-            investigatorState.play(index)
-            investigatorContext.actionsMade++
-            return createInvestigatorPhase(context, investigatorContext)
-          },
+          execute: () =>
+            executeAction((context) => {
+              investigatorState.play(index)
+              return createInvestigatorPhase(context, investigatorContext)
+            }),
         })
       }
 
@@ -68,31 +78,32 @@ export function createInvestigatorPhase(
           type: 'play',
           investigatorId,
           handCardIndex: index,
-          execute: () => {
-            if (card.effect) {
-              context = card.effect.apply(context, {
-                investigatorId,
-                locationId: investigatorState.currentLocation,
-              })
-            }
+          execute: () =>
+            executeAction((context) => {
+              if (card.effect) {
+                context = card.effect.apply(context, {
+                  investigatorId,
+                  locationId: investigatorState.currentLocation,
+                })
+              }
 
-            investigatorState.discard(index)
-            investigatorContext.actionsMade++
+              investigatorState.discard(index)
 
-            if (card.skillCheck) {
-              return createSkillCheckPhase(context, {
-                investigatorId,
-                locationId: investigatorState.currentLocation,
-                skillModifier: 0,
-                addedCards: [],
-                check: card.skillCheck,
-                nextPhase: (context) =>
-                  createInvestigatorPhase(context, investigatorContext),
-              })
-            }
+              const skillCheck = card.skillCheck
+              if (skillCheck) {
+                return createSkillCheckPhase(context, {
+                  investigatorId,
+                  locationId: investigatorState.currentLocation,
+                  skillModifier: 0,
+                  addedCards: [],
+                  check: skillCheck,
+                  nextPhase: (context) =>
+                    createInvestigatorPhase(context, investigatorContext),
+                })
+              }
 
-            return createInvestigatorPhase(context, investigatorContext)
-          },
+              return createInvestigatorPhase(context, investigatorContext)
+            }),
         })
       }
     })
@@ -119,15 +130,13 @@ export function createInvestigatorPhase(
         type: 'move',
         investigatorId,
         locationId,
-        execute: () => {
-          const newContext = context.moveInvestigator(
-            investigatorId,
-            locationId
-          )
-          investigatorContext.actionsMade++
+        execute: () =>
+          executeAction((context) => {
+            context.moveInvestigator(investigatorId, locationId)
+            context.moveEngagedEnemies(investigatorId, locationId)
 
-          return createInvestigatorPhase(newContext, investigatorContext)
-        },
+            return createInvestigatorPhase(context, investigatorContext)
+          }),
       })
     }
 
@@ -139,39 +148,38 @@ export function createInvestigatorPhase(
           type: 'investigate',
           investigatorId,
           locationId,
-          execute: () => {
-            investigatorContext.actionsMade++
-
-            return createSkillCheckPhase(context, {
-              investigatorId,
-              locationId,
-              skillModifier: 0,
-              addedCards: [],
-              check: {
-                skill: 'intelligence',
-                difficulty: location.shroud,
-                onSuccess: {
-                  apply: (context) =>
-                    context.collectClue(investigatorId, locationId),
+          execute: () =>
+            executeAction((context) =>
+              createSkillCheckPhase(context, {
+                investigatorId,
+                locationId,
+                skillModifier: 0,
+                addedCards: [],
+                check: {
+                  skill: 'intelligence',
+                  difficulty: location.shroud,
+                  onSuccess: {
+                    apply: (context) =>
+                      context.collectClue(investigatorId, locationId),
+                  },
+                  onFailure: {
+                    apply: (context) => context,
+                  },
                 },
-                onFailure: {
-                  apply: (context) => context,
-                },
-              },
-              nextPhase: (context) => {
-                const scene = context.getSceneCard()
-                const totalClues = context.getTotalInvestigatorClues()
-                if (scene.clueTreshold <= totalClues) {
-                  context.investigatorStates.forEach((state) => {
-                    state.clues = 0
-                  })
-                  return createAdvanceScenePhase(context, investigatorContext)
-                }
+                nextPhase: (context) => {
+                  const scene = context.getSceneCard()
+                  const totalClues = context.getTotalInvestigatorClues()
+                  if (scene.clueTreshold <= totalClues) {
+                    context.investigatorStates.forEach((state) => {
+                      state.clues = 0
+                    })
+                    return createAdvanceScenePhase(context, investigatorContext)
+                  }
 
-                return createInvestigatorPhase(context, investigatorContext)
-              },
-            })
-          },
+                  return createInvestigatorPhase(context, investigatorContext)
+                },
+              })
+            ),
         })
       }
     }

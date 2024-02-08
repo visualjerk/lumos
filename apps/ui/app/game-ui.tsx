@@ -9,6 +9,7 @@ import ActionButton from './action-button'
 import EncounterOverlay from './encounter-overlay'
 import SkillCheckOverlay from './skill-check-overlay'
 import LocationEnemy from './location-enemy'
+import EnemyAttackOverlay from './enemy-attack-overlay'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -75,6 +76,13 @@ export default function GameUI() {
             <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
               <div className="bg-white p-4">
                 <EncounterOverlay phase={phase} />
+              </div>
+            </div>
+          )}
+          {phase.type === 'enemyAttack' && (
+            <div className="inset-0 fixed bg-gray-200 bg-opacity-50 grid place-content-center">
+              <div className="bg-white p-4">
+                <EnemyAttackOverlay phase={phase} />
               </div>
             </div>
           )}

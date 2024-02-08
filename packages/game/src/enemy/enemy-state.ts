@@ -1,4 +1,6 @@
-import { EncounterCardId, InvestigatorId } from '..'
+import { Context } from '../context'
+import { InvestigatorId } from '../investigator'
+import { EncounterCardId } from '../encounter'
 import { LocationId } from '../location'
 import { EnemyCard } from './enemy-card'
 
@@ -7,8 +9,9 @@ export type EnemyStateProps = {
   health: number
   strength: number
   damage: number
+  ready: boolean
   location: LocationId
-  engangedInvestigator: InvestigatorId | null
+  engagedInvestigator: InvestigatorId | null
 }
 
 export class EnemyState implements EnemyStateProps {
@@ -18,8 +21,9 @@ export class EnemyState implements EnemyStateProps {
     public strength: number,
     public attackDamage: number,
     public damage: number,
+    public ready: boolean = true,
     public location: LocationId,
-    public engangedInvestigator: InvestigatorId | null = null
+    public engagedInvestigator: InvestigatorId | null = null
   ) {}
 
   addDamage(amount: number) {
@@ -28,6 +32,17 @@ export class EnemyState implements EnemyStateProps {
 
   isDead(): boolean {
     return this.health <= 0
+  }
+
+  attackEnganged(context: Context) {
+    if (!this.engagedInvestigator) {
+      return
+    }
+    const investigatorState = context.getInvestigatorState(
+      this.engagedInvestigator
+    )
+    investigatorState.addDamage(this.attackDamage)
+    this.ready = false
   }
 }
 
@@ -42,6 +57,7 @@ function createInitialEnemyState(
     card.strength,
     card.attackDamage,
     0,
+    true,
     location,
     engagedInvestigator
   )
