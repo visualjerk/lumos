@@ -117,6 +117,7 @@ const StormWyvern: SceneCard = {
 
 const FireTrap: EncounterCard = {
   id: 'fire-trap',
+  type: 'trap',
   name: 'Fire Trap',
   description: 'You are caught in a fire trap. Lose 1 health.',
   effect: {
@@ -129,6 +130,7 @@ const FireTrap: EncounterCard = {
 
 const SpikeTrap: EncounterCard = {
   id: 'spike-trap',
+  type: 'trap',
   name: 'Spike Trap',
   description: 'Make an agility check (3). If you fail, lose 2 health.',
   skillCheck: {
@@ -148,6 +150,7 @@ const SpikeTrap: EncounterCard = {
 
 const MindSpikes: EncounterCard = {
   id: 'mind-spikes',
+  type: 'trap',
   name: 'Mind Spikes',
   description: 'Make an intelligence check (3). If you fail, lose 2 health.',
   skillCheck: {

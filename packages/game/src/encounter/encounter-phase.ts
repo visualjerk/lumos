@@ -46,53 +46,66 @@ export type HandleEncounterPhase = CreatePhase<'handleEncounter'>
 export function createHandleEncounterPhase(
   context: Context
 ): HandleEncounterPhase {
-  const actions: PhaseAction[] = []
+  function getActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
 
-  const encounterCard = context.getEncounterCard(
-    context.encounterState.currentCardId!
-  )
+    const encounterCard = context.getEncounterCard(
+      context.encounterState.currentCardId!
+    )
 
-  const { effect, skillCheck } = encounterCard
+    const investigatorId = context.encounterState.investigatorId!
+    const locationId = context.getInvestigatorLocation(investigatorId).id
 
-  if (effect && !skillCheck) {
-    actions.push({
-      type: 'endHandleEncounterPhase',
-      execute: () => {
-        context = effect.apply(context, {
-          investigatorId: context.encounterState.investigatorId!,
-        })
-        return createEncounterPhase(context)
-      },
-    })
-  }
+    if (encounterCard.type === 'enemy') {
+      // Ignore for now
+      return actions
+    }
 
-  if (skillCheck) {
-    actions.push({
-      type: 'startSkillCheck',
-      execute: () => {
-        if (effect) {
+    const { effect, skillCheck } = encounterCard
+
+    if (effect && !skillCheck) {
+      actions.push({
+        type: 'endHandleEncounterPhase',
+        execute: () => {
           context = effect.apply(context, {
-            investigatorId: context.encounterState.investigatorId!,
+            investigatorId,
+            locationId,
           })
-        }
+          return createEncounterPhase(context)
+        },
+      })
+    }
 
-        return createSkillCheckPhase(context, {
-          check: skillCheck,
-          investigatorId: context.encounterState.investigatorId!,
-          locationId: context.getInvestigatorLocation(
-            context.encounterState.investigatorId!
-          ).id,
-          nextPhase: (context) => createEncounterPhase(context),
-          skillModifier: 0,
-          addedCards: [],
-        })
-      },
-    })
+    if (skillCheck) {
+      actions.push({
+        type: 'startSkillCheck',
+        execute: () => {
+          if (effect) {
+            context = effect.apply(context, {
+              investigatorId,
+              locationId,
+            })
+          }
+
+          return createSkillCheckPhase(context, {
+            check: skillCheck,
+            investigatorId: context.encounterState.investigatorId!,
+            locationId: context.getInvestigatorLocation(
+              context.encounterState.investigatorId!
+            ).id,
+            nextPhase: (context) => createEncounterPhase(context),
+            skillModifier: 0,
+            addedCards: [],
+          })
+        },
+      })
+    }
+    return actions
   }
 
   return {
     type: 'handleEncounter',
-    actions,
+    actions: getActions(),
     context,
   }
 }
