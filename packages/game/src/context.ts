@@ -169,7 +169,7 @@ export class Context {
     }
 
     if (location.clues === 0) {
-      throw new Error('Location has no clues')
+      return this
     }
 
     location.clues--
