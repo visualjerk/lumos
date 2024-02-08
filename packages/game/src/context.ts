@@ -18,7 +18,17 @@ import {
 import { Scenario } from './scenario'
 import { DoomCard, DoomCardId, DoomState } from './doom'
 import { SceneCard, SceneState } from './scene'
-import { EncounterState, createInitialEncounterState } from './encounter'
+import {
+  EncounterCardId,
+  EncounterState,
+  createInitialEncounterState,
+} from './encounter'
+import {
+  EnemyCard,
+  EnemyState,
+  EnemyStates,
+  createInitialEnemyStates,
+} from './enemy'
 
 export function createInitialContext(
   scenario: Scenario,
@@ -27,6 +37,7 @@ export function createInitialContext(
   const encounterState = createInitialEncounterState(
     scenario.encounterCards.map(({ id }) => id)
   )
+  const enemyStates = createInitialEnemyStates()
   const locationStates = createInitialLocationStates(
     scenario.locationCards,
     scenario.startLocation
@@ -41,6 +52,7 @@ export function createInitialContext(
     { doom: 0, doomCardId: scenario.doomCards[0].id },
     { sceneCardId: scenario.sceneCards[0].id },
     encounterState,
+    enemyStates,
     locationStates,
     investigators,
     investigatorStates
@@ -53,6 +65,7 @@ export class Context {
     public doomState: DoomState,
     public sceneState: SceneState,
     public encounterState: EncounterState,
+    public enemyStates: EnemyStates,
     public locationStates: LocationStates,
     public investigators: Investigator[],
     public investigatorStates: InvestigatorStates
@@ -108,6 +121,17 @@ export class Context {
     return this.scenario.encounterCards.find(
       (card) => card.id === encounterCardId
     )!
+  }
+
+  getLocationEnemies(locationId: LocationId): EnemyState[] {
+    return this.enemyStates.filter((enemy) => enemy.location === locationId)
+  }
+
+  getEnemyCard(cardId: EncounterCardId): EnemyCard {
+    // TODO: Ensure this is really an enemy card
+    return this.scenario.encounterCards.find(
+      (card) => card.id === cardId
+    )! as EnemyCard
   }
 
   moveInvestigator(

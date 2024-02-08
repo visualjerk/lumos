@@ -1,6 +1,7 @@
 import { InvestigatorId } from '../investigator'
 import { EncounterCardId } from './encounter-card'
 import { shuffleArray } from '../utils'
+import { Context } from '../context'
 
 export class EncounterState {
   constructor(
@@ -17,15 +18,29 @@ export class EncounterState {
       this.shuffle()
     }
 
+    if (this.deck.length === 0) {
+      throw new Error('No encounter cards left')
+    }
+
     this.currentCardId = this.deck.pop()!
   }
 
-  discardCurrent() {
-    if (!this.currentCardId) {
+  addToDiscardPile(cardId: EncounterCardId) {
+    this.discardPile.push(cardId)
+  }
+
+  resetCurrent(context: Context) {
+    if (this.currentCardId === null) {
       return
     }
+    const encounterCard = context.getEncounterCard(
+      context.encounterState.currentCardId!
+    )
 
-    this.discardPile.push(this.currentCardId!)
+    if (encounterCard.type !== 'enemy') {
+      this.discardPile.push(this.currentCardId!)
+    }
+
     this.currentCardId = null
   }
 

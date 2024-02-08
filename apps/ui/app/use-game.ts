@@ -1,11 +1,13 @@
 import {
   DoomCard,
   DoomState,
+  EnemyCard,
+  EnemyStateProps,
   GameAction,
   Investigator,
   InvestigatorCard,
   InvestigatorCardCollection,
-  InvestigatorState,
+  InvestigatorStateProps,
   LocationCard,
   LocationId,
   Position,
@@ -21,7 +23,7 @@ export type GameInvestigatorCard = InvestigatorCard & {
 
 export type GameInvestigator = Investigator &
   Omit<
-    InvestigatorState,
+    InvestigatorStateProps,
     'cardsInHand' | 'cardsInPlay' | 'deck' | 'discardPile'
   > & {
     skills: Skills
@@ -38,7 +40,10 @@ export type GameLocation = LocationCard & {
   clues: number
   actions: GameAction[]
   investigators: Investigator[]
+  enemies: GameEnemy[]
 }
+
+export type GameEnemy = EnemyCard & EnemyStateProps
 
 export type GameDoom = DoomCard & DoomState
 
@@ -97,6 +102,10 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       position: context.scenario.layout.get(location.id)!,
       actions: getLocationActions(location.id),
       investigators: context.getLocationInvestigators(location.id),
+      enemies: context.getLocationEnemies(location.id).map((enemyState) => ({
+        ...enemyState,
+        ...context.getEnemyCard(enemyState.cardId),
+      })),
     })
   )
 

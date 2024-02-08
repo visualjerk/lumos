@@ -8,6 +8,7 @@ import InvestigatorArea from './investigator-area'
 import ActionButton from './action-button'
 import EncounterOverlay from './encounter-overlay'
 import SkillCheckOverlay from './skill-check-overlay'
+import LocationEnemy from './location-enemy'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -129,6 +130,9 @@ export default function GameUI() {
               <div key={investigator.id} className=" text-purple-500">
                 {investigator.name}
               </div>
+            ))}
+            {location.enemies.map((enemy, index) => (
+              <LocationEnemy key={index} enemy={enemy} />
             ))}
             {location.actions.map((action, index) => (
               <ActionButton key={index} onClick={() => action.execute()}>

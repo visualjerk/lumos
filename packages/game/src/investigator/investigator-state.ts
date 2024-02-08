@@ -4,7 +4,17 @@ import { shuffleArray } from '../utils'
 import type { Investigator, InvestigatorId } from './investigator'
 import type { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
-export class InvestigatorState {
+export type InvestigatorStateProps = {
+  damage: number
+  clues: number
+  currentLocation: LocationId
+  cardsInHand: InvestigatorCardId[]
+  cardsInPlay: InvestigatorCardId[]
+  deck: InvestigatorCardId[]
+  discardPile: InvestigatorCardId[]
+}
+
+export class InvestigatorState implements InvestigatorStateProps {
   constructor(
     public damage: number,
     public clues: number,
@@ -42,6 +52,10 @@ export class InvestigatorState {
       this.deck = this.discardPile
       this.discardPile = []
       this.shuffle()
+    }
+
+    if (this.deck.length === 0) {
+      throw new Error('No cards left')
     }
 
     this.cardsInHand.push(this.deck.pop()!)

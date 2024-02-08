@@ -168,6 +168,26 @@ const MindSpikes: EncounterCard = {
   },
 }
 
+const Acromantula: EncounterCard = {
+  id: 'acromantula',
+  type: 'enemy',
+  name: 'Acromantula',
+  description: 'A giant spider jumps at you.',
+  health: 3,
+  strength: 3,
+  attackDamage: 1,
+}
+
+const Dementor: EncounterCard = {
+  id: 'dementor',
+  type: 'enemy',
+  name: 'Dementor',
+  description: 'A dementor is coming for you. You feel cold and hopeless.',
+  health: 5,
+  strength: 4,
+  attackDamage: 2,
+}
+
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [
     Aisle2,
@@ -180,7 +200,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   ],
   doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
-  encounterCards: [FireTrap, MindSpikes, SpikeTrap],
+  encounterCards: [FireTrap, MindSpikes, SpikeTrap, Acromantula, Dementor],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],

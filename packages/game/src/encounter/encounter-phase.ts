@@ -6,7 +6,7 @@ import { createInvestigatorPhase } from '../investigator'
 export type EncounterPhase = CreatePhase<'encounter'>
 
 export function createEncounterPhase(context: Context): EncounterPhase {
-  context.encounterState.discardCurrent()
+  context.encounterState.resetCurrent(context)
 
   const actions: PhaseAction[] = []
 
@@ -57,7 +57,14 @@ export function createHandleEncounterPhase(
     const locationId = context.getInvestigatorLocation(investigatorId).id
 
     if (encounterCard.type === 'enemy') {
-      // Ignore for now
+      actions.push({
+        type: 'endHandleEncounterPhase',
+        execute: () => {
+          context.enemyStates.add(encounterCard, locationId, investigatorId)
+          return createEncounterPhase(context)
+        },
+      })
+
       return actions
     }
 

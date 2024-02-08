@@ -1,5 +1,5 @@
 import { Effect, SkillCheck } from '../skill-check'
-import { EnemyCard } from './enemy'
+import { EnemyCard } from '../enemy'
 
 export type EncounterCardId = string
 
