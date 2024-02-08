@@ -26,9 +26,9 @@ export type Phase =
   | AdvanceScenePhase
   | EncounterPhase
   | HandleEncounterPhase
-  | EnemyAttackPhase
   | InvestigatorPhase
   | EnemyPhase
+  | EnemyAttackPhase
   | CleanupPhase
   | EndGamePhase
   | WinGamePhase

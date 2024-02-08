@@ -1,11 +1,24 @@
 import { CreatePhase, Phase, PhaseAction } from '../phase'
 import { Context } from '../context'
-import { InvestigatorId } from '../investigator'
+import { InvestigatorId, createCleanupPhase } from '../investigator'
 
 export type EnemyPhase = CreatePhase<'enemy'>
 
 export function createEnemyPhase(context: Context): EnemyPhase {
   const actions: PhaseAction[] = []
+
+  actions.push({
+    type: 'endEnemyPhase',
+    execute: () => {
+      // TODO: add current investigator
+      const investigatorId = context.investigators[0].id
+
+      return createEnemyAttackPhase(context, {
+        investigatorId,
+        nextPhase: (context) => createCleanupPhase(context),
+      })
+    },
+  })
 
   return {
     type: 'enemy',
@@ -34,6 +47,11 @@ export function createEnemyAttackPhase(
   const engagedEnemy = getNextEnemy()
 
   if (!engagedEnemy) {
+    context
+      .getEngagedEnemies(enemyAttackContext.investigatorId)
+      .forEach((enemy) => {
+        enemy.ready = true
+      })
     return enemyAttackContext.nextPhase(context)
   }
 
@@ -44,19 +62,7 @@ export function createEnemyAttackPhase(
     execute: () => {
       engagedEnemy.attackEnganged(context)
 
-      if (getNextEnemy()) {
-        enemyAttackContext.nextPhase = (context) => {
-          return createEnemyAttackPhase(context, enemyAttackContext)
-        }
-      }
-
-      context
-        .getEngagedEnemies(enemyAttackContext.investigatorId)
-        .forEach((enemy) => {
-          enemy.ready = true
-        })
-
-      return enemyAttackContext.nextPhase(context)
+      return createEnemyAttackPhase(context, enemyAttackContext)
     },
   })
 

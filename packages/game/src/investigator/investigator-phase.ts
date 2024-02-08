@@ -4,7 +4,7 @@ import { InvestigatorId } from './investigator'
 import { createSkillCheckPhase } from '../skill-check'
 import { createDoomPhase } from '../doom'
 import { CreatePhase, Phase, PhaseAction, createWinGamePhase } from '../phase'
-import { createEnemyAttackPhase } from '../enemy'
+import { createEnemyAttackPhase, createEnemyPhase } from '../enemy'
 
 export type InvestigatorContext = {
   actionsMade: number
@@ -39,7 +39,7 @@ export function createInvestigatorPhase(
     actions.push({
       type: 'endInvestigationPhase',
       investigatorId,
-      execute: () => createCleanupPhase(context),
+      execute: () => createEnemyPhase(context),
     })
 
     if (investigatorContext.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
