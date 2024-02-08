@@ -43,7 +43,10 @@ export type GameLocation = LocationCard & {
   enemies: GameEnemy[]
 }
 
-export type GameEnemy = EnemyCard & EnemyStateProps
+export type GameEnemy = EnemyCard &
+  EnemyStateProps & {
+    actions: GameAction[]
+  }
 
 export type GameDoom = DoomCard & DoomState
 
@@ -102,15 +105,23 @@ export function useGame(scenario: Scenario, _investigators: Investigator[]) {
       position: context.scenario.layout.get(location.id)!,
       actions: getLocationActions(location.id),
       investigators: context.getLocationInvestigators(location.id),
-      enemies: context.getLocationEnemies(location.id).map((enemyState) => ({
-        ...enemyState,
-        ...context.getEnemyCard(enemyState.cardId),
-      })),
+      enemies: context
+        .getLocationEnemies(location.id)
+        .map((enemyState, index) => ({
+          ...enemyState,
+          ...context.getEnemyCard(enemyState.cardId),
+          actions: phase.actions.filter(
+            (action) =>
+              action.locationId === location.id && action.enemyIndex == index
+          ),
+        })),
     })
   )
 
   function getLocationActions(locationId: LocationId): GameAction[] {
-    return phase.actions.filter((action) => action.locationId === locationId)
+    return phase.actions.filter(
+      (action) => action.locationId === locationId && action.enemyIndex == null
+    )
   }
 
   const doom: GameDoom = {

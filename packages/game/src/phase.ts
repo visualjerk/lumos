@@ -16,6 +16,7 @@ export type PhaseAction = {
   type: string
   locationId?: LocationId
   investigatorId?: InvestigatorId
+  enemyIndex?: number
   handCardIndex?: number
   execute: () => Phase
 }

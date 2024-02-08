@@ -16,7 +16,7 @@ const investigator: Investigator = {
   name: 'Isabel Brimble',
   baseSkills: {
     intelligence: 4,
-    strength: 2,
+    strength: 5,
     agility: 3,
   },
   health: 8,
@@ -45,7 +45,7 @@ export default function GameUI() {
   const currentInvestigator = investigators[0]
 
   return (
-    <div className="max-w-screen-lg">
+    <div className="max-w-screen-xl">
       <div className="grid grid-cols-3 gap-3">
         <div>
           <div className="text-2xl ">Phase: {phase.type}</div>

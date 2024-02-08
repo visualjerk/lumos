@@ -1,3 +1,4 @@
+import ActionButton from './action-button'
 import { GameEnemy } from './use-game'
 
 export default function LocationEnemy({ enemy }: { enemy: GameEnemy }) {
@@ -10,6 +11,11 @@ export default function LocationEnemy({ enemy }: { enemy: GameEnemy }) {
         </div>
         <div>💪 {enemy.strength}</div>
       </div>
+      {enemy.actions.map((action, index) => (
+        <ActionButton key={index} onClick={() => action.execute()}>
+          {action.type}
+        </ActionButton>
+      ))}
     </div>
   )
 }

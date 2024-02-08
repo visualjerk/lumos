@@ -31,7 +31,7 @@ export class EnemyState implements EnemyStateProps {
   }
 
   isDead(): boolean {
-    return this.health <= 0
+    return this.damage >= this.health
   }
 
   attackEnganged(context: Context) {
@@ -70,6 +70,11 @@ export class EnemyStates extends Array<EnemyState> {
     engagedInvestigator: InvestigatorId | null = null
   ) {
     this.push(createInitialEnemyState(card, location, engagedInvestigator))
+  }
+
+  remove(enemy: EnemyState) {
+    const index = this.indexOf(enemy)
+    this.splice(index, 1)
   }
 }
 

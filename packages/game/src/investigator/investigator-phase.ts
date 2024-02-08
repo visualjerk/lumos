@@ -113,6 +113,8 @@ export function createInvestigatorPhase(
       actions.push(...locationActions)
     })
 
+    actions.push(...getEnemyActions(investigatorId))
+
     return actions
   }
 
@@ -182,6 +184,57 @@ export function createInvestigatorPhase(
             ),
         })
       }
+    }
+
+    return actions
+  }
+
+  function getEnemyActions(investigatorId: InvestigatorId): PhaseAction[] {
+    const actions: PhaseAction[] = []
+
+    const investigator = context.getInvestigatorState(investigatorId)
+    const locationId = investigator.currentLocation
+    const enemies = context.getLocationEnemies(locationId)
+
+    if (enemies) {
+      enemies.forEach((enemy, index) => {
+        actions.push({
+          type: 'attack',
+          investigatorId,
+          locationId,
+          enemyIndex: index,
+          execute: () =>
+            createSkillCheckPhase(context, {
+              check: {
+                skill: 'strength',
+                difficulty: enemy.strength,
+                onSuccess: {
+                  apply: (context) => {
+                    enemy.addDamage(1)
+
+                    if (enemy.isDead()) {
+                      context.enemyStates.remove(enemy)
+                      context.encounterState.addToDiscardPile(enemy.cardId)
+                    }
+
+                    return context
+                  },
+                },
+                onFailure: {
+                  apply: (context) => context,
+                },
+              },
+              investigatorId,
+              locationId,
+              skillModifier: 0,
+              addedCards: [],
+              nextPhase: (context) => {
+                investigatorContext.actionsMade++
+                return createInvestigatorPhase(context, investigatorContext)
+              },
+            }),
+        })
+      })
     }
 
     return actions

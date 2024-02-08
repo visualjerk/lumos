@@ -173,7 +173,7 @@ const Acromantula: EncounterCard = {
   type: 'enemy',
   name: 'Acromantula',
   description: 'A giant spider jumps at you.',
-  health: 3,
+  health: 2,
   strength: 3,
   attackDamage: 1,
 }
@@ -200,7 +200,14 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   ],
   doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
-  encounterCards: [FireTrap, MindSpikes, SpikeTrap, Acromantula, Dementor],
+  encounterCards: [
+    FireTrap,
+    MindSpikes,
+    SpikeTrap,
+    Acromantula,
+    Acromantula,
+    Dementor,
+  ],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],
