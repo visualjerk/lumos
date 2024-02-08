@@ -16,7 +16,6 @@ export function createInitialLocationStates(
       location.id,
       {
         revealed: location.id === startLocation,
-        investigatorIds: [],
         clues: location.initialClues,
       },
     ])
