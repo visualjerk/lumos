@@ -1,4 +1,9 @@
-import { Phase, PhaseAction, createInitialPhase } from './phase'
+import {
+  Phase,
+  PhaseAction,
+  createEndGamePhase,
+  createInitialPhase,
+} from './phase'
 import { createInitialContext } from './context'
 import { Investigator } from './investigator'
 import { Scenario } from './scenario'
@@ -47,7 +52,12 @@ function createGameFromPhase(phase: Phase): Game {
   }
 
   function executePhaseAction(action: PhaseAction) {
-    const nextPhase = action.execute()
+    let nextPhase = action.execute()
+
+    if (nextPhase.context.investigatorStates.allDefeated()) {
+      nextPhase = createEndGamePhase(nextPhase.context)
+    }
+
     onChange(createGameFromPhase(nextPhase))
   }
 

@@ -16,6 +16,7 @@ export type InvestigatorStateProps = {
 
 export class InvestigatorState implements InvestigatorStateProps {
   constructor(
+    public health: number,
     public damage: number,
     public clues: number,
     public currentLocation: LocationId,
@@ -31,6 +32,10 @@ export class InvestigatorState implements InvestigatorStateProps {
 
   removeDamage(amount: number) {
     this.damage = Math.max(this.damage - amount, 0)
+  }
+
+  isDefeated(): boolean {
+    return this.damage >= this.health
   }
 
   canDraw(): boolean {
@@ -115,6 +120,7 @@ function createInitialInvestigatorState(
   currentLocation: LocationId
 ): InvestigatorState {
   return new InvestigatorState(
+    investigator.health,
     0,
     0,
     currentLocation,
@@ -125,10 +131,11 @@ function createInitialInvestigatorState(
   )
 }
 
-export class InvestigatorStates extends Map<
-  InvestigatorId,
-  InvestigatorState
-> {}
+export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
+  allDefeated(): boolean {
+    return [...this.values()].every((state) => state.isDefeated())
+  }
+}
 
 export function createInitialInvestigatorStates(
   investigators: Investigator[],
