@@ -210,13 +210,7 @@ export function createInvestigatorPhase(
                 difficulty: enemy.strength,
                 onSuccess: {
                   apply: (context) => {
-                    enemy.addDamage(1)
-
-                    if (enemy.isDead()) {
-                      context.enemyStates.remove(enemy)
-                      context.encounterState.addToDiscardPile(enemy.cardId)
-                    }
-
+                    enemy.addDamage(context, 1)
                     return context
                   },
                 },

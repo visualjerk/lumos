@@ -26,11 +26,16 @@ export class EnemyState implements EnemyStateProps {
     public engagedInvestigator: InvestigatorId | null = null
   ) {}
 
-  addDamage(amount: number) {
+  addDamage(context: Context, amount: number) {
     this.damage += amount
+
+    if (this.isDefeated()) {
+      context.encounterState.addToDiscardPile(this.cardId)
+      context.enemyStates.remove(this)
+    }
   }
 
-  isDead(): boolean {
+  isDefeated(): boolean {
     return this.damage >= this.health
   }
 
