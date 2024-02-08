@@ -7,6 +7,7 @@ import {
 import {
   Investigator,
   InvestigatorCard,
+  InvestigatorCardId,
   InvestigatorId,
   InvestigatorState,
   InvestigatorStates,
@@ -186,7 +187,7 @@ export class Context {
     return investigator
   }
 
-  getInvestigatorCard(cardId: string): InvestigatorCard {
+  getInvestigatorCard(cardId: InvestigatorCardId): InvestigatorCard {
     return getInvestigatorCard(cardId)
   }
 
