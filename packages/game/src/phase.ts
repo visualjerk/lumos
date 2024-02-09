@@ -11,6 +11,7 @@ import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 import { EncounterPhase, HandleEncounterPhase } from './encounter'
 import { AdvanceDoomPhase, DoomPhase } from './doom'
 import { EnemyAttackPhase, EnemyPhase } from './enemy'
+import { ActionPhase } from './action'
 
 export type PhaseAction = {
   type: string
@@ -35,6 +36,7 @@ export type Phase =
   | WinGamePhase
   | SkillCheckPhase
   | CommitSkillCheckPhase
+  | ActionPhase
 
 export type CreatePhase<Type extends string> = {
   type: Type

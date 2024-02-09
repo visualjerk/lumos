@@ -4,6 +4,8 @@ export function getInvestigatorCard(cardId: InvestigatorCardId) {
   return InvestigatorCardCollection.get(cardId)!
 }
 
+// TODO: create common actions
+
 export const InvestigatorCardCollection = new Map<
   InvestigatorCardId,
   InvestigatorCard
@@ -12,16 +14,11 @@ export const InvestigatorCardCollection = new Map<
     'ic1',
     {
       id: 'ic1',
-      type: 'effect',
+      type: 'action',
       name: 'Force Of Will',
       description: 'Draw 2 cards.',
       skillModifier: { intelligence: 2 },
-      effect: {
-        apply: (context, { investigatorId }) => {
-          context.getInvestigatorState(investigatorId).draw(2)
-          return context
-        },
-      },
+      action: { type: 'draw', amount: 2, target: 'self' },
     },
   ],
   [

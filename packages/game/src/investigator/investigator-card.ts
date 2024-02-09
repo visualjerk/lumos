@@ -1,3 +1,4 @@
+import { Action } from '../action'
 import { Effect, SkillCheck } from '../skill-check'
 import { Skills } from './investigator'
 
@@ -25,4 +26,13 @@ export type EffectCard = InvestigatorCardBase & {
   skillCheck?: SkillCheck
 }
 
-export type InvestigatorCard = SkillCard | PermanentCard | EffectCard
+export type ActionCard = InvestigatorCardBase & {
+  type: 'action'
+  action: Action
+}
+
+export type InvestigatorCard =
+  | SkillCard
+  | PermanentCard
+  | EffectCard
+  | ActionCard

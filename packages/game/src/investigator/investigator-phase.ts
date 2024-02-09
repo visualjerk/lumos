@@ -5,6 +5,7 @@ import { createSkillCheckPhase } from '../skill-check'
 import { createDoomPhase } from '../doom'
 import { CreatePhase, Phase, PhaseAction, createWinGamePhase } from '../phase'
 import { createEnemyAttackPhase, createEnemyPhase } from '../enemy'
+import { createActionPhase } from '../action'
 
 export type InvestigatorContext = {
   actionsMade: number
@@ -103,6 +104,24 @@ export function createInvestigatorPhase(
               }
 
               return createInvestigatorPhase(context, investigatorContext)
+            }),
+        })
+      }
+
+      if (card.type === 'action') {
+        actions.push({
+          type: 'play',
+          investigatorId,
+          handCardIndex: index,
+          execute: () =>
+            executeAction((context) => {
+              return createActionPhase(context, {
+                action: card.action,
+                nextPhase: (context) => {
+                  investigatorState.discard(index)
+                  return createInvestigatorPhase(context, investigatorContext)
+                },
+              })
             }),
         })
       }
