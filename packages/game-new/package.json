@@ -1,0 +1,13 @@
+{
+  "name": "@lumos/game-new",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@lumos/tsconfig": "workspace:*",
+    "@lumos/game": "workspace:*"
+  }
+}
