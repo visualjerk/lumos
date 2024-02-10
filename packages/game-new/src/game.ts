@@ -48,6 +48,10 @@ export class Game {
     return promise
   }
 
+  advanceTo(phase: Phase<Context>): void {
+    this.phases = [phase]
+  }
+
   private addPhase(phase: Phase<Context>): void {
     this.phases.push(phase)
   }
@@ -80,7 +84,24 @@ export class InvestigatorPhase implements Phase<Context> {
           return this.context
         },
       },
+      {
+        type: 'end',
+        execute: async () => {
+          this.game.advanceTo(new EndPhase(this.game, this.context))
+          return this.context
+        },
+      },
     ]
+  }
+}
+
+export class EndPhase implements Phase<Context> {
+  type = 'end'
+
+  constructor(private game: Game, private context: Context) {}
+
+  get actions() {
+    return []
   }
 }
 

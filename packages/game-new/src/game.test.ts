@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { Context, Game, InvestigatorPhase } from './game'
 import { Investigator, createInitialInvestigatorStates } from '@lumos/game'
 
@@ -27,8 +27,10 @@ const INVESTIGATOR_TWO: Investigator = {
 }
 
 describe('game', () => {
-  it('can damage first investigator', async () => {
-    const game = new Game()
+  let game: Game
+
+  beforeEach(() => {
+    game = new Game()
     const investigatorStates = createInitialInvestigatorStates(
       [INVESTIGATOR_ONE, INVESTIGATOR_TWO],
       'hotel'
@@ -36,7 +38,16 @@ describe('game', () => {
     const context = new Context(investigatorStates)
     const phase = new InvestigatorPhase(game, context)
     game.init(context, phase)
+  })
 
+  it('can end phase', async () => {
+    expect(game.phase.type).toBe('investigator')
+
+    await game.phase.actions[1].execute()
+    expect(game.phase.type).toBe('end')
+  })
+
+  it('can damage first investigator', async () => {
     expect(game.phase.type).toBe('investigator')
     expect(game.context.investigatorStates.get('1')?.damage).toBe(0)
 
@@ -51,15 +62,6 @@ describe('game', () => {
   })
 
   it('can damage second investigator', async () => {
-    const game = new Game()
-    const investigatorStates = createInitialInvestigatorStates(
-      [INVESTIGATOR_ONE, INVESTIGATOR_TWO],
-      'hotel'
-    )
-    const context = new Context(investigatorStates)
-    const phase = new InvestigatorPhase(game, context)
-    game.init(context, phase)
-
     expect(game.phase.type).toBe('investigator')
     expect(game.context.investigatorStates.get('2')?.damage).toBe(0)
 
