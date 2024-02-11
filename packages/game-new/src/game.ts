@@ -69,29 +69,35 @@ export type Action<TContext extends Context> = {
 
 export class InvestigatorPhase implements Phase<Context> {
   type = 'investigator'
+  public actionCount: number = 0
 
   constructor(private game: Game, private context: Context) {}
 
   get actions() {
-    return [
-      {
+    const actions: Action<Context>[] = []
+
+    if (this.actionCount < 3) {
+      actions.push({
         type: 'damage',
         execute: async () => {
           const { investigatorId } = await this.game.invoke(
             new TargetPhase(this.game, this.context)
           )
           this.context.investigatorStates.get(investigatorId)?.addDamage(1)
+          this.actionCount++
           return this.context
         },
+      })
+    }
+
+    actions.push({
+      type: 'end',
+      execute: async () => {
+        this.game.advanceTo(new EndPhase(this.game, this.context))
+        return this.context
       },
-      {
-        type: 'end',
-        execute: async () => {
-          this.game.advanceTo(new EndPhase(this.game, this.context))
-          return this.context
-        },
-      },
-    ]
+    })
+    return actions
   }
 }
 
