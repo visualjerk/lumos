@@ -26,7 +26,7 @@ const INVESTIGATOR_TWO: Investigator = {
   baseDeck: [],
 }
 
-describe.skip('game', () => {
+describe('game', () => {
   let game: Game
 
   beforeEach(() => {
