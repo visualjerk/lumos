@@ -30,14 +30,13 @@ describe('game', () => {
   let game: Game
 
   beforeEach(() => {
-    game = new Game()
     const investigatorStates = createInitialInvestigatorStates(
       [INVESTIGATOR_ONE, INVESTIGATOR_TWO],
       'hotel'
     )
     const context = new Context(investigatorStates)
-    const phase = new InvestigatorPhase(game, context)
-    game.init(context, phase)
+    const phase = new InvestigatorPhase(context)
+    game = new Game(context, phase)
   })
 
   it('can end phase', () => {

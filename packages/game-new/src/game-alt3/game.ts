@@ -20,27 +20,21 @@ type ExecuteContext = {
 }
 
 export class Game {
-  context!: Context
   phases: Phase[] = []
   executeContexts: ExecuteContext[] = []
 
-  // Initializes the game with a context and a phase
-  init(context: Context, phase: Phase): void {
-    this.context = context
+  constructor(public context: Context, phase: Phase) {
     this.phases = [phase]
   }
 
-  // Returns the current phase
   get phase(): GamePhase {
     return this.convertToGamePhase(this.phases.at(-1)!)
   }
 
-  // Returns the current phase
   get parentPhase(): Phase {
     return this.phases[0]
   }
 
-  // Converts a Phase to a GamePhase
   private convertToGamePhase(phase: Phase): GamePhase {
     // Create a Proxy that intercepts the `actions` property access
     const phaseProxy = new Proxy(phase, {
@@ -56,7 +50,6 @@ export class Game {
     return phaseProxy as GamePhase
   }
 
-  // Converts an Action to a GameAction
   private convertToGameAction(action: Action): GameAction {
     return {
       type: action.type,
@@ -83,7 +76,6 @@ export class Game {
 
     const nextExecute = executeContext.executes.pop()!
     const result = nextExecute(...executeContext.phases)
-
     this.handleExecuteResult(result, executeContext)
   }
 
@@ -188,7 +180,7 @@ export class InvestigatorPhase implements PhaseBase {
   type = 'investigator'
   public actionCount: number = 0
 
-  constructor(private game: Game, private context: Context) {}
+  constructor(private context: Context) {}
 
   get actions() {
     const actions: Action[] = []
@@ -197,7 +189,7 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'damage',
         execute: [
-          () => Game.spawnSubphase(new TargetPhase(this.game, this.context)),
+          () => Game.spawnSubphase(new TargetPhase(this.context)),
           ({ investigatorId }) => {
             this.context.investigatorStates.get(investigatorId)?.addDamage(1)
             this.actionCount++
@@ -209,8 +201,8 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'variable-damage',
         execute: [
-          () => Game.spawnSubphase(new TargetPhase(this.game, this.context)),
-          () => Game.spawnSubphase(new DamagePhase(this.game, this.context)),
+          () => Game.spawnSubphase(new TargetPhase(this.context)),
+          () => Game.spawnSubphase(new DamagePhase(this.context)),
           ({ investigatorId }, { damage }) => {
             this.context.investigatorStates
               .get(investigatorId)
@@ -224,7 +216,7 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push({
       type: 'end',
-      execute: () => Game.advanceTo(new EndPhase(this.game, this.context)),
+      execute: () => Game.advanceTo(new EndPhase(this.context)),
     })
     return actions
   }
@@ -234,7 +226,7 @@ export class TargetPhase implements PhaseBase {
   type = 'target'
   public investigatorId?: string
 
-  constructor(private game: Game, private context: Context) {}
+  constructor(private context: Context) {}
 
   get actions() {
     return [...this.context.investigatorStates.keys()].map(
@@ -253,7 +245,7 @@ export class DamagePhase implements PhaseBase {
   type = 'damage'
   public damage: number = 2
 
-  constructor(private game: Game, private context: Context) {}
+  constructor(private context: Context) {}
 
   get actions() {
     return [
@@ -278,7 +270,7 @@ export class DamagePhase implements PhaseBase {
 export class EndPhase implements PhaseBase {
   type = 'end'
 
-  constructor(private game: Game, private context: Context) {}
+  constructor(private context: Context) {}
 
   get actions() {
     return []
