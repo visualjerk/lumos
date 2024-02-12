@@ -21,23 +21,23 @@ type ExecuteContext = {
 
 export class Game {
   context!: Context
-  _phase!: GamePhase
+  phases: Phase[] = []
   executeContexts: ExecuteContext[] = []
 
   // Initializes the game with a context and a phase
   init(context: Context, phase: Phase): void {
     this.context = context
-    this.setPhase(phase)
+    this.phases = [phase]
   }
 
   // Returns the current phase
   get phase(): GamePhase {
-    return this._phase
+    return this.convertToGamePhase(this.phases.at(-1)!)
   }
 
-  // Adds a phase to the game
-  private setPhase(phase: Phase): void {
-    this._phase = this.convertToGamePhase(phase)
+  // Returns the current phase
+  get parentPhase(): Phase {
+    return this.phases[0]
   }
 
   // Converts a Phase to a GamePhase
@@ -82,13 +82,32 @@ export class Game {
     }
 
     const nextExecute = executeContext.executes.pop()!
-    const nextPhase = nextExecute(...executeContext.phases)
+    const result = nextExecute(...executeContext.phases)
 
-    if (nextPhase) {
-      this.setPhase(nextPhase)
-      executeContext.phases.push(nextPhase)
-    } else {
+    if (result == null) {
+      return
+    }
+
+    if (result === 'previous') {
+      if (this.phases.length < 2) {
+        throw new Error(
+          '"previous" is not allowed on an action in the parent phase.'
+        )
+      }
+
+      this.phases.pop()
       this.handleNextExecute()
+      return
+    }
+
+    if ('subphase' in result) {
+      this.phases.push(result.subphase)
+      executeContext.phases.push(result.subphase)
+      return
+    }
+
+    if ('next' in result) {
+      this.phases = [result.next]
     }
   }
 
@@ -121,7 +140,17 @@ export type Action = {
   execute: ExecuteAction | ExecuteAction[]
 }
 
-export type ExecuteAction = (...args: any[]) => Phase | void
+export type ExecuteResult =
+  | {
+      next: Phase
+    }
+  | {
+      subphase: Phase
+    }
+  | 'previous'
+  | void
+
+export type ExecuteAction = (...args: any[]) => ExecuteResult
 
 export class InvestigatorPhase implements PhaseBase {
   type = 'investigator'
@@ -136,11 +165,12 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'damage',
         execute: [
-          () => new TargetPhase(this.game, this.context),
+          () => ({
+            subphase: new TargetPhase(this.game, this.context),
+          }),
           ({ investigatorId }) => {
             this.context.investigatorStates.get(investigatorId)?.addDamage(1)
             this.actionCount++
-            return this
           },
         ],
       })
@@ -148,14 +178,17 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'variable-damage',
         execute: [
-          () => new TargetPhase(this.game, this.context),
-          () => new DamagePhase(this.game, this.context),
+          () => ({
+            subphase: new TargetPhase(this.game, this.context),
+          }),
+          () => ({
+            subphase: new DamagePhase(this.game, this.context),
+          }),
           ({ investigatorId }, { damage }) => {
             this.context.investigatorStates
               .get(investigatorId)
               ?.addDamage(damage)
             this.actionCount++
-            return this
           },
         ],
       })
@@ -163,7 +196,9 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push({
       type: 'end',
-      execute: () => new EndPhase(this.game, this.context),
+      execute: () => ({
+        next: new EndPhase(this.game, this.context),
+      }),
     })
     return actions
   }
@@ -181,6 +216,7 @@ export class TargetPhase implements PhaseBase {
         type: 'target',
         execute: () => {
           this.investigatorId = investigatorId
+          return 'previous'
         },
       })
     )
@@ -199,13 +235,13 @@ export class DamagePhase implements PhaseBase {
         type: 'increase',
         execute: () => {
           this.damage++
+          return 'previous'
         },
       },
       {
         type: 'increaseOnce',
         execute: () => {
           this.damage++
-          return this
         },
       },
     ]

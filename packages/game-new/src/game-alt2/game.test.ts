@@ -45,6 +45,7 @@ describe('game', () => {
 
     game.phase.actions[2].execute()
     expect(game.phase.type).toBe('end')
+    expect(game.parentPhase.type).toBe('end')
   })
 
   it('can damage first investigator', () => {
@@ -53,6 +54,7 @@ describe('game', () => {
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('investigator')
@@ -66,6 +68,7 @@ describe('game', () => {
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[1].execute()
     expect(game.phase.type).toBe('investigator')
@@ -79,9 +82,11 @@ describe('game', () => {
 
     game.phase.actions[1].execute()
     expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('damage')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('investigator')
@@ -95,12 +100,15 @@ describe('game', () => {
 
     game.phase.actions[1].execute()
     expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('damage')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[1].execute()
     expect(game.phase.type).toBe('damage')
+    expect(game.parentPhase.type).toBe('investigator')
 
     game.phase.actions[0].execute()
     expect(game.phase.type).toBe('investigator')
