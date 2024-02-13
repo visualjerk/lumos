@@ -85,13 +85,13 @@ export class Game {
   ): void {
     switch (result.type) {
       case 'next':
-        this.phases = [result.next]
+        this.phases[this.phases.length - 1] = result.next
         return
       case 'subphase':
         this.phases.push(result.subphase)
         executeContext.phases.push(result.subphase)
         return
-      case 'subphase':
+      case 'parent':
         if (this.phases.length < 2) {
           throw new Error(
             '"endSubphase" is not allowed on an action in the parent phase.'
