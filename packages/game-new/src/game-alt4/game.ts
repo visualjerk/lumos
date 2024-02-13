@@ -158,7 +158,7 @@ export type Transition =
   | TransitionToParent
   | TransitionToSelf
 
-export const To = {
+export const to = {
   subphase(subphase: Phase): TransitionToSubPhase {
     return { type: 'subphase', subphase }
   },
@@ -191,11 +191,11 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'damage',
         execute: [
-          () => To.subphase(new TargetPhase(this.context)),
+          () => to.subphase(new TargetPhase(this.context)),
           ({ investigatorId }) => {
             this.context.investigatorStates.get(investigatorId)?.addDamage(1)
             this.actionCount++
-            return To.self()
+            return to.self()
           },
         ],
       })
@@ -203,14 +203,14 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'variable-damage',
         execute: [
-          () => To.subphase(new TargetPhase(this.context)),
-          () => To.subphase(new DamagePhase(this.context)),
+          () => to.subphase(new TargetPhase(this.context)),
+          () => to.subphase(new DamagePhase(this.context)),
           ({ investigatorId }, { damage }) => {
             this.context.investigatorStates
               .get(investigatorId)
               ?.addDamage(damage)
             this.actionCount++
-            return To.self()
+            return to.self()
           },
         ],
       })
@@ -218,7 +218,7 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push({
       type: 'end',
-      execute: () => To.next(new EndPhase(this.context)),
+      execute: () => to.next(new EndPhase(this.context)),
     })
     return actions
   }
@@ -236,7 +236,7 @@ export class TargetPhase implements PhaseBase {
         type: 'target',
         execute: () => {
           this.investigatorId = investigatorId
-          return To.parent()
+          return to.parent()
         },
       })
     )
@@ -255,14 +255,14 @@ export class DamagePhase implements PhaseBase {
         type: 'increase',
         execute: () => {
           this.damage++
-          return To.parent()
+          return to.parent()
         },
       },
       {
         type: 'increaseOnce',
         execute: () => {
           this.damage++
-          return To.self()
+          return to.self()
         },
       },
     ]
