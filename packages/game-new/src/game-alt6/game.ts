@@ -75,7 +75,12 @@ export class Game {
   }
 }
 
-type Phase = InvestigatorPhase | EndPhase | TargetPhase | DamagePhase
+type Phase =
+  | InvestigatorPhase
+  | EndPhase
+  | TargetPhase
+  | DamagePhase
+  | TargetAndDamagePhase
 
 type PhaseBase = {
   type: string
@@ -100,7 +105,7 @@ class GameExecute<TSubPhases extends Phase[] = Phase[]> {
     return this.subPhases.length > 0
   }
 
-  private execute(fn: () => void) {
+  private enqueueOrExecute(fn: () => void) {
     if (this.waitForSubPhase) {
       this.executeQueue.push(fn)
       return
@@ -108,27 +113,27 @@ class GameExecute<TSubPhases extends Phase[] = Phase[]> {
     fn()
   }
 
-  executeNext() {
-    if (this.executeQueue.length === 0) {
-      return
+  private resume() {
+    while (this.executeQueue.length > 0) {
+      const fn = this.executeQueue.shift()!
+      fn()
     }
-    this.executeQueue.shift()!()
   }
 
   apply(applyFn: (...args: TSubPhases) => void): GameExecute<TSubPhases> {
-    this.execute(() => applyFn(...this.subPhases))
+    this.enqueueOrExecute(() => applyFn(...this.subPhases))
     return this
   }
 
   toNext(next: Phase): GameExecute<TSubPhases> {
-    this.execute(() => this.game.setCurrentPhase(next))
+    this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
     return this
   }
 
   toParent(): GameExecute<TSubPhases> {
-    this.execute(() => {
+    this.enqueueOrExecute(() => {
       this.game.popCurrentPhase()
-      this.parentGameExecute?.executeNext()
+      this.parentGameExecute?.resume()
     })
     return this
   }
@@ -136,8 +141,12 @@ class GameExecute<TSubPhases extends Phase[] = Phase[]> {
   waitFor<TPhase extends Phase>(
     phase: TPhase
   ): GameExecute<[...TSubPhases, TPhase]> {
-    const parentExecute = new GameExecute(this.game, [...this.subPhases, phase])
-    this.execute(() => this.game.addPhase(phase, parentExecute))
+    const parentExecute = new GameExecute(
+      this.game,
+      [...this.subPhases, phase],
+      this.parentGameExecute
+    )
+    this.enqueueOrExecute(() => this.game.addPhase(phase, parentExecute))
     return parentExecute as GameExecute<[...TSubPhases, TPhase]>
   }
 }
@@ -172,6 +181,19 @@ export class InvestigatorPhase implements PhaseBase {
             .waitFor(new TargetPhase(this.context))
             .waitFor(new DamagePhase(this.context))
             .apply(({ investigatorId }, { damage }) => {
+              this.context.investigatorStates
+                .get(investigatorId!)
+                ?.addDamage(damage)
+              this.actionCount++
+            }),
+      })
+
+      actions.push({
+        type: 'variable-damage-subphase',
+        execute: (e) =>
+          e
+            .waitFor(new TargetAndDamagePhase(this.context))
+            .apply(({ investigatorId, damage }) => {
               this.context.investigatorStates
                 .get(investigatorId!)
                 ?.addDamage(damage)
@@ -232,6 +254,31 @@ export class DamagePhase implements PhaseBase {
           e.apply(() => {
             this.damage++
           }),
+      },
+    ] satisfies Action[]
+  }
+}
+
+export class TargetAndDamagePhase implements PhaseBase {
+  type = 'targetAndDamage'
+  public investigatorId?: string
+  public damage: number = 0
+
+  constructor(private context: Context) {}
+
+  get actions() {
+    return [
+      {
+        type: 'targetAndDamage',
+        execute: (e) =>
+          e
+            .waitFor(new TargetPhase(this.context))
+            .waitFor(new DamagePhase(this.context))
+            .apply(({ investigatorId }, { damage }) => {
+              this.investigatorId = investigatorId
+              this.damage = damage
+            })
+            .toParent(),
       },
     ] satisfies Action[]
   }

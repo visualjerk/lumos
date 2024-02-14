@@ -42,7 +42,7 @@ describe('game', () => {
   it('can end phase', () => {
     expect(game.phase.type).toBe('investigator')
 
-    game.phase.actions[2].execute()
+    game.phase.actions[3].execute()
     expect(game.phase.type).toBe('end')
     expect(game.parentPhase.type).toBe('end')
   })
@@ -113,6 +113,28 @@ describe('game', () => {
     expect(game.phase.type).toBe('investigator')
 
     expect(game.context.investigatorStates.get('1')?.damage).toBe(4)
+  })
+
+  it('can add target and damage', () => {
+    expect(game.phase.type).toBe('investigator')
+    expect(game.context.investigatorStates.get('1')?.damage).toBe(0)
+
+    game.phase.actions[2].execute()
+    expect(game.phase.type).toBe('targetAndDamage')
+    expect(game.parentPhase.type).toBe('investigator')
+
+    game.phase.actions[0].execute()
+    expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
+
+    game.phase.actions[0].execute()
+    expect(game.phase.type).toBe('damage')
+    expect(game.parentPhase.type).toBe('investigator')
+
+    game.phase.actions[0].execute()
+    expect(game.phase.type).toBe('investigator')
+
+    expect(game.context.investigatorStates.get('1')?.damage).toBe(3)
   })
 
   it('ends investigator phase after 3 actions', async () => {
