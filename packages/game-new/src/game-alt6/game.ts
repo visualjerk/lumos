@@ -120,7 +120,7 @@ class GameExecute<TSubPhases extends Phase[] = Phase[]> {
     }
   }
 
-  apply(applyFn: (...args: TSubPhases) => void): GameExecute<TSubPhases> {
+  apply(applyFn: (...subPhases: TSubPhases) => void): GameExecute<TSubPhases> {
     this.enqueueOrExecute(() => applyFn(...this.subPhases))
     return this
   }
