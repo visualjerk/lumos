@@ -29,16 +29,8 @@ export class Game {
     return this.phases[0]
   }
 
-  addPhase(
-    phase: Phase,
-    parentGameExecute?: GameExecute,
-    awaitedPhaseResult?: PendingPhaseResult
-  ) {
-    const gamePhase = this.convertToGamePhase(
-      phase,
-      parentGameExecute,
-      awaitedPhaseResult
-    )
+  addPhase(phase: Phase, awaitedPhaseResult?: PendingPhaseResult) {
+    const gamePhase = this.convertToGamePhase(phase, awaitedPhaseResult)
     this.phases.push(gamePhase)
   }
 
@@ -53,7 +45,6 @@ export class Game {
 
   private convertToGamePhase(
     phase: Phase,
-    parentGameExecute?: GameExecute,
     awaitedPhaseResult?: PendingPhaseResult
   ): GamePhase {
     // Create a Proxy that intercepts the `actions` property access
@@ -62,11 +53,7 @@ export class Game {
         if (prop === 'actions') {
           // Convert actions to GameAction objects on-the-fly
           return target[prop].map((action) =>
-            this.convertToGameAction(
-              action,
-              parentGameExecute,
-              awaitedPhaseResult
-            )
+            this.convertToGameAction(action, awaitedPhaseResult)
           )
         }
         return target[prop as keyof Phase]
@@ -78,15 +65,12 @@ export class Game {
 
   private convertToGameAction(
     action: Action,
-    parentGameExecute?: GameExecute,
     awaitedPhaseResult?: PendingPhaseResult
   ): GameAction {
     return {
       type: action.type,
       execute: () =>
-        action.execute(
-          new GameExecute(this, [], parentGameExecute, awaitedPhaseResult)
-        ),
+        action.execute(new GameExecute(this, [], awaitedPhaseResult)),
     }
   }
 }
@@ -122,9 +106,15 @@ type Execute<TPhaseResult extends PhaseResult = PhaseResult> = (
 
 class PendingPhaseResult<TPhaseResult extends PhaseResult = PhaseResult> {
   result?: TPhaseResult
+  private subscriber?: () => void
 
   resolve(result: TPhaseResult) {
     this.result = result
+    this.subscriber?.()
+  }
+
+  onResolve(subscriber: () => void) {
+    this.subscriber = subscriber
   }
 }
 
@@ -146,9 +136,15 @@ class GameExecute<
   constructor(
     private game: Game,
     private pendingPhaseResults: TPendingPhaseResults,
-    private parentGameExecute?: GameExecute,
     private awaitedPhaseResult?: PendingPhaseResult
-  ) {}
+  ) {
+    const lastPendingPhaseResult = this.pendingPhaseResults.at(-1)
+    if (lastPendingPhaseResult) {
+      lastPendingPhaseResult.onResolve(() => {
+        this.resume()
+      })
+    }
+  }
 
   private get waitForSubPhase() {
     return this.pendingPhaseResults.length > 0
@@ -177,6 +173,11 @@ class GameExecute<
       ) as UnwrapPendingPhaseResult<TPendingPhaseResults>
   }
 
+  toNext(next: Phase): this {
+    this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
+    return this
+  }
+
   apply(
     applyFn: (results: UnwrapPendingPhaseResult<TPendingPhaseResults>) => void
   ): this {
@@ -193,32 +194,23 @@ class GameExecute<
       const result = applyFn(this.unwrappedPendingPhaseResults)
       this.game.popCurrentPhase()
       this.awaitedPhaseResult?.resolve(result)
-      this.parentGameExecute?.resume()
     })
-    return this
-  }
-
-  toNext(next: Phase): this {
-    this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
     return this
   }
 
   waitFor<TPhase extends Phase>(phase: TPhase) {
     const pendingPhaseResult: PendingPhaseResult<GetPhaseResult<TPhase>> =
       new PendingPhaseResult<GetPhaseResult<TPhase>>()
-    const parentExecute: GameExecute<
+    const nextGameExecute: GameExecute<
       [...TPendingPhaseResults, PendingPhaseResult<GetPhaseResult<TPhase>>],
       GetPhaseResult<TPhase>
     > = new GameExecute(
       this.game,
       [...this.pendingPhaseResults, pendingPhaseResult],
-      this.parentGameExecute,
       this.awaitedPhaseResult
     )
-    this.enqueueOrExecute(() =>
-      this.game.addPhase(phase, parentExecute, pendingPhaseResult)
-    )
-    return parentExecute
+    this.enqueueOrExecute(() => this.game.addPhase(phase, pendingPhaseResult))
+    return nextGameExecute
   }
 }
 
