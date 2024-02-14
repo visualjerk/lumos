@@ -120,8 +120,8 @@ class GameExecute<TSubPhases extends Phase[] = Phase[]> {
     }
   }
 
-  apply(applyFn: (...subPhases: TSubPhases) => void): GameExecute<TSubPhases> {
-    this.enqueueOrExecute(() => applyFn(...this.subPhases))
+  apply(applyFn: (subPhases: TSubPhases) => void): GameExecute<TSubPhases> {
+    this.enqueueOrExecute(() => applyFn(this.subPhases))
     return this
   }
 
@@ -168,7 +168,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (e) =>
           e
             .waitFor(new TargetPhase(this.context))
-            .apply(({ investigatorId }) => {
+            .apply(([{ investigatorId }]) => {
               this.context.investigatorStates.get(investigatorId!)?.addDamage(1)
               this.actionCount++
             }),
@@ -180,7 +180,7 @@ export class InvestigatorPhase implements PhaseBase {
           e
             .waitFor(new TargetPhase(this.context))
             .waitFor(new DamagePhase(this.context))
-            .apply(({ investigatorId }, { damage }) => {
+            .apply(([{ investigatorId }, { damage }]) => {
               this.context.investigatorStates
                 .get(investigatorId!)
                 ?.addDamage(damage)
@@ -193,7 +193,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (e) =>
           e
             .waitFor(new TargetAndDamagePhase(this.context))
-            .apply(({ investigatorId, damage }) => {
+            .apply(([{ investigatorId, damage }]) => {
               this.context.investigatorStates
                 .get(investigatorId!)
                 ?.addDamage(damage)
@@ -274,7 +274,7 @@ export class TargetAndDamagePhase implements PhaseBase {
           e
             .waitFor(new TargetPhase(this.context))
             .waitFor(new DamagePhase(this.context))
-            .apply(({ investigatorId }, { damage }) => {
+            .apply(([{ investigatorId }, { damage }]) => {
               this.investigatorId = investigatorId
               this.damage = damage
             })
