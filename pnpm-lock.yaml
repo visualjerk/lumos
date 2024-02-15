@@ -75,6 +75,9 @@ importers:
       '@lumos/game':
         specifier: workspace:*
         version: link:../game
+      '@lumos/scenarios':
+        specifier: workspace:*
+        version: link:../scenarios
       '@lumos/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

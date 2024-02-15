@@ -1,6 +1,8 @@
+import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Context, Game, InvestigatorPhase } from './game'
-import { Investigator, createInitialInvestigatorStates } from '@lumos/game'
+import { Game } from './game'
+import { Investigator, createInitialContext } from '@lumos/game'
+import { InvestigatorPhase } from './investigator'
 
 const INVESTIGATOR_ONE: Investigator = {
   id: '1',
@@ -30,56 +32,55 @@ describe('game', () => {
   let game: Game
 
   beforeEach(() => {
-    game = new Game()
-    const investigatorStates = createInitialInvestigatorStates(
-      [INVESTIGATOR_ONE, INVESTIGATOR_TWO],
-      'hotel'
-    )
-    const context = new Context(investigatorStates)
-    const phase = new InvestigatorPhase(game, context)
-    game.init(context, phase)
+    const context = createInitialContext(MisteryOfTheHogwartsExpress, [
+      INVESTIGATOR_ONE,
+      INVESTIGATOR_TWO,
+    ])
+    const phase = new InvestigatorPhase(context)
+    game = new Game(context, phase)
   })
 
-  it('can end phase', async () => {
+  it('can end phase', () => {
     expect(game.phase.type).toBe('investigator')
 
-    await game.phase.actions[1].execute()
+    game.phase.actions[1].execute()
     expect(game.phase.type).toBe('end')
+    expect(game.parentPhase.type).toBe('end')
   })
 
-  it('can damage first investigator', async () => {
+  it('can damage first investigator', () => {
     expect(game.phase.type).toBe('investigator')
     expect(game.context.investigatorStates.get('1')?.damage).toBe(0)
 
-    const actionPromise = game.phase.actions[0].execute()
-    expect(game.phase.type).toBe('target-phase')
+    game.phase.actions[0].execute()
+    expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
-    await game.phase.actions[0].execute()
+    game.phase.actions[0].execute()
     expect(game.phase.type).toBe('investigator')
 
-    await actionPromise
     expect(game.context.investigatorStates.get('1')?.damage).toBe(1)
   })
 
-  it('can damage second investigator', async () => {
+  it('can damage second investigator', () => {
     expect(game.phase.type).toBe('investigator')
     expect(game.context.investigatorStates.get('2')?.damage).toBe(0)
 
-    const actionPromise = game.phase.actions[0].execute()
-    expect(game.phase.type).toBe('target-phase')
+    game.phase.actions[0].execute()
+    expect(game.phase.type).toBe('target')
+    expect(game.parentPhase.type).toBe('investigator')
 
-    await game.phase.actions[1].execute()
+    game.phase.actions[1].execute()
     expect(game.phase.type).toBe('investigator')
 
-    await actionPromise
     expect(game.context.investigatorStates.get('2')?.damage).toBe(1)
   })
 
   it('ends investigator phase after 3 actions', async () => {
     for (let i = 0; i < 3; i++) {
-      const actionPromise = game.phase.actions[0].execute()
-      await game.phase.actions[0].execute()
-      await actionPromise
+      game.phase.actions[0].execute()
+      game.phase.actions[0].execute()
+      await new Promise((resolve) => setTimeout(resolve, 100))
     }
     expect(game.phase.type).toBe('investigator')
     game.phase.actions[0].execute()
