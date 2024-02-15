@@ -167,7 +167,7 @@ class GameExecute<
     applyFn: (
       results: UnwrapPendingPhaseResult<TPendingPhaseResults>
     ) => TPhaseResult
-  ): this {
+  ): void {
     if (this.parentGameExecute === undefined) {
       throw new Error('No parent to apply to')
     }
@@ -179,12 +179,10 @@ class GameExecute<
       awaitedPhaseResult?.resolve(result)
       this.parentGameExecute?.resume()
     })
-    return this
   }
 
-  toNext(next: Phase): this {
+  toNext(next: Phase) {
     this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
-    return this
   }
 
   waitFor<TPhase extends Phase>(phase: TPhase) {
