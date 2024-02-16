@@ -39,6 +39,7 @@ function executeAction(
   const actions = game.phase.actions.filter((action) =>
     actionMatches(action, actionSearchParams)
   )
+  expect(actions[index]).toBeDefined()
   actions[index].execute()
 }
 

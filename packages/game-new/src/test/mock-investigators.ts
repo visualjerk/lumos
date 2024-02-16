@@ -9,7 +9,7 @@ export const MOCK_INVESTIGATOR_ONE: Investigator = {
     strength: 3,
     agility: 3,
   },
-  baseDeck: [],
+  baseDeck: ['ic1', 'ic1', 'ic2', 'ic2'],
 }
 
 export const MOCK_INVESTIGATOR_TWO: Investigator = {
@@ -21,5 +21,5 @@ export const MOCK_INVESTIGATOR_TWO: Investigator = {
     strength: 3,
     agility: 3,
   },
-  baseDeck: [],
+  baseDeck: ['ic1', 'ic1', 'ic2', 'ic2'],
 }

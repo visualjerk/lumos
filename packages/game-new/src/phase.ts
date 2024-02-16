@@ -1,4 +1,4 @@
-import { LocationId } from '@lumos/game'
+import { InvestigatorId, LocationId } from '@lumos/game'
 import { GameExecute } from './game'
 import { EndPhase, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
@@ -18,6 +18,7 @@ export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
 
 export type Action<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string
+  investigatorId?: InvestigatorId
   locationId?: LocationId
   execute: Execute<TPhaseResult>
 }

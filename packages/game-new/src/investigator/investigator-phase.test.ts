@@ -30,4 +30,14 @@ describe('game', () => {
     const locationId = Aisle2.id
     t.expectNoAction({ type: 'move', locationId })
   })
+
+  it('can draw card', () => {
+    t.executeAction({ type: 'draw' })
+    expect(game.context.investigatorStates.get('1')?.cardsInHand.length).toBe(1)
+  })
+
+  it('can not draw with empty deck', () => {
+    game.context.investigatorStates.get('1')!.deck = []
+    t.expectNoAction({ type: 'draw' })
+  })
 })

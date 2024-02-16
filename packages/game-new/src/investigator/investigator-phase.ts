@@ -1,4 +1,9 @@
-import { Context, Investigator, InvestigatorId, isConnected } from '@lumos/game'
+import {
+  Context,
+  InvestigatorId,
+  InvestigatorState,
+  isConnected,
+} from '@lumos/game'
 import { PhaseBase, Action } from '../phase'
 import { TargetPhase } from '../target'
 
@@ -6,9 +11,11 @@ export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
 }
 
+export const INVESTIGATOR_ACTIONS_PER_TURN = 3
+
 export class InvestigatorPhase implements PhaseBase {
   type = 'investigator'
-  public actionCount: number = 0
+  public actionsMade: number = 0
   public investigatorId: InvestigatorId
 
   constructor(private context: Context) {
@@ -19,35 +26,59 @@ export class InvestigatorPhase implements PhaseBase {
   get actions() {
     const actions: Action[] = []
 
-    if (this.actionCount < 3) {
-      actions.push({
-        type: 'attack',
-        execute: (e) =>
-          e
-            .waitFor(new TargetPhase(this.context))
-            .apply(([{ investigatorId }]) => {
-              this.context.investigatorStates.get(investigatorId!)?.addDamage(1)
-              this.actionCount++
-            }),
-      })
-      actions.push(...this.locationActions)
-    }
-
     actions.push({
       type: 'end',
       execute: (e) => e.toNext(new EndPhase(this.context)),
     })
+
+    if (this.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
+      return actions
+    }
+
+    actions.push(...this.generalActions)
+    actions.push(...this.locationActions)
+
+    return actions
+  }
+
+  private get investigatorState(): InvestigatorState {
+    return this.context.getInvestigatorState(this.investigatorId)
+  }
+
+  private get generalActions(): Action[] {
+    const actions: Action[] = []
+
+    actions.push({
+      type: 'attack',
+      execute: (e) =>
+        e
+          .waitFor(new TargetPhase(this.context))
+          .apply(([{ investigatorId }]) => {
+            this.context.investigatorStates.get(investigatorId!)?.addDamage(1)
+            this.actionsMade++
+          }),
+    })
+
+    if (this.investigatorState.canDraw()) {
+      actions.push({
+        type: 'draw',
+        investigatorId: this.investigatorId,
+        execute: (e) =>
+          e.apply(() => {
+            this.investigatorState.draw()
+            this.actionsMade++
+          }),
+      })
+    }
+
     return actions
   }
 
   private get locationActions(): Action[] {
-    const investigatorState = this.context.investigatorStates.get(
-      this.investigatorId
-    )
     const connectedLocations = this.context.scenario.locationCards.filter(
       ({ id }) => {
         const currentLocation = this.context.getLocation(
-          investigatorState!.currentLocation
+          this.investigatorState.currentLocation
         )
         const location = this.context.getLocation(id)
         return isConnected(currentLocation, location)
