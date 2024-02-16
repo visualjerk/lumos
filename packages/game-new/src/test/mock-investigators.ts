@@ -1,0 +1,25 @@
+import { Investigator } from '@lumos/game'
+
+export const MOCK_INVESTIGATOR_ONE: Investigator = {
+  id: '1',
+  name: 'Hans',
+  health: 9,
+  baseSkills: {
+    intelligence: 3,
+    strength: 3,
+    agility: 3,
+  },
+  baseDeck: [],
+}
+
+export const MOCK_INVESTIGATOR_TWO: Investigator = {
+  id: '2',
+  name: 'Sepp',
+  health: 9,
+  baseSkills: {
+    intelligence: 3,
+    strength: 3,
+    agility: 3,
+  },
+  baseDeck: [],
+}

@@ -2,6 +2,10 @@ import { Context } from '@lumos/game'
 import { PhaseBase, Action } from '../phase'
 import { TargetPhase } from '../target'
 
+export function createInvestigatorPhase(context: Context) {
+  return new InvestigatorPhase(context)
+}
+
 export class InvestigatorPhase implements PhaseBase {
   type = 'investigator'
   public actionCount: number = 0
@@ -13,7 +17,7 @@ export class InvestigatorPhase implements PhaseBase {
 
     if (this.actionCount < 3) {
       actions.push({
-        type: 'damage',
+        type: 'attack',
         execute: (e) =>
           e
             .waitFor(new TargetPhase(this.context))

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Game } from './game'
-import { createInvestigatorPhase } from './investigator'
-import { GameTestUtils, createGameTestUtils } from './test'
+import { Game } from '../game'
+import { createInvestigatorPhase } from '../investigator'
+import { GameTestUtils, createGameTestUtils } from '../test'
 
 describe('game', () => {
   let t: GameTestUtils
