@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { Game } from '../game'
 import { createInvestigatorPhase } from '../investigator'
-import { GameTestUtils, createGameTestUtils } from '../test'
+import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
 
 describe('game', () => {
   let t: GameTestUtils
@@ -18,36 +18,16 @@ describe('game', () => {
     t.expectPhase('end')
   })
 
-  it('can damage first investigator', () => {
-    expect(game.context.investigatorStates.get('1')?.damage).toBe(0)
-
-    t.executeAction({ type: 'attack' })
-    t.expectPhase('target', 'investigator')
-
-    t.executeAction({ type: 'target' })
-    t.expectPhase('investigator')
-
-    expect(game.context.investigatorStates.get('1')?.damage).toBe(1)
+  it('can move to location', () => {
+    const locationId = Aisle3.id
+    t.executeAction({ type: 'move', locationId })
+    expect(game.context.investigatorStates.get('1')?.currentLocation).toBe(
+      locationId
+    )
   })
 
-  it('can damage second investigator', () => {
-    expect(game.context.investigatorStates.get('2')?.damage).toBe(0)
-
-    t.executeAction({ type: 'attack' })
-    t.expectPhase('target', 'investigator')
-
-    t.executeAction({ type: 'target' }, 1)
-    t.expectPhase('investigator')
-
-    expect(game.context.investigatorStates.get('2')?.damage).toBe(1)
-  })
-
-  it('ends investigator phase after 3 actions', () => {
-    for (let i = 0; i < 3; i++) {
-      t.executeAction({ type: 'attack' })
-      t.executeAction({ type: 'target' })
-    }
-    t.expectPhase('investigator')
-    t.expectOnlyActions({ type: 'end' })
+  it('cannot move to unconnected location', () => {
+    const locationId = Aisle2.id
+    t.expectNoAction({ type: 'move', locationId })
   })
 })

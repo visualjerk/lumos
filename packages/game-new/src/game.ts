@@ -6,8 +6,7 @@ export type GamePhase = {
   actions: GameAction[]
 }
 
-export type GameAction = {
-  type: string
+export type GameAction = Omit<Action, 'execute'> & {
   execute: () => void
 }
 
@@ -65,7 +64,7 @@ export class Game {
     parentGameExecute?: GameExecute
   ): GameAction {
     return {
-      type: action.type,
+      ...action,
       execute: () =>
         action.execute(new GameExecute(this, [], parentGameExecute)),
     }

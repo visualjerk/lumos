@@ -11,7 +11,7 @@ import {
   EncounterCard,
 } from '@lumos/game'
 
-const Aisle2: LocationCard = {
+export const Aisle2: LocationCard = {
   id: 'aisle-2',
   name: 'Aisle 2',
   incomingConnection: 'moon',
@@ -38,7 +38,7 @@ const Compartment25: LocationCard = {
   shroud: 2,
 }
 
-const Aisle3: LocationCard = {
+export const Aisle3: LocationCard = {
   id: 'aisle-3',
   name: 'Aisle 3',
   incomingConnection: 'circle',
@@ -47,7 +47,7 @@ const Aisle3: LocationCard = {
   shroud: 0,
 }
 
-const Compartment34: LocationCard = {
+export const Compartment34: LocationCard = {
   id: 'compartment-34',
   name: 'Compartment 34',
   incomingConnection: 'square',
