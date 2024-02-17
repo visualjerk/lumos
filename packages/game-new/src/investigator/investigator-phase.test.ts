@@ -31,6 +31,30 @@ describe('game', () => {
     t.expectNoAction({ type: 'move', locationId })
   })
 
+  it('can collect clue at location', () => {
+    const investigatorState = game.context.investigatorStates.get('1')!
+    const currentLocationId =
+      game.context.investigatorStates.get('1')?.currentLocation!
+    const locationState = game.context.locationStates.get(currentLocationId)!
+
+    expect(investigatorState.clues).toBe(0)
+    expect(locationState.clues).toBe(3)
+
+    t.executeAction({ type: 'investigate' })
+
+    expect(investigatorState.clues).toBe(1)
+    expect(locationState.clues).toBe(2)
+  })
+
+  it('cannot collect clue at location with no clues', () => {
+    const currentLocationId =
+      game.context.investigatorStates.get('1')?.currentLocation!
+    const locationState = game.context.locationStates.get(currentLocationId)!
+
+    locationState.clues = 0
+    t.expectNoAction({ type: 'investigate' })
+  })
+
   it('can draw card', () => {
     t.executeAction({ type: 'draw' })
     expect(game.context.investigatorStates.get('1')?.cardsInHand.length).toBe(1)

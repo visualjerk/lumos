@@ -47,9 +47,9 @@ export const Aisle3: LocationCard = {
   shroud: 0,
 }
 
-export const Compartment34: LocationCard = {
-  id: 'compartment-34',
-  name: 'Compartment 34',
+export const START_LOCATION: LocationCard = {
+  id: 'start-location',
+  name: 'Start Location',
   incomingConnection: 'square',
   connections: ['circle'],
   initialClues: 3,
@@ -194,7 +194,7 @@ export const MOCK_SCENARIO: Scenario = {
     Compartment24,
     Compartment25,
     Aisle3,
-    Compartment34,
+    START_LOCATION,
     Compartment35,
     BoardRestaurant,
   ],
@@ -208,13 +208,13 @@ export const MOCK_SCENARIO: Scenario = {
     Acromantula,
     Dementor,
   ],
-  startLocation: Compartment34.id,
+  startLocation: START_LOCATION.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],
     [Compartment24.id, [1, 4]],
     [Compartment25.id, [3, 4]],
     [Aisle3.id, [6, 2]],
-    [Compartment34.id, [5, 4]],
+    [START_LOCATION.id, [5, 4]],
     [Compartment35.id, [7, 4]],
     [BoardRestaurant.id, [8, 2]],
   ]),

@@ -75,23 +75,43 @@ export class InvestigatorPhase implements PhaseBase {
   }
 
   private get locationActions(): Action[] {
+    const actions: Action[] = []
+
+    const currentLocation = this.context.getLocation(
+      this.investigatorState.currentLocation
+    )
+
     const connectedLocations = this.context.scenario.locationCards.filter(
       ({ id }) => {
-        const currentLocation = this.context.getLocation(
-          this.investigatorState.currentLocation
-        )
         const location = this.context.getLocation(id)
         return isConnected(currentLocation, location)
       }
     )
-    return connectedLocations.map((location) => ({
-      type: 'move',
-      locationId: location.id,
-      execute: (e) =>
-        e.apply(() => {
-          this.context.moveInvestigator(this.investigatorId, location.id)
-        }),
-    }))
+
+    connectedLocations.forEach((location) => {
+      actions.push({
+        type: 'move',
+        locationId: location.id,
+        execute: (e) =>
+          e.apply(() => {
+            this.context.moveInvestigator(this.investigatorId, location.id)
+            this.actionsMade++
+          }),
+      })
+    })
+
+    if (this.context.locationStates.get(currentLocation.id)!.clues > 0) {
+      actions.push({
+        type: 'investigate',
+        execute: (e) =>
+          e.apply(() => {
+            this.context.collectClue(this.investigatorId, currentLocation.id)
+            this.actionsMade++
+          }),
+      })
+    }
+
+    return actions
   }
 }
 
