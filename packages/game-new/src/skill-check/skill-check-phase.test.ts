@@ -17,6 +17,7 @@ const applyFailure = vi.fn()
 
 const skillCheck: SkillCheck = {
   skill: 'intelligence',
+  investigatorId: '1',
   difficulty: 3,
   onSuccess: {
     apply: applySuccess,
@@ -24,11 +25,6 @@ const skillCheck: SkillCheck = {
   onFailure: {
     apply: applyFailure,
   },
-}
-
-const effectContext = {
-  investigatorId: '1',
-  locationId: '1',
 }
 
 class TestPhase implements PhaseBase {
@@ -41,9 +37,7 @@ class TestPhase implements PhaseBase {
       {
         type: 'startSkillCheck',
         execute: (e) =>
-          e.waitFor(
-            createSkillCheckPhase(this.context, skillCheck, effectContext)
-          ),
+          e.waitFor(createSkillCheckPhase(this.context, skillCheck)),
       },
     ]
     return actions
@@ -73,14 +67,11 @@ describe('SkillCheckPhase', () => {
     t.executeAction({ type: 'endSkillCheck' })
     t.expectPhase('test')
 
-    expect(applySuccess).toHaveBeenCalledWith(
-      t.game.context,
-      expect.objectContaining(effectContext)
-    )
+    expect(applySuccess).toHaveBeenCalledWith(t.game.context)
   })
 
   it('executes failed skill check', () => {
-    vi.mocked(spinFateWheel).mockReturnValue({
+    vi.mocked(spinFateWheel).mockReturnValueOnce({
       symbol: 0,
       modifySkillCheck: () => 0,
     })
@@ -94,9 +85,30 @@ describe('SkillCheckPhase', () => {
     t.executeAction({ type: 'endSkillCheck' })
     t.expectPhase('test')
 
-    expect(applyFailure).toHaveBeenCalledWith(
-      t.game.context,
-      expect.objectContaining(effectContext)
-    )
+    expect(applyFailure).toHaveBeenCalledWith(t.game.context)
   })
+
+  const testCases: [modifier: number, result: 'fail' | 'success'][] = [
+    [-1, 'fail'],
+    [0, 'success'],
+    [1, 'success'],
+  ]
+
+  it.each(testCases)(
+    `skill check for modifier %s is a %s`,
+    (modifier, result) => {
+      vi.mocked(spinFateWheel).mockReturnValueOnce({
+        symbol: modifier,
+        modifySkillCheck: (n: number) => n + modifier,
+      })
+
+      t.executeAction({ type: 'startSkillCheck' })
+      t.executeAction({ type: 'commitSkillCheck' })
+      t.executeAction({ type: 'endSkillCheck' })
+
+      const applyFn = result === 'success' ? applySuccess : applyFailure
+
+      expect(applyFn).toHaveBeenCalledOnce()
+    }
+  )
 })

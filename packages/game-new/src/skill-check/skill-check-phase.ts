@@ -1,52 +1,31 @@
 import { Context } from '@lumos/game'
 import { Action, PhaseBase } from '../phase'
-import { EffectContext, SkillCheck, SkillCheckContext } from './skill-check'
-import { spinFateWheel } from '../fate'
+import { SkillCheck, SkillCheckContext } from './skill-check'
+import { Fate, spinFateWheel } from '../fate'
 
 export function createSkillCheckPhase(
   context: Context,
-  check: SkillCheck,
-  effectContext: EffectContext
+  check: SkillCheck
 ): SkillCheckPhase {
-  return new SkillCheckPhase(context, check, effectContext)
+  return new SkillCheckPhase(context, check)
 }
 
 export class SkillCheckPhase implements PhaseBase {
   type = 'skillCheck'
 
-  constructor(
-    public context: Context,
-    public check: SkillCheck,
-    public effectContext: EffectContext
-  ) {}
+  constructor(public context: Context, public check: SkillCheck) {}
 
   get actions() {
     const actions: Action[] = []
 
     const { check, context } = this
-    const { investigatorId, locationId } = this.effectContext
-
-    const difficulty =
-      check.difficulty instanceof Function
-        ? check.difficulty(context, { investigatorId, locationId })
-        : check.difficulty
+    const { investigatorId } = check
 
     actions.push({
       type: 'commitSkillCheck',
       investigatorId,
-      execute: (e) => {
-        const fate = spinFateWheel(context.scenario.fateWheel)
-        const skills = context.getInvestigatorSkills(investigatorId)
-        const totalSkill = fate.modifySkillCheck(skills[check.skill])
-
-        e.waitFor(
-          createCommitSkillCheckPhase(
-            context,
-            { check, difficulty, totalSkill, fate },
-            this.effectContext
-          )
-        ).toParent()
-      },
+      execute: (e) =>
+        e.waitFor(createCommitSkillCheckPhase(context, { check })).toParent(),
     })
 
     return actions
@@ -55,25 +34,34 @@ export class SkillCheckPhase implements PhaseBase {
 
 function createCommitSkillCheckPhase(
   context: Context,
-  skillCheckContext: SkillCheckContext,
-  effectContext: EffectContext
+  skillCheckContext: SkillCheckContext
 ): CommitSkillCheckPhase {
-  return new CommitSkillCheckPhase(context, skillCheckContext, effectContext)
+  return new CommitSkillCheckPhase(context, skillCheckContext)
 }
 
 export class CommitSkillCheckPhase implements PhaseBase {
   type = 'commitSkillCheck'
+  fate: Fate
+  totalSkill: number
 
   constructor(
     public context: Context,
-    public skillCheckContext: SkillCheckContext,
-    public effectContext: EffectContext
-  ) {}
+    public skillCheckContext: SkillCheckContext
+  ) {
+    const { check } = skillCheckContext
+    const { investigatorId, skill } = check
+
+    this.fate = spinFateWheel(context.scenario.fateWheel)
+    const skills = context.getInvestigatorSkills(investigatorId)
+
+    this.totalSkill = this.fate.modifySkillCheck(skills[skill])
+  }
 
   get actions() {
     const actions: Action[] = []
 
-    const { investigatorId } = this.effectContext
+    const { check } = this.skillCheckContext
+    const { investigatorId, difficulty, onSuccess, onFailure } = check
 
     actions.push({
       type: 'endSkillCheck',
@@ -81,13 +69,11 @@ export class CommitSkillCheckPhase implements PhaseBase {
       execute: (e) =>
         e
           .apply(() => {
-            const { check, difficulty, totalSkill } = this.skillCheckContext
-
-            if (difficulty <= totalSkill) {
-              check.onSuccess.apply(this.context, this.effectContext)
+            if (difficulty <= this.totalSkill) {
+              onSuccess.apply(this.context)
               return
             }
-            check.onFailure.apply(this.context, this.effectContext)
+            onFailure.apply(this.context)
           })
           .toParent(),
     })

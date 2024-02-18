@@ -1,27 +1,17 @@
-import { Context, InvestigatorId, LocationId, Skills } from '@lumos/game'
-import { Fate } from '../fate'
+import { Context, InvestigatorId, Skills } from '@lumos/game'
 
 export type SkillCheckContext = {
   check: SkillCheck
-  difficulty: number
-  totalSkill: number
-  fate: Fate
 }
 
 export type SkillCheck = {
   skill: keyof Skills
-  difficulty:
-    | number
-    | ((context: Context, effectContext: EffectContext) => number)
+  investigatorId: InvestigatorId
+  difficulty: number
   onSuccess: Effect
   onFailure: Effect
 }
 
-export type EffectContext = {
-  investigatorId: InvestigatorId
-  locationId: LocationId
-}
-
 export type Effect = {
-  apply: (context: Context, effectContext: EffectContext) => Context
+  apply: (context: Context) => Context
 }
