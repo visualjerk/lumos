@@ -20,6 +20,7 @@ export function executeInvestigateAction(
 ) {
   // TODO: Add target phase for this (self | investigator)
   const investigatorId = context.investigators[0].id
+  // TODO: Add target phase to select location (current | connected)
   const currentLocation = context.getInvestigatorLocation(investigatorId)
 
   const skillCheck: SkillCheck = {
