@@ -3,7 +3,7 @@ import { Game } from '../game'
 import { createInvestigatorPhase } from '../investigator'
 import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
 
-describe('game', () => {
+describe('InvestigatorPhase', () => {
   let t: GameTestUtils
   let game: Game
 

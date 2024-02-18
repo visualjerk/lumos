@@ -2,8 +2,14 @@ import { InvestigatorId, LocationId } from '@lumos/game'
 import { GameExecute } from './game'
 import { EndPhase, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
+import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 
-export type Phase = InvestigatorPhase | EndPhase | TargetPhase
+export type Phase =
+  | InvestigatorPhase
+  | EndPhase
+  | TargetPhase
+  | SkillCheckPhase
+  | CommitSkillCheckPhase
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string

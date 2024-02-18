@@ -150,6 +150,17 @@ export class GameExecute<
     })
   }
 
+  toParent() {
+    if (this.parentGameExecute === undefined) {
+      throw new Error('No parent to apply to')
+    }
+
+    this.enqueueOrExecute(() => {
+      this.game.popCurrentPhase()
+      this.parentGameExecute?.resume()
+    })
+  }
+
   toNext(next: Phase) {
     this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
   }
@@ -165,7 +176,9 @@ export class GameExecute<
       [...this.pendingPhaseResults, pendingPhaseResult],
       this.parentGameExecute
     )
-    this.enqueueOrExecute(() => this.game.addPhase(phase, parentExecute))
+    this.enqueueOrExecute(() => {
+      this.game.addPhase(phase, parentExecute)
+    })
     return parentExecute
   }
 }
