@@ -1,5 +1,5 @@
 import { Context } from '@lumos/game'
-import { Action, PhaseBase } from '../phase'
+import { PhaseAction, PhaseBase } from '../phase'
 
 export type TargetPhaseResult = {
   investigatorId: string
@@ -12,7 +12,7 @@ export class TargetPhase implements PhaseBase<TargetPhaseResult> {
 
   get actions() {
     return [...this.context.investigatorStates.keys()].map<
-      Action<TargetPhaseResult>
+      PhaseAction<TargetPhaseResult>
     >((investigatorId) => ({
       type: 'target',
       execute: (e) =>

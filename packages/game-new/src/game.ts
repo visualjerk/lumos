@@ -1,12 +1,12 @@
 import { Context } from '@lumos/game'
-import { Phase, PhaseResult, GetPhaseResult, Action } from './phase'
+import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 
 export type GamePhase = {
   type: string
   actions: GameAction[]
 }
 
-export type GameAction = Omit<Action, 'execute'> & {
+export type GameAction = Omit<PhaseAction, 'execute'> & {
   execute: () => void
 }
 
@@ -60,7 +60,7 @@ export class Game {
   }
 
   private convertToGameAction(
-    action: Action,
+    action: PhaseAction,
     parentGameExecute?: GameExecute
   ): GameAction {
     return {

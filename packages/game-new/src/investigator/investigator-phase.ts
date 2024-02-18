@@ -4,8 +4,9 @@ import {
   InvestigatorState,
   isConnected,
 } from '@lumos/game'
-import { PhaseBase, Action } from '../phase'
+import { PhaseBase, PhaseAction } from '../phase'
 import { TargetPhase } from '../target'
+import { executeInvestigateAction } from '../action'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -24,7 +25,7 @@ export class InvestigatorPhase implements PhaseBase {
   }
 
   get actions() {
-    const actions: Action[] = []
+    const actions: PhaseAction[] = []
 
     actions.push({
       type: 'end',
@@ -45,8 +46,8 @@ export class InvestigatorPhase implements PhaseBase {
     return this.context.getInvestigatorState(this.investigatorId)
   }
 
-  private get generalActions(): Action[] {
-    const actions: Action[] = []
+  private get generalActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
 
     actions.push({
       type: 'attack',
@@ -74,8 +75,8 @@ export class InvestigatorPhase implements PhaseBase {
     return actions
   }
 
-  private get locationActions(): Action[] {
-    const actions: Action[] = []
+  private get locationActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
 
     const currentLocation = this.context.getLocation(
       this.investigatorState.currentLocation
@@ -104,10 +105,11 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'investigate',
         execute: (e) =>
-          e.apply(() => {
-            this.context.collectClue(this.investigatorId, currentLocation.id)
-            this.actionsMade++
-          }),
+          executeInvestigateAction(e, this.context, { clueAmount: 1 }).apply(
+            () => {
+              this.actionsMade++
+            }
+          ),
       })
     }
 

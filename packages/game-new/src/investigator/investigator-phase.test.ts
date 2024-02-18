@@ -1,7 +1,14 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Game } from '../game'
 import { createInvestigatorPhase } from '../investigator'
 import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
+
+vi.mock('../fate', () => ({
+  spinFateWheel: vi.fn(() => ({
+    symbol: 1,
+    modifySkillCheck: (n: number) => n,
+  })),
+}))
 
 describe('InvestigatorPhase', () => {
   let t: GameTestUtils
@@ -41,6 +48,8 @@ describe('InvestigatorPhase', () => {
     expect(locationState.clues).toBe(3)
 
     t.executeAction({ type: 'investigate' })
+    t.executeAction({ type: 'commitSkillCheck' })
+    t.executeAction({ type: 'endSkillCheck' })
 
     expect(investigatorState.clues).toBe(1)
     expect(locationState.clues).toBe(2)

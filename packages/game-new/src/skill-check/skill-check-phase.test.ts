@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GameTestUtils, createGameTestUtils } from '../test'
-import { Action, Phase, PhaseBase } from '../phase'
+import { PhaseAction, Phase, PhaseBase } from '../phase'
 import { Context } from '@lumos/game'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { spinFateWheel } from '../fate'
@@ -33,7 +33,7 @@ class TestPhase implements PhaseBase {
   constructor(public context: Context) {}
 
   get actions() {
-    const actions: Action[] = [
+    const actions: PhaseAction[] = [
       {
         type: 'startSkillCheck',
         execute: (e) =>

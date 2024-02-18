@@ -1,5 +1,5 @@
 import { Context } from '@lumos/game'
-import { Action, PhaseBase } from '../phase'
+import { PhaseAction, PhaseBase } from '../phase'
 import { SkillCheck, SkillCheckContext } from './skill-check'
 import { Fate, spinFateWheel } from '../fate'
 
@@ -16,7 +16,7 @@ export class SkillCheckPhase implements PhaseBase {
   constructor(public context: Context, public check: SkillCheck) {}
 
   get actions() {
-    const actions: Action[] = []
+    const actions: PhaseAction[] = []
 
     const { check, context } = this
     const { investigatorId } = check
@@ -58,7 +58,7 @@ export class CommitSkillCheckPhase implements PhaseBase {
   }
 
   get actions() {
-    const actions: Action[] = []
+    const actions: PhaseAction[] = []
 
     const { check } = this.skillCheckContext
     const { investigatorId, difficulty, onSuccess, onFailure } = check

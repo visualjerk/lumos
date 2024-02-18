@@ -13,7 +13,7 @@ export type Phase =
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string
-  actions: Action<TPhaseResult>[]
+  actions: PhaseAction<TPhaseResult>[]
 }
 
 export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
@@ -22,7 +22,7 @@ export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
   ? TResult
   : never
 
-export type Action<TPhaseResult extends PhaseResult = PhaseResult> = {
+export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string
   investigatorId?: InvestigatorId
   locationId?: LocationId
