@@ -32,5 +32,5 @@ export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> = {
 export type PhaseResult = Record<string, unknown> | undefined
 
 export type Execute<TPhaseResult extends PhaseResult = PhaseResult> = (
-  e: GameExecute<[], TPhaseResult, []>
+  e: GameExecute<[], TPhaseResult>
 ) => void

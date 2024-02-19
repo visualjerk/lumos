@@ -1,5 +1,5 @@
 import { Context, InvestigatorId, LocationId } from '@lumos/game'
-import { PhaseAction, PhaseBase, PhaseResult } from '../phase'
+import { PhaseAction, PhaseBase } from '../phase'
 import { GameExecute } from '../game'
 
 export type LocationTargetScope = 'current'
@@ -13,8 +13,8 @@ export type LocationTargetResult = {
   locationId: LocationId
 }
 
-export function executeTargetLocation(
-  e: GameExecute<[], PhaseResult, []>,
+export function executeTargetLocation<TGameExecute extends GameExecute>(
+  e: TGameExecute,
   context: Context,
   investigatorId: InvestigatorId,
   locationTarget: LocationTarget
@@ -35,9 +35,9 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
   type = 'locationTarget'
 
   constructor(
-    private context: Context,
-    private investigatorId: InvestigatorId,
-    private locationTarget: LocationTarget
+    public context: Context,
+    public investigatorId: InvestigatorId,
+    public locationTarget: LocationTarget
   ) {}
 
   get actions() {

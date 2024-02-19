@@ -1,8 +1,12 @@
 import { Context } from '@lumos/game'
 import { PhaseAction, PhaseBase } from '../phase'
 import { LocationTargetPhase } from './location-target'
+import { InvestigatorTargetPhase } from './investigator-target'
 
-export type TargetPhase = LocationTargetPhase | TargetPhase_TEST_REMOVE_ME
+export type TargetPhase =
+  | InvestigatorTargetPhase
+  | LocationTargetPhase
+  | TargetPhase_TEST_REMOVE_ME
 
 export type TargetPhaseResult_TEST_REMOVE_ME = {
   investigatorId: string

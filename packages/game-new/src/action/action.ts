@@ -5,6 +5,7 @@ import { GameExecute } from '../game'
 import {
   InvestigatorTargetScope,
   LocationTargetScope,
+  executeTargetInvestigator,
   executeTargetLocation,
 } from '../target'
 
@@ -15,7 +16,7 @@ export type CreateAction<Type extends string> = {
 }
 
 export function executeAction(
-  e: GameExecute<[], PhaseResult, []>,
+  e: GameExecute<[], PhaseResult>,
   context: Context,
   action: Action
 ) {
@@ -32,17 +33,23 @@ export type InvestigateAction = CreateAction<'investigate'> & {
 }
 
 export function executeInvestigateAction(
-  e: GameExecute<[], PhaseResult, []>,
+  e: GameExecute<[], PhaseResult>,
   context: Context,
   action: InvestigateAction
 ) {
-  // TODO: Add target phase for this (self | investigator)
+  // TODO: add current investigator to context
   const investigatorId = context.investigators[0].id
 
-  return executeTargetLocation(e, context, investigatorId, {
+  const investigatorExecute = executeTargetInvestigator(
+    e,
+    context,
+    investigatorId,
+    { type: 'investigator', scope: action.investigatorTarget }
+  )
+  return executeTargetLocation(investigatorExecute, context, investigatorId, {
     type: 'location',
     scope: action.locationTarget,
-  }).waitFor(([{ locationId }]) => {
+  }).waitFor(([{ investigatorId }, { locationId }]) => {
     const location = context.getLocation(locationId)
 
     const skillCheck: SkillCheck = {
