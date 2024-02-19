@@ -76,10 +76,32 @@ export class PendingPhaseResult<
 > {
   result?: TPhaseResult
   isResolved: boolean = false
+  subscribers: (() => void)[] = []
 
   resolve(result: TPhaseResult) {
     this.result = result
     this.isResolved = true
+    this.notifySubscribers()
+  }
+
+  notifySubscribers() {
+    this.subscribers.forEach((s) => s())
+  }
+
+  onResolve(subscriber: () => void) {
+    if (this.isResolved) {
+      subscriber()
+      return
+    }
+    this.subscribers.push(subscriber)
+    return () => this.unsubscribe(subscriber)
+  }
+
+  private unsubscribe(subscriber: () => void) {
+    const index = this.subscribers.indexOf(subscriber)
+    if (index !== -1) {
+      this.subscribers.splice(index, 1)
+    }
   }
 }
 
@@ -102,7 +124,9 @@ export class GameExecute<
     private game: Game,
     private pendingPhaseResults: TPendingPhaseResults,
     private parentGameExecute?: GameExecute
-  ) {}
+  ) {
+    this.subscribeToPendingPhaseResults()
+  }
 
   private get hasUnresolvedResults() {
     return this.pendingPhaseResults.some((p) => !p.isResolved)
@@ -114,6 +138,18 @@ export class GameExecute<
       return
     }
     fn()
+  }
+
+  private subscribeToPendingPhaseResults() {
+    this.pendingPhaseResults.forEach((p) => {
+      p.onResolve(() => this.resumeIfNoUnresolvedResults())
+    })
+  }
+
+  private resumeIfNoUnresolvedResults() {
+    if (!this.hasUnresolvedResults) {
+      this.resume()
+    }
   }
 
   private resume() {
@@ -152,7 +188,6 @@ export class GameExecute<
       const result = applyFn(this.unwrappedPendingPhaseResults)
       this.game.popCurrentPhase()
       awaitedPhaseResult?.resolve(result)
-      this.parentGameExecute?.resume()
     })
   }
 
@@ -160,10 +195,11 @@ export class GameExecute<
     if (this.parentGameExecute === undefined) {
       throw new Error('No parent to apply to')
     }
+    const awaitedPhaseResult = this.parentGameExecute.pendingPhaseResults.at(-1)
 
     this.enqueueOrExecute(() => {
       this.game.popCurrentPhase()
-      this.parentGameExecute?.resume()
+      awaitedPhaseResult?.resolve(undefined as any)
     })
   }
 
