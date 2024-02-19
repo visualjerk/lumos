@@ -6,7 +6,7 @@ import {
 } from '@lumos/game'
 import { PhaseBase, PhaseAction } from '../phase'
 import { TargetPhase_TEST_REMOVE_ME } from '../target'
-import { executeAction } from '../action'
+import { createActionPhase } from '../action'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -16,8 +16,8 @@ export const INVESTIGATOR_ACTIONS_PER_TURN = 3
 
 export class InvestigatorPhase implements PhaseBase {
   type = 'investigator'
-  public actionsMade: number = 0
-  public investigatorId: InvestigatorId
+  actionsMade: number = 0
+  investigatorId: InvestigatorId
 
   constructor(public context: Context) {
     // TODO: support multiple investigators
@@ -105,14 +105,18 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'investigate',
         execute: (e) =>
-          executeAction(e, this.context, {
-            type: 'investigate',
-            clueAmount: 1,
-            locationTarget: 'current',
-            investigatorTarget: 'self',
-          }).apply(() => {
-            this.actionsMade++
-          }),
+          e
+            .waitFor(
+              createActionPhase(this.context, {
+                type: 'investigate',
+                clueAmount: 1,
+                locationTarget: 'current',
+                investigatorTarget: 'self',
+              })
+            )
+            .apply(() => {
+              this.actionsMade++
+            }),
       })
     }
 
