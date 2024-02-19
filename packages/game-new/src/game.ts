@@ -25,8 +25,8 @@ export class Game {
     return this.phases[0]
   }
 
-  addPhase(phase: Phase, parentGameExecute?: GameExecute) {
-    const gamePhase = this.convertToGamePhase(phase, parentGameExecute)
+  addPhase(phase: Phase, awaitedPhaseResult?: PendingPhaseResult) {
+    const gamePhase = this.convertToGamePhase(phase, awaitedPhaseResult)
     this.phases.push(gamePhase)
   }
 
@@ -41,7 +41,7 @@ export class Game {
 
   private convertToGamePhase(
     phase: Phase,
-    parentGameExecute?: GameExecute
+    awaitedPhaseResult?: PendingPhaseResult
   ): GamePhase {
     // Create a Proxy that intercepts the `actions` property access
     const phaseProxy = new Proxy(phase, {
@@ -49,7 +49,7 @@ export class Game {
         if (prop === 'actions') {
           // Convert actions to GameAction objects on-the-fly
           return target[prop].map((action) =>
-            this.convertToGameAction(action, parentGameExecute)
+            this.convertToGameAction(action, awaitedPhaseResult)
           )
         }
         return target[prop as keyof Phase]
@@ -61,12 +61,12 @@ export class Game {
 
   private convertToGameAction(
     action: PhaseAction,
-    parentGameExecute?: GameExecute
+    awaitedPhaseResult?: PendingPhaseResult
   ): GameAction {
     return {
       ...action,
       execute: () =>
-        action.execute(new GameExecute(this, [], parentGameExecute)),
+        action.execute(new GameExecute(this, [], awaitedPhaseResult)),
     }
   }
 }
@@ -123,7 +123,7 @@ export class GameExecute<
   constructor(
     private game: Game,
     private pendingPhaseResults: TPendingPhaseResults,
-    private parentGameExecute?: GameExecute
+    private awaitedPhaseResult?: PendingPhaseResult
   ) {
     this.subscribeToPendingPhaseResults()
   }
@@ -179,27 +179,25 @@ export class GameExecute<
       results: UnwrapPendingPhaseResult<TPendingPhaseResults>
     ) => TPhaseResult
   ): void {
-    if (this.parentGameExecute === undefined) {
+    if (this.awaitedPhaseResult === undefined) {
       throw new Error('No parent to apply to')
     }
-    const awaitedPhaseResult = this.parentGameExecute.pendingPhaseResults.at(-1)
 
     this.enqueueOrExecute(() => {
       const result = applyFn(this.unwrappedPendingPhaseResults)
       this.game.popCurrentPhase()
-      awaitedPhaseResult?.resolve(result)
+      this.awaitedPhaseResult?.resolve(result)
     })
   }
 
   toParent() {
-    if (this.parentGameExecute === undefined) {
+    if (this.awaitedPhaseResult === undefined) {
       throw new Error('No parent to apply to')
     }
-    const awaitedPhaseResult = this.parentGameExecute.pendingPhaseResults.at(-1)
 
     this.enqueueOrExecute(() => {
       this.game.popCurrentPhase()
-      awaitedPhaseResult?.resolve(undefined as any)
+      this.awaitedPhaseResult?.resolve(undefined as any)
     })
   }
 
@@ -220,14 +218,14 @@ export class GameExecute<
     > = new GameExecute(
       this.game,
       [...this.pendingPhaseResults, pendingPhaseResult],
-      this.parentGameExecute
+      this.awaitedPhaseResult
     )
     this.enqueueOrExecute(() => {
       const resolvedPhase =
         typeof phase === 'function'
           ? phase(this.unwrappedPendingPhaseResults)
           : phase
-      this.game.addPhase(resolvedPhase, parentExecute)
+      this.game.addPhase(resolvedPhase, pendingPhaseResult)
     })
     return parentExecute
   }
@@ -243,7 +241,7 @@ export class GameExecute<
     > = new GameExecute(
       this.game,
       [...this.pendingPhaseResults, phaseResult],
-      this.parentGameExecute
+      this.awaitedPhaseResult
     )
 
     return gameExecute
