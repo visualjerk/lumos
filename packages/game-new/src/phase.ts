@@ -1,13 +1,13 @@
 import { InvestigatorId, LocationId } from '@lumos/game'
 import { GameExecute } from './game'
 import { EndPhase, InvestigatorPhase } from './investigator'
-import { TargetPhase } from './target'
+import { TargetPhase_TEST_REMOVE_ME } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 
 export type Phase =
   | InvestigatorPhase
   | EndPhase
-  | TargetPhase
+  | TargetPhase_TEST_REMOVE_ME
   | SkillCheckPhase
   | CommitSkillCheckPhase
 

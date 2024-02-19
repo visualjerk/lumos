@@ -5,8 +5,8 @@ import {
   isConnected,
 } from '@lumos/game'
 import { PhaseBase, PhaseAction } from '../phase'
-import { TargetPhase } from '../target'
-import { executeAction, executeInvestigateAction } from '../action'
+import { TargetPhase_TEST_REMOVE_ME } from '../target'
+import { executeAction } from '../action'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -53,7 +53,7 @@ export class InvestigatorPhase implements PhaseBase {
       type: 'attack',
       execute: (e) =>
         e
-          .waitFor(new TargetPhase(this.context))
+          .waitFor(new TargetPhase_TEST_REMOVE_ME(this.context))
           .apply(([{ investigatorId }]) => {
             this.context.investigatorStates.get(investigatorId!)?.addDamage(1)
             this.actionsMade++
