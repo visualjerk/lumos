@@ -71,6 +71,10 @@ export class Game {
   }
 }
 
+type PendingPhaseResultSubscription = {
+  unsubscribe: () => void
+}
+
 export class PendingPhaseResult<
   TPhaseResult extends PhaseResult = PhaseResult
 > {
@@ -88,13 +92,11 @@ export class PendingPhaseResult<
     this.subscribers.forEach((s) => s())
   }
 
-  onResolve(subscriber: () => void) {
-    if (this.isResolved) {
-      subscriber()
-      return
-    }
+  onResolve(subscriber: () => void): PendingPhaseResultSubscription {
     this.subscribers.push(subscriber)
-    return () => this.unsubscribe(subscriber)
+    return {
+      unsubscribe: () => this.unsubscribe(subscriber),
+    }
   }
 
   private unsubscribe(subscriber: () => void) {
@@ -119,6 +121,7 @@ export class GameExecute<
   TPhaseResult extends PhaseResult = PhaseResult
 > {
   private executeQueue: (() => void)[] = []
+  private subscriptions: PendingPhaseResultSubscription[] = []
 
   constructor(
     private game: Game,
@@ -142,13 +145,20 @@ export class GameExecute<
 
   private subscribeToPendingPhaseResults() {
     this.pendingPhaseResults.forEach((p) => {
-      p.onResolve(() => this.resumeIfNoUnresolvedResults())
+      this.subscriptions.push(
+        p.onResolve(() => this.resumeIfNoUnresolvedResults())
+      )
     })
+  }
+
+  private unsubscribeFromPendingPhaseResults() {
+    this.subscriptions.forEach((s) => s.unsubscribe())
   }
 
   private resumeIfNoUnresolvedResults() {
     if (!this.hasUnresolvedResults) {
       this.resume()
+      this.unsubscribeFromPendingPhaseResults()
     }
   }
 
