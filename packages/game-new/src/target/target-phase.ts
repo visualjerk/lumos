@@ -1,6 +1,8 @@
-import { Context, InvestigatorId } from '@lumos/game'
+import { Context } from '@lumos/game'
 import { PhaseAction, PhaseBase } from '../phase'
-import { LocationTarget, LocationTargetResult } from './target'
+import { LocationTargetPhase } from './location-target'
+
+export type TargetPhase = LocationTargetPhase | TargetPhase_TEST_REMOVE_ME
 
 export type TargetPhaseResult_TEST_REMOVE_ME = {
   investigatorId: string
@@ -25,28 +27,3 @@ export class TargetPhase_TEST_REMOVE_ME
     }))
   }
 }
-
-// export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
-//   type = 'locationTarget'
-
-//   constructor(
-//     private context: Context,
-//     private investigatorId: InvestigatorId,
-//     private locationTarget: LocationTarget
-//   ) {
-//     if (locationTarget.scope === 'current') {
-//       const currentLocation = this.context.getInvestigatorLocation(
-//         this.investigatorId
-//       )
-//       this.game.applyToParent(() => ({
-//         locationId: currentLocation.id,
-//       }))
-//     }
-//   }
-
-//   get actions() {
-//     const actions: PhaseAction<LocationTargetResult>[] = []
-
-//     return actions
-//   }
-// }

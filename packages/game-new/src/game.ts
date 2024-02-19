@@ -66,7 +66,7 @@ export class Game {
     return {
       ...action,
       execute: () =>
-        action.execute(new GameExecute(this, [], parentGameExecute)),
+        action.execute(new GameExecute(this, [], [], parentGameExecute)),
     }
   }
 }
@@ -92,13 +92,15 @@ export type UnwrapPendingPhaseResult<
 
 export class GameExecute<
   TPendingPhaseResults extends PendingPhaseResult[] = PendingPhaseResult[],
-  TPhaseResult extends PhaseResult = PhaseResult
+  TPhaseResult extends PhaseResult = PhaseResult,
+  TResolvedPhaseResults extends PendingPhaseResult[] = PendingPhaseResult[]
 > {
   private executeQueue: (() => void)[] = []
 
   constructor(
     private game: Game,
     private pendingPhaseResults: TPendingPhaseResults,
+    private resolvedPhaseResults: TResolvedPhaseResults,
     private parentGameExecute?: GameExecute
   ) {}
 
@@ -118,15 +120,19 @@ export class GameExecute<
   }
 
   private get unwrappedPendingPhaseResults() {
-    return this.pendingPhaseResults
+    return [...this.pendingPhaseResults, ...this.resolvedPhaseResults]
       .map((p) => p.result)
-      .filter(
-        (r) => r !== undefined
-      ) as UnwrapPendingPhaseResult<TPendingPhaseResults>
+      .filter((r) => r !== undefined) as UnwrapPendingPhaseResult<
+      [...TPendingPhaseResults, ...TResolvedPhaseResults]
+    >
   }
 
   apply(
-    applyFn: (results: UnwrapPendingPhaseResult<TPendingPhaseResults>) => void
+    applyFn: (
+      results: UnwrapPendingPhaseResult<
+        [...TPendingPhaseResults, ...TResolvedPhaseResults]
+      >
+    ) => void
   ): this {
     this.enqueueOrExecute(() => applyFn(this.unwrappedPendingPhaseResults))
     return this
@@ -134,7 +140,9 @@ export class GameExecute<
 
   applyToParent(
     applyFn: (
-      results: UnwrapPendingPhaseResult<TPendingPhaseResults>
+      results: UnwrapPendingPhaseResult<
+        [...TPendingPhaseResults, ...TResolvedPhaseResults]
+      >
     ) => TPhaseResult
   ): void {
     if (this.parentGameExecute === undefined) {
@@ -165,20 +173,53 @@ export class GameExecute<
     this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
   }
 
-  waitFor<TPhase extends Phase>(phase: TPhase) {
+  waitFor<TPhase extends Phase>(
+    phase:
+      | TPhase
+      | ((
+          results: UnwrapPendingPhaseResult<
+            [...TPendingPhaseResults, ...TResolvedPhaseResults]
+          >
+        ) => TPhase)
+  ) {
     const pendingPhaseResult: PendingPhaseResult<GetPhaseResult<TPhase>> =
       new PendingPhaseResult<GetPhaseResult<TPhase>>()
     const parentExecute: GameExecute<
       [...TPendingPhaseResults, PendingPhaseResult<GetPhaseResult<TPhase>>],
-      GetPhaseResult<TPhase>
+      GetPhaseResult<TPhase>,
+      TResolvedPhaseResults
     > = new GameExecute(
       this.game,
       [...this.pendingPhaseResults, pendingPhaseResult],
+      this.resolvedPhaseResults,
       this.parentGameExecute
     )
     this.enqueueOrExecute(() => {
-      this.game.addPhase(phase, parentExecute)
+      const resolvedPhase =
+        typeof phase === 'function'
+          ? phase(this.unwrappedPendingPhaseResults)
+          : phase
+      this.game.addPhase(resolvedPhase, parentExecute)
     })
     return parentExecute
+  }
+
+  addResult<TPhaseResult extends PhaseResult>(result: TPhaseResult) {
+    const phaseResult: PendingPhaseResult<TPhaseResult> =
+      new PendingPhaseResult<TPhaseResult>()
+    phaseResult.resolve(result)
+
+    const gameExecute: GameExecute<
+      TPendingPhaseResults,
+      TPhaseResult,
+      [...TResolvedPhaseResults, PendingPhaseResult<TPhaseResult>]
+    > = new GameExecute(
+      this.game,
+      this.pendingPhaseResults,
+      [...this.resolvedPhaseResults, phaseResult],
+      this.parentGameExecute
+    )
+
+    return gameExecute
   }
 }

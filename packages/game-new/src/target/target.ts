@@ -1,19 +1,12 @@
-import { InvestigatorId, LocationId } from '@lumos/game'
+import { InvestigatorId } from '@lumos/game'
+
+export type InvestigatorTargetScope = 'self'
 
 export type InvestigatorTarget = {
   type: 'investigator'
-  scope: 'self'
+  scope: InvestigatorTargetScope
 }
 
 export type InvestigatorTargetResult = {
   investigatorId: InvestigatorId
-}
-
-export type LocationTarget = {
-  type: 'location'
-  scope: 'current'
-}
-
-export type LocationTargetResult = {
-  locationId: LocationId
 }

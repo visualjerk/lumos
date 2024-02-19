@@ -2,6 +2,11 @@ import { Context } from '@lumos/game'
 import { PhaseResult } from '../phase'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { GameExecute } from '../game'
+import {
+  InvestigatorTargetScope,
+  LocationTargetScope,
+  executeTargetLocation,
+} from '../target'
 
 export type Action = InvestigateAction
 
@@ -10,7 +15,7 @@ export type CreateAction<Type extends string> = {
 }
 
 export function executeAction(
-  e: GameExecute<[], PhaseResult>,
+  e: GameExecute<[], PhaseResult, []>,
   context: Context,
   action: Action
 ) {
@@ -22,28 +27,36 @@ export function executeAction(
 
 export type InvestigateAction = CreateAction<'investigate'> & {
   clueAmount: number
+  locationTarget: LocationTargetScope
+  investigatorTarget: InvestigatorTargetScope
 }
 
 export function executeInvestigateAction(
-  e: GameExecute<[], PhaseResult>,
+  e: GameExecute<[], PhaseResult, []>,
   context: Context,
   action: InvestigateAction
 ) {
   // TODO: Add target phase for this (self | investigator)
   const investigatorId = context.investigators[0].id
-  // TODO: Add target phase to select location (current | connected)
-  const currentLocation = context.getInvestigatorLocation(investigatorId)
 
-  const skillCheck: SkillCheck = {
-    investigatorId,
-    skill: 'intelligence',
-    difficulty: currentLocation.shroud,
-    onFailure: () => {},
-    onSuccess: () => {
-      for (let i = 0; i < action.clueAmount; i++) {
-        context.collectClue(investigatorId, currentLocation.id)
-      }
-    },
-  }
-  return e.waitFor(createSkillCheckPhase(context, skillCheck))
+  return executeTargetLocation(e, context, investigatorId, {
+    type: 'location',
+    scope: action.locationTarget,
+  }).waitFor(([{ locationId }]) => {
+    const location = context.getLocation(locationId)
+
+    const skillCheck: SkillCheck = {
+      investigatorId,
+      skill: 'intelligence',
+      difficulty: location.shroud,
+      onFailure: () => {},
+      onSuccess: () => {
+        for (let i = 0; i < action.clueAmount; i++) {
+          context.collectClue(investigatorId, locationId)
+        }
+      },
+    }
+
+    return createSkillCheckPhase(context, skillCheck)
+  })
 }

@@ -108,6 +108,8 @@ export class InvestigatorPhase implements PhaseBase {
           executeAction(e, this.context, {
             type: 'investigate',
             clueAmount: 1,
+            locationTarget: 'current',
+            investigatorTarget: 'self',
           }).apply(() => {
             this.actionsMade++
           }),
