@@ -5,8 +5,8 @@ import { GameExecute } from '../game'
 import {
   InvestigatorTargetScope,
   LocationTargetScope,
-  executeTargetInvestigator,
-  executeTargetLocation,
+  createInvestigatorTargetPhase,
+  createLocactionTargetPhase,
 } from '../target'
 
 export type Action = InvestigateAction
@@ -40,30 +40,34 @@ export function executeInvestigateAction(
   // TODO: add current investigator to context
   const investigatorId = context.investigators[0].id
 
-  const investigatorExecute = executeTargetInvestigator(
-    e,
-    context,
-    investigatorId,
-    { type: 'investigator', scope: action.investigatorTarget }
-  )
-  return executeTargetLocation(investigatorExecute, context, investigatorId, {
-    type: 'location',
-    scope: action.locationTarget,
-  }).waitFor(([{ investigatorId }, { locationId }]) => {
-    const location = context.getLocation(locationId)
+  return e
+    .waitFor(
+      createInvestigatorTargetPhase(context, investigatorId, {
+        type: 'investigator',
+        scope: action.investigatorTarget,
+      })
+    )
+    .waitFor(
+      createLocactionTargetPhase(context, investigatorId, {
+        type: 'location',
+        scope: action.locationTarget,
+      })
+    )
+    .waitFor(([{ investigatorId }, { locationId }]) => {
+      const location = context.getLocation(locationId)
 
-    const skillCheck: SkillCheck = {
-      investigatorId,
-      skill: 'intelligence',
-      difficulty: location.shroud,
-      onFailure: () => {},
-      onSuccess: () => {
-        for (let i = 0; i < action.clueAmount; i++) {
-          context.collectClue(investigatorId, locationId)
-        }
-      },
-    }
+      const skillCheck: SkillCheck = {
+        investigatorId,
+        skill: 'intelligence',
+        difficulty: location.shroud,
+        onFailure: () => {},
+        onSuccess: () => {
+          for (let i = 0; i < action.clueAmount; i++) {
+            context.collectClue(investigatorId, locationId)
+          }
+        },
+      }
 
-    return createSkillCheckPhase(context, skillCheck)
-  })
+      return createSkillCheckPhase(context, skillCheck)
+    })
 }

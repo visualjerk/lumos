@@ -14,6 +14,7 @@ export type Phase =
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string
   context: Context
+  onEnter?: (gameExecute: GameExecute<[], TPhaseResult>) => void
   actions: PhaseAction<TPhaseResult>[]
 }
 

@@ -3,6 +3,7 @@ import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 
 export type GamePhase = {
   type: string
+  onEnter?: (gameExecute: GameExecute) => void
   actions: GameAction[]
 }
 
@@ -28,6 +29,10 @@ export class Game {
   addPhase(phase: Phase, awaitedPhaseResult?: PendingPhaseResult) {
     const gamePhase = this.convertToGamePhase(phase, awaitedPhaseResult)
     this.phases.push(gamePhase)
+
+    if (gamePhase.onEnter !== undefined) {
+      gamePhase.onEnter(new GameExecute(this, [], awaitedPhaseResult))
+    }
   }
 
   popCurrentPhase() {
@@ -230,6 +235,7 @@ export class GameExecute<
       [...this.pendingPhaseResults, pendingPhaseResult],
       this.awaitedPhaseResult
     )
+
     this.enqueueOrExecute(() => {
       const resolvedPhase =
         typeof phase === 'function'

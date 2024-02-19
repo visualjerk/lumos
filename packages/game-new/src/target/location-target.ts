@@ -13,22 +13,12 @@ export type LocationTargetResult = {
   locationId: LocationId
 }
 
-export function executeTargetLocation<TGameExecute extends GameExecute>(
-  e: TGameExecute,
+export function createLocactionTargetPhase(
   context: Context,
   investigatorId: InvestigatorId,
   locationTarget: LocationTarget
-) {
-  // Instantly resolve if scope is the current location
-  if (locationTarget.scope === 'current') {
-    const currentLocation = context.getInvestigatorLocation(investigatorId)
-    return e.addResult({
-      locationId: currentLocation.id,
-    })
-  }
-  return e.waitFor(
-    new LocationTargetPhase(context, investigatorId, locationTarget)
-  )
+): LocationTargetPhase {
+  return new LocationTargetPhase(context, investigatorId, locationTarget)
 }
 
 export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
@@ -39,6 +29,18 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
     public investigatorId: InvestigatorId,
     public locationTarget: LocationTarget
   ) {}
+
+  onEnter(gameExecute: GameExecute<[], LocationTargetResult>) {
+    // Instantly resolve if scope is the current location
+    if (this.locationTarget.scope === 'current') {
+      const currentLocation = this.context.getInvestigatorLocation(
+        this.investigatorId
+      )
+      gameExecute.applyToParent(() => ({
+        locationId: currentLocation.id,
+      }))
+    }
+  }
 
   get actions() {
     const actions: PhaseAction<LocationTargetResult>[] = []

@@ -13,20 +13,15 @@ export type InvestigatorTargetResult = {
   investigatorId: InvestigatorId
 }
 
-export function executeTargetInvestigator<TGameExecute extends GameExecute>(
-  e: TGameExecute,
+export function createInvestigatorTargetPhase(
   context: Context,
   investigatorId: InvestigatorId,
   investigatorTarget: InvestigatorTarget
-) {
-  // Instantly resolve if scope is self
-  if (investigatorTarget.scope === 'self') {
-    return e.addResult({
-      investigatorId,
-    })
-  }
-  return e.waitFor(
-    new InvestigatorTargetPhase(context, investigatorId, investigatorTarget)
+): InvestigatorTargetPhase {
+  return new InvestigatorTargetPhase(
+    context,
+    investigatorId,
+    investigatorTarget
   )
 }
 
@@ -40,6 +35,15 @@ export class InvestigatorTargetPhase
     public investigatorId: InvestigatorId,
     public investigatorTarget: InvestigatorTarget
   ) {}
+
+  onEnter(gameExecute: GameExecute<[], InvestigatorTargetResult>) {
+    // Instantly resolve if scope is self
+    if (this.investigatorTarget.scope === 'self') {
+      gameExecute.applyToParent(() => ({
+        investigatorId: this.investigatorId,
+      }))
+    }
+  }
 
   get actions() {
     return []
