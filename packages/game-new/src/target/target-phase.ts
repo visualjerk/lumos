@@ -17,7 +17,7 @@ export class TargetPhase_TEST_REMOVE_ME
 {
   type = 'target'
 
-  constructor(private context: Context) {}
+  constructor(public context: Context) {}
 
   get actions() {
     return [...this.context.investigatorStates.keys()].map<

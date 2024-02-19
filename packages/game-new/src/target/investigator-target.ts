@@ -1,5 +1,6 @@
 import { Context, InvestigatorId } from '@lumos/game'
 import { GameExecute } from '../game'
+import { PhaseBase } from '../phase'
 
 export type InvestigatorTargetScope = 'self'
 
@@ -29,7 +30,11 @@ export function executeTargetInvestigator<TGameExecute extends GameExecute>(
   )
 }
 
-export class InvestigatorTargetPhase {
+export class InvestigatorTargetPhase
+  implements PhaseBase<InvestigatorTargetResult>
+{
+  type = 'investigatorTarget'
+
   constructor(
     public context: Context,
     public investigatorId: InvestigatorId,

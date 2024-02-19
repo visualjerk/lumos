@@ -19,7 +19,7 @@ export class InvestigatorPhase implements PhaseBase {
   public actionsMade: number = 0
   public investigatorId: InvestigatorId
 
-  constructor(private context: Context) {
+  constructor(public context: Context) {
     // TODO: support multiple investigators
     this.investigatorId = context.investigators[0].id
   }
@@ -123,7 +123,7 @@ export class InvestigatorPhase implements PhaseBase {
 export class EndPhase implements PhaseBase {
   type = 'end'
 
-  constructor(private context: Context) {}
+  constructor(public context: Context) {}
 
   get actions() {
     return []

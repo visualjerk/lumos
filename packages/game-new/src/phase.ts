@@ -1,4 +1,4 @@
-import { InvestigatorId, LocationId } from '@lumos/game'
+import { Context, InvestigatorId, LocationId } from '@lumos/game'
 import { GameExecute } from './game'
 import { EndPhase, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
@@ -13,6 +13,7 @@ export type Phase =
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string
+  context: Context
   actions: PhaseAction<TPhaseResult>[]
 }
 
