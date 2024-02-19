@@ -9,6 +9,17 @@ export type CreateAction<Type extends string> = {
   type: Type
 }
 
+export function executeAction(
+  e: GameExecute<[], PhaseResult>,
+  context: Context,
+  action: Action
+) {
+  switch (action.type) {
+    case 'investigate':
+      return executeInvestigateAction(e, context, action)
+  }
+}
+
 export type InvestigateAction = CreateAction<'investigate'> & {
   clueAmount: number
 }
@@ -16,7 +27,7 @@ export type InvestigateAction = CreateAction<'investigate'> & {
 export function executeInvestigateAction(
   e: GameExecute<[], PhaseResult>,
   context: Context,
-  action: Omit<InvestigateAction, 'type'>
+  action: InvestigateAction
 ) {
   // TODO: Add target phase for this (self | investigator)
   const investigatorId = context.investigators[0].id

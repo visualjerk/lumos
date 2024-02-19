@@ -6,7 +6,7 @@ import {
 } from '@lumos/game'
 import { PhaseBase, PhaseAction } from '../phase'
 import { TargetPhase } from '../target'
-import { executeInvestigateAction } from '../action'
+import { executeAction, executeInvestigateAction } from '../action'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -105,11 +105,12 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'investigate',
         execute: (e) =>
-          executeInvestigateAction(e, this.context, { clueAmount: 1 }).apply(
-            () => {
-              this.actionsMade++
-            }
-          ),
+          executeAction(e, this.context, {
+            type: 'investigate',
+            clueAmount: 1,
+          }).apply(() => {
+            this.actionsMade++
+          }),
       })
     }
 
