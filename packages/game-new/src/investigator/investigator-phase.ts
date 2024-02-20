@@ -65,10 +65,17 @@ export class InvestigatorPhase implements PhaseBase {
         type: 'draw',
         investigatorId: this.investigatorId,
         execute: (coordinator) =>
-          coordinator.apply(() => {
-            this.investigatorState.draw()
-            this.actionsMade++
-          }),
+          coordinator
+            .waitFor(
+              createActionPhase(this.context, this.investigatorId, {
+                type: 'draw',
+                cardAmount: 1,
+                investigatorTarget: 'self',
+              })
+            )
+            .apply(() => {
+              this.actionsMade++
+            }),
       })
     }
 
@@ -107,7 +114,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (coordinator) =>
           coordinator
             .waitFor(
-              createActionPhase(this.context, {
+              createActionPhase(this.context, this.investigatorId, {
                 type: 'investigate',
                 clueAmount: 1,
                 locationTarget: 'current',

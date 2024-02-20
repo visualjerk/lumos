@@ -1,4 +1,4 @@
-import { Context } from '@lumos/game'
+import { Context, InvestigatorId } from '@lumos/game'
 import { PhaseBase, PhaseResult } from '../phase'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { GamePhaseCoordinator } from '../game'
@@ -18,29 +18,32 @@ export type InvestigateAction = CreateAction<'investigate'> & {
 
 export function createInvestigateActionPhase(
   context: Context,
+  investigatorId: InvestigatorId,
   action: InvestigateAction
 ): InvestigateActionPhase {
-  return new InvestigateActionPhase(context, action)
+  return new InvestigateActionPhase(context, investigatorId, action)
 }
 
 export class InvestigateActionPhase implements PhaseBase {
   type = 'investigate'
   actions = []
 
-  constructor(public context: Context, public action: InvestigateAction) {}
+  constructor(
+    public context: Context,
+    public investigatorId: InvestigatorId,
+    public action: InvestigateAction
+  ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
-    const investigatorId = this.context.investigators[0].id
-
     return coordinator
       .waitFor(
-        createInvestigatorTargetPhase(this.context, investigatorId, {
+        createInvestigatorTargetPhase(this.context, this.investigatorId, {
           type: 'investigator',
           scope: this.action.investigatorTarget,
         })
       )
       .waitFor(
-        createLocactionTargetPhase(this.context, investigatorId, {
+        createLocactionTargetPhase(this.context, this.investigatorId, {
           type: 'location',
           scope: this.action.locationTarget,
         })

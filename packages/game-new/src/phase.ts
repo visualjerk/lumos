@@ -3,12 +3,14 @@ import { GamePhaseCoordinator } from './game'
 import { EndPhase, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
+import { ActionPhase } from './action'
 
 export type Phase =
   | InvestigatorPhase
   | EndPhase
   | SkillCheckPhase
   | CommitSkillCheckPhase
+  | ActionPhase
   | TargetPhase
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
