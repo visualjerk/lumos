@@ -3,7 +3,7 @@ import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 
 export type GamePhase = {
   type: string
-  onEnter?: (gameExecute: GameExecute) => void
+  onEnter?: (gameExecute: GamePhaseCoordinator) => void
   actions: GameAction[]
 }
 
@@ -31,7 +31,7 @@ export class Game {
     this.phases.push(gamePhase)
 
     if (gamePhase.onEnter !== undefined) {
-      gamePhase.onEnter(new GameExecute(this, [], awaitedPhaseResult))
+      gamePhase.onEnter(new GamePhaseCoordinator(this, [], awaitedPhaseResult))
     }
   }
 
@@ -71,7 +71,7 @@ export class Game {
     return {
       ...action,
       execute: () =>
-        action.execute(new GameExecute(this, [], awaitedPhaseResult)),
+        action.execute(new GamePhaseCoordinator(this, [], awaitedPhaseResult)),
     }
   }
 }
@@ -121,7 +121,7 @@ export type UnwrapPendingPhaseResult<
   ? [TPhaseResult, ...UnwrapPendingPhaseResult<TRest>]
   : []
 
-export class GameExecute<
+export class GamePhaseCoordinator<
   TPendingPhaseResults extends PendingPhaseResult[] = PendingPhaseResult[],
   TPhaseResult extends PhaseResult = PhaseResult
 > {
@@ -227,14 +227,6 @@ export class GameExecute<
   ) {
     const pendingPhaseResult: PendingPhaseResult<GetPhaseResult<TPhase>> =
       new PendingPhaseResult<GetPhaseResult<TPhase>>()
-    const parentExecute: GameExecute<
-      [...TPendingPhaseResults, PendingPhaseResult<GetPhaseResult<TPhase>>],
-      GetPhaseResult<TPhase>
-    > = new GameExecute(
-      this.game,
-      [...this.pendingPhaseResults, pendingPhaseResult],
-      this.awaitedPhaseResult
-    )
 
     this.enqueueOrExecute(() => {
       const resolvedPhase =
@@ -243,23 +235,16 @@ export class GameExecute<
           : phase
       this.game.addPhase(resolvedPhase, pendingPhaseResult)
     })
-    return parentExecute
-  }
 
-  addResult<TPhaseResult extends PhaseResult>(result: TPhaseResult) {
-    const phaseResult: PendingPhaseResult<TPhaseResult> =
-      new PendingPhaseResult<TPhaseResult>()
-    phaseResult.resolve(result)
-
-    const gameExecute: GameExecute<
-      [...TPendingPhaseResults, PendingPhaseResult<TPhaseResult>],
+    const coordinator: GamePhaseCoordinator<
+      [...TPendingPhaseResults, PendingPhaseResult<GetPhaseResult<TPhase>>],
       TPhaseResult
-    > = new GameExecute(
+    > = new GamePhaseCoordinator(
       this.game,
-      [...this.pendingPhaseResults, phaseResult],
+      [...this.pendingPhaseResults, pendingPhaseResult],
       this.awaitedPhaseResult
     )
 
-    return gameExecute
+    return coordinator
   }
 }

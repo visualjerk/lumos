@@ -1,6 +1,6 @@
 import { Context, InvestigatorId, LocationId } from '@lumos/game'
 import { PhaseAction, PhaseBase } from '../phase'
-import { GameExecute } from '../game'
+import { GamePhaseCoordinator } from '../game'
 
 export type LocationTargetScope = 'current'
 
@@ -30,7 +30,7 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
     public locationTarget: LocationTarget
   ) {}
 
-  onEnter(gameExecute: GameExecute<[], LocationTargetResult>) {
+  onEnter(gameExecute: GamePhaseCoordinator<[], LocationTargetResult>) {
     // Instantly resolve if scope is the current location
     if (this.locationTarget.scope === 'current') {
       const currentLocation = this.context.getInvestigatorLocation(

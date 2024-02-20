@@ -29,7 +29,7 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push({
       type: 'end',
-      execute: (e) => e.toNext(new EndPhase(this.context)),
+      execute: (coordinator) => coordinator.toNext(new EndPhase(this.context)),
     })
 
     if (this.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
@@ -51,8 +51,8 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push({
       type: 'attack',
-      execute: (e) =>
-        e
+      execute: (coordinator) =>
+        coordinator
           .waitFor(new TargetPhase_TEST_REMOVE_ME(this.context))
           .apply(([{ investigatorId }]) => {
             this.context.investigatorStates.get(investigatorId!)?.addDamage(1)
@@ -64,8 +64,8 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'draw',
         investigatorId: this.investigatorId,
-        execute: (e) =>
-          e.apply(() => {
+        execute: (coordinator) =>
+          coordinator.apply(() => {
             this.investigatorState.draw()
             this.actionsMade++
           }),
@@ -93,8 +93,8 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'move',
         locationId: location.id,
-        execute: (e) =>
-          e.apply(() => {
+        execute: (coordinator) =>
+          coordinator.apply(() => {
             this.context.moveInvestigator(this.investigatorId, location.id)
             this.actionsMade++
           }),
@@ -104,8 +104,8 @@ export class InvestigatorPhase implements PhaseBase {
     if (this.context.locationStates.get(currentLocation.id)!.clues > 0) {
       actions.push({
         type: 'investigate',
-        execute: (e) =>
-          e
+        execute: (coordinator) =>
+          coordinator
             .waitFor(
               createActionPhase(this.context, {
                 type: 'investigate',

@@ -1,5 +1,5 @@
 import { Context, InvestigatorId } from '@lumos/game'
-import { GameExecute } from '../game'
+import { GamePhaseCoordinator } from '../game'
 import { PhaseBase } from '../phase'
 
 export type InvestigatorTargetScope = 'self'
@@ -36,7 +36,7 @@ export class InvestigatorTargetPhase
     public investigatorTarget: InvestigatorTarget
   ) {}
 
-  onEnter(gameExecute: GameExecute<[], InvestigatorTargetResult>) {
+  onEnter(gameExecute: GamePhaseCoordinator<[], InvestigatorTargetResult>) {
     // Instantly resolve if scope is self
     if (this.investigatorTarget.scope === 'self') {
       gameExecute.applyToParent(() => ({

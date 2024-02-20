@@ -24,8 +24,10 @@ export class SkillCheckPhase implements PhaseBase {
     actions.push({
       type: 'commitSkillCheck',
       investigatorId,
-      execute: (e) =>
-        e.waitFor(createCommitSkillCheckPhase(context, { check })).toParent(),
+      execute: (coordinator) =>
+        coordinator
+          .waitFor(createCommitSkillCheckPhase(context, { check }))
+          .toParent(),
     })
 
     return actions
@@ -66,8 +68,8 @@ export class CommitSkillCheckPhase implements PhaseBase {
     actions.push({
       type: 'endSkillCheck',
       investigatorId,
-      execute: (e) =>
-        e
+      execute: (coordinator) =>
+        coordinator
           .apply(() => {
             if (difficulty <= this.totalSkill) {
               onSuccess.apply(this.context)

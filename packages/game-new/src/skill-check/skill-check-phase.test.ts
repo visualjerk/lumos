@@ -36,8 +36,8 @@ class TestPhase implements PhaseBase {
     const actions: PhaseAction[] = [
       {
         type: 'startSkillCheck',
-        execute: (e) =>
-          e.waitFor(createSkillCheckPhase(this.context, skillCheck)),
+        execute: (coordinator) =>
+          coordinator.waitFor(createSkillCheckPhase(this.context, skillCheck)),
       },
     ]
     return actions

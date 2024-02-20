@@ -24,8 +24,8 @@ export class TargetPhase_TEST_REMOVE_ME
       PhaseAction<TargetPhaseResult_TEST_REMOVE_ME>
     >((investigatorId) => ({
       type: 'target',
-      execute: (e) =>
-        e.applyToParent(() => ({
+      execute: (coordinator) =>
+        coordinator.applyToParent(() => ({
           investigatorId,
         })),
     }))
