@@ -1,9 +1,10 @@
-import { Context, InvestigatorId, LocationId } from '@lumos/game'
 import { GamePhaseCoordinator } from './game'
-import { EndPhase, InvestigatorPhase } from './investigator'
+import { EndPhase, InvestigatorId, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 import { ActionPhase } from './action'
+import { Context } from './context'
+import { LocationId } from './location'
 
 export type Phase =
   | InvestigatorPhase

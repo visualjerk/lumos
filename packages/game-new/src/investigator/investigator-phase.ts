@@ -1,12 +1,10 @@
-import {
-  Context,
-  InvestigatorId,
-  InvestigatorState,
-  isConnected,
-} from '@lumos/game'
 import { PhaseBase, PhaseAction } from '../phase'
 import { TargetPhase_TEST_REMOVE_ME } from '../target'
 import { createActionPhase } from '../action'
+import { Context } from '../context'
+import { InvestigatorId } from './investigator'
+import { InvestigatorState } from './investigator-state'
+import { isConnected } from '../location'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -69,8 +67,8 @@ export class InvestigatorPhase implements PhaseBase {
             .waitFor(
               createActionPhase(this.context, this.investigatorId, {
                 type: 'draw',
-                cardAmount: 1,
-                investigatorTarget: 'self',
+                amount: 1,
+                target: 'self',
               })
             )
             .apply(() => {

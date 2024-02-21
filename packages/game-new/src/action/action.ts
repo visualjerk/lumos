@@ -1,4 +1,3 @@
-import { Context, InvestigatorId } from '@lumos/game'
 import { PhaseBase, PhaseResult } from '../phase'
 import {
   InvestigateAction,
@@ -10,6 +9,8 @@ import {
   DrawActionPhase,
   createDrawActionPhase,
 } from './draw-action'
+import { Context } from '../context'
+import { InvestigatorId } from '../investigator'
 
 export type Action = InvestigateAction | DrawAction
 

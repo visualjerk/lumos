@@ -1,6 +1,8 @@
-import { Context, InvestigatorId, LocationId } from '@lumos/game'
 import { PhaseAction, PhaseBase } from '../phase'
 import { GamePhaseCoordinator } from '../game'
+import { LocationId } from '../location'
+import { Context } from '../context'
+import { InvestigatorId } from '../investigator'
 
 export type LocationTargetScope = 'current'
 

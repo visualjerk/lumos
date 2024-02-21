@@ -1,4 +1,5 @@
-import { Context, InvestigatorId, Skills } from '@lumos/game'
+import { Context } from '../context'
+import { InvestigatorId, Skills } from '../investigator'
 
 export type SkillCheckContext = {
   check: SkillCheck

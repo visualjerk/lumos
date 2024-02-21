@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "@lumos/tsconfig": "workspace:*",
-    "@lumos/game": "workspace:*",
     "@lumos/scenarios": "workspace:*"
   }
 }

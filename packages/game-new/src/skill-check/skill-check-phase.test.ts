@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GameTestUtils, createGameTestUtils } from '../test'
 import { PhaseAction, Phase, PhaseBase } from '../phase'
-import { Context } from '@lumos/game'
+import { Context } from '../context'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { spinFateWheel } from '../fate'
 
-vi.mock('../fate', () => ({
+vi.mock('../fate', async () => ({
+  ...(await vi.importActual('../fate')),
   spinFateWheel: vi.fn(() => ({
     symbol: 1,
     modifySkillCheck: (n: number) => n,

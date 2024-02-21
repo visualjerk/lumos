@@ -1,5 +1,6 @@
-import { Context, InvestigatorId } from '@lumos/game'
+import { Context } from '../context'
 import { GamePhaseCoordinator } from '../game'
+import { InvestigatorId } from '../investigator'
 import { PhaseBase } from '../phase'
 
 export type InvestigatorTargetScope = 'self'

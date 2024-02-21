@@ -1,4 +1,3 @@
-import { Context, InvestigatorId } from '@lumos/game'
 import {
   InvestigatorTargetScope,
   createInvestigatorTargetPhase,
@@ -6,10 +5,12 @@ import {
 import { CreateAction } from './action'
 import { GamePhaseCoordinator } from '../game'
 import { PhaseBase, PhaseResult } from '../phase'
+import { Context } from '../context'
+import { InvestigatorId } from '../investigator'
 
 export type DrawAction = CreateAction<'draw'> & {
-  cardAmount: number
-  investigatorTarget: InvestigatorTargetScope
+  amount: number
+  target: InvestigatorTargetScope
 }
 
 export function createDrawActionPhase(
@@ -35,13 +36,13 @@ export class DrawActionPhase implements PhaseBase {
       .waitFor(
         createInvestigatorTargetPhase(this.context, this.investigatorId, {
           type: 'investigator',
-          scope: this.action.investigatorTarget,
+          scope: this.action.target,
         })
       )
       .apply(([{ investigatorId }]) => {
         const investigatorState =
           this.context.getInvestigatorState(investigatorId)
-        for (let i = 0; i < this.action.cardAmount; i++) {
+        for (let i = 0; i < this.action.amount; i++) {
           if (investigatorState.canDraw()) {
             investigatorState.draw()
           }

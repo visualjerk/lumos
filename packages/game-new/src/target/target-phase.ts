@@ -1,4 +1,4 @@
-import { Context } from '@lumos/game'
+import { Context } from '../context'
 import { PhaseAction, PhaseBase } from '../phase'
 import { LocationTargetPhase } from './location-target'
 import { InvestigatorTargetPhase } from './investigator-target'

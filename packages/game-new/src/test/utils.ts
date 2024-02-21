@@ -1,8 +1,9 @@
-import { Context, LocationId, createInitialContext } from '@lumos/game'
 import { MOCK_INVESTIGATOR_ONE, MOCK_INVESTIGATOR_TWO, MOCK_SCENARIO } from '.'
 import { Phase } from '../phase'
 import { Game, GameAction } from '../game'
 import { expect } from 'vitest'
+import { Context, createInitialContext } from '../context'
+import { LocationId } from '../location'
 
 function createTestContext() {
   return createInitialContext(MOCK_SCENARIO, [

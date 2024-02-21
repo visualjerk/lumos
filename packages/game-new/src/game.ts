@@ -1,4 +1,4 @@
-import { Context } from '@lumos/game'
+import { Context } from './context'
 import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 
 export type GamePhase = {

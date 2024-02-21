@@ -1,4 +1,3 @@
-import { Context, InvestigatorId } from '@lumos/game'
 import { PhaseBase, PhaseResult } from '../phase'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { GamePhaseCoordinator } from '../game'
@@ -9,6 +8,8 @@ import {
   createLocactionTargetPhase,
 } from '../target'
 import { CreateAction } from './action'
+import { Context } from '../context'
+import { InvestigatorId } from '../investigator'
 
 export type InvestigateAction = CreateAction<'investigate'> & {
   clueAmount: number

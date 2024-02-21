@@ -1,4 +1,4 @@
-import { Investigator } from '@lumos/game'
+import { Investigator } from '../investigator'
 
 export const MOCK_INVESTIGATOR_ONE: Investigator = {
   id: '1',

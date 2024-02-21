@@ -72,9 +72,6 @@ importers:
 
   packages/game-new:
     devDependencies:
-      '@lumos/game':
-        specifier: workspace:*
-        version: link:../game
       '@lumos/scenarios':
         specifier: workspace:*
         version: link:../scenarios
