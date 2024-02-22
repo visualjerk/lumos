@@ -40,10 +40,10 @@ export function createInitialContext(
 
 export class Context {
   constructor(
-    public scenario: Scenario,
-    public locationStates: LocationStates,
-    public investigators: Investigator[],
-    public investigatorStates: InvestigatorStates
+    public readonly scenario: Scenario,
+    public readonly locationStates: LocationStates,
+    public readonly investigators: Investigator[],
+    public readonly investigatorStates: InvestigatorStates
   ) {}
 
   getTotalInvestigatorClues(): number {
