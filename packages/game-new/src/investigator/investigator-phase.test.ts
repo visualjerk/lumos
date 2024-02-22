@@ -3,7 +3,8 @@ import { Game } from '../game'
 import { createInvestigatorPhase } from '../investigator'
 import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
 
-vi.mock('../fate', () => ({
+vi.mock('../fate', async () => ({
+  ...(await vi.importActual('../fate')),
   spinFateWheel: vi.fn(() => ({
     symbol: 1,
     modifySkillCheck: (n: number) => n,
