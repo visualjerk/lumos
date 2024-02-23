@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Game } from '../game'
-import { createInvestigatorPhase } from '../investigator'
+import { InvestigatorState, createInvestigatorPhase } from '../investigator'
 import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
 
 vi.mock('../fate', async () => ({
@@ -14,10 +14,12 @@ vi.mock('../fate', async () => ({
 describe('InvestigatorPhase', () => {
   let t: GameTestUtils
   let game: Game
+  let investigatorState: InvestigatorState
 
   beforeEach(() => {
     t = createGameTestUtils(createInvestigatorPhase)
     game = t.game
+    investigatorState = game.context.investigatorStates.get('1')!
     t.expectPhase('investigator')
   })
 
@@ -29,9 +31,7 @@ describe('InvestigatorPhase', () => {
   it('can move to location', () => {
     const locationId = Aisle3.id
     t.executeAction({ type: 'move', locationId })
-    expect(game.context.investigatorStates.get('1')?.currentLocation).toBe(
-      locationId
-    )
+    expect(investigatorState.currentLocation).toBe(locationId)
   })
 
   it('cannot move to unconnected location', () => {
@@ -40,9 +40,7 @@ describe('InvestigatorPhase', () => {
   })
 
   it('can collect clue at location', () => {
-    const investigatorState = game.context.investigatorStates.get('1')!
-    const currentLocationId =
-      game.context.investigatorStates.get('1')?.currentLocation!
+    const currentLocationId = investigatorState.currentLocation!
     const locationState = game.context.locationStates.get(currentLocationId)!
 
     expect(investigatorState.clues).toBe(0)
@@ -57,8 +55,7 @@ describe('InvestigatorPhase', () => {
   })
 
   it('cannot collect clue at location with no clues', () => {
-    const currentLocationId =
-      game.context.investigatorStates.get('1')?.currentLocation!
+    const currentLocationId = investigatorState.currentLocation!
     const locationState = game.context.locationStates.get(currentLocationId)!
 
     locationState.clues = 0
@@ -67,17 +64,16 @@ describe('InvestigatorPhase', () => {
 
   it('can draw card', () => {
     t.executeAction({ type: 'draw' })
-    expect(game.context.investigatorStates.get('1')?.cardsInHand.length).toBe(1)
+    expect(investigatorState.cardsInHand.length).toBe(1)
   })
 
   it('can not draw with empty deck', () => {
-    game.context.investigatorStates.get('1')!.deck = []
+    investigatorState.deck = []
     t.expectNoAction({ type: 'draw' })
   })
 
   it('can play action card', () => {
     const cardId = 'ic1'
-    const investigatorState = game.context.investigatorStates.get('1')!
     investigatorState.cardsInHand = [cardId]
 
     t.executeAction({ type: 'play', cardIndex: 0 })
