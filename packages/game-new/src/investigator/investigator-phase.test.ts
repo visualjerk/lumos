@@ -93,4 +93,9 @@ describe('InvestigatorPhase', () => {
     expect(investigatorState.cardsInHand.length).toBe(2)
     expect(investigatorState.discardPile).toEqual([cardId])
   })
+
+  it('cannot play action card with empty hand', () => {
+    investigatorState.cardsInHand = []
+    t.expectNoAction({ type: 'play' })
+  })
 })

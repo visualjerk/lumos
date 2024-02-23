@@ -144,4 +144,11 @@ describe('SkillCheckPhase', () => {
     expect(investigatorState.cardsInHand).toEqual([])
     expect(investigatorState.discardPile).toEqual([cardId])
   })
+
+  it('cannot add card to skill check with empty hand', () => {
+    investigatorState.cardsInHand = []
+    t.executeAction({ type: 'startSkillCheck' })
+
+    t.expectNoAction({ type: 'addToSkillCheck' })
+  })
 })
