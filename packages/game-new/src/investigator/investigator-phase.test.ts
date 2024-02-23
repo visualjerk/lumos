@@ -74,4 +74,15 @@ describe('InvestigatorPhase', () => {
     game.context.investigatorStates.get('1')!.deck = []
     t.expectNoAction({ type: 'draw' })
   })
+
+  it('can play action card', () => {
+    const cardId = 'ic1'
+    const investigatorState = game.context.investigatorStates.get('1')!
+    investigatorState.cardsInHand = [cardId]
+
+    t.executeAction({ type: 'play', cardIndex: 0 })
+
+    expect(investigatorState.cardsInHand.length).toBe(2)
+    expect(investigatorState.discardPile).toEqual([cardId])
+  })
 })

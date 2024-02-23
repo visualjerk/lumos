@@ -27,15 +27,29 @@ export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
   ? TResult
   : never
 
-export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> = {
+export type PhaseActionFilterParams = {
   type: string
   investigatorId?: InvestigatorId
   locationId?: LocationId
-  execute: Execute<TPhaseResult>
+  cardIndex?: number
 }
+
+export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> =
+  PhaseActionFilterParams & {
+    execute: Execute<TPhaseResult>
+  }
 
 export type PhaseResult = Record<string, unknown> | undefined
 
 export type Execute<TPhaseResult extends PhaseResult = PhaseResult> = (
   coordinator: GamePhaseCoordinator<[], TPhaseResult>
 ) => void
+
+export function actionMatches(
+  action: PhaseAction<PhaseResult>,
+  filterParams: PhaseActionFilterParams
+): boolean {
+  return Object.entries(filterParams).every(
+    ([key, value]) => action[key as keyof PhaseActionFilterParams] === value
+  )
+}

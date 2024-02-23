@@ -36,6 +36,7 @@ export class InvestigatorPhase implements PhaseBase {
 
     actions.push(...this.generalActions)
     actions.push(...this.locationActions)
+    actions.push(...this.cardsInHandActions)
 
     return actions
   }
@@ -124,6 +125,34 @@ export class InvestigatorPhase implements PhaseBase {
             }),
       })
     }
+
+    return actions
+  }
+
+  private get cardsInHandActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
+
+    this.investigatorState.cardsInHand.forEach((cardId, index) => {
+      const card = this.context.getInvestigatorCard(cardId)
+
+      if (card.type !== 'action') {
+        return
+      }
+
+      actions.push({
+        type: 'play',
+        cardIndex: index,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createActionPhase(this.context, this.investigatorId, card.action)
+            )
+            .apply(() => {
+              this.investigatorState.discard(index)
+              this.actionsMade++
+            }),
+      })
+    })
 
     return actions
   }
