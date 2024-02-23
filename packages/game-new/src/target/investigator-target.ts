@@ -37,10 +37,10 @@ export class InvestigatorTargetPhase
     public investigatorTarget: InvestigatorTarget
   ) {}
 
-  onEnter(gameExecute: GamePhaseCoordinator<[], InvestigatorTargetResult>) {
+  onEnter(coordinator: GamePhaseCoordinator<[], InvestigatorTargetResult>) {
     // Instantly resolve if scope is self
     if (this.investigatorTarget.scope === 'self') {
-      gameExecute.applyToParent(() => ({
+      coordinator.applyToParent(() => ({
         investigatorId: this.investigatorId,
       }))
     }

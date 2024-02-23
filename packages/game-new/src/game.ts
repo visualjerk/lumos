@@ -3,7 +3,7 @@ import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 
 export type GamePhase = {
   type: string
-  onEnter?: (gameExecute: GamePhaseCoordinator) => void
+  onEnter?: (coordinator: GamePhaseCoordinator) => void
   actions: GameAction[]
 }
 

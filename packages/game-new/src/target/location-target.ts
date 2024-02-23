@@ -32,13 +32,13 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
     public locationTarget: LocationTarget
   ) {}
 
-  onEnter(gameExecute: GamePhaseCoordinator<[], LocationTargetResult>) {
+  onEnter(coordinator: GamePhaseCoordinator<[], LocationTargetResult>) {
     // Instantly resolve if scope is the current location
     if (this.locationTarget.scope === 'current') {
       const currentLocation = this.context.getInvestigatorLocation(
         this.investigatorId
       )
-      gameExecute.applyToParent(() => ({
+      coordinator.applyToParent(() => ({
         locationId: currentLocation.id,
       }))
     }
