@@ -1,15 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Game } from '../game'
 import { InvestigatorState, createInvestigatorPhase } from '../investigator'
-import { Aisle2, Aisle3, GameTestUtils, createGameTestUtils } from '../test'
-
-vi.mock('../fate', async () => ({
-  ...(await vi.importActual('../fate')),
-  spinFateWheel: vi.fn(() => ({
-    symbol: 1,
-    modifySkillCheck: (n: number) => n,
-  })),
-}))
+import {
+  Aisle2,
+  Aisle3,
+  GameTestUtils,
+  createGameTestUtils,
+  mockGetInvestigatorCard,
+  mockSpinFateWheel,
+} from '../test'
 
 describe('InvestigatorPhase', () => {
   let t: GameTestUtils
@@ -21,6 +20,11 @@ describe('InvestigatorPhase', () => {
     game = t.game
     investigatorState = game.context.investigatorStates.get('1')!
     t.expectPhase('investigator')
+
+    mockSpinFateWheel({
+      symbol: 1,
+      modifySkillCheck: (n: number) => n,
+    })
   })
 
   it('can end phase', () => {
@@ -74,6 +78,14 @@ describe('InvestigatorPhase', () => {
 
   it('can play action card', () => {
     const cardId = 'ic1'
+    mockGetInvestigatorCard({
+      id: cardId,
+      type: 'action',
+      name: 'Test Card',
+      description: '',
+      skillModifier: {},
+      action: { type: 'draw', amount: 2, target: 'self' },
+    })
     investigatorState.cardsInHand = [cardId]
 
     t.executeAction({ type: 'play', cardIndex: 0 })

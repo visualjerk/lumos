@@ -1,18 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { GameTestUtils, createGameTestUtils } from '../test'
+import {
+  GameTestUtils,
+  createGameTestUtils,
+  mockGetInvestigatorCard,
+  mockSpinFateWheel,
+} from '../test'
 import { PhaseAction, Phase, PhaseBase } from '../phase'
 import { Context } from '../context'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { spinFateWheel } from '../fate'
 import { InvestigatorState } from '../investigator'
-
-vi.mock('../fate', async () => ({
-  ...(await vi.importActual('../fate')),
-  spinFateWheel: vi.fn(() => ({
-    symbol: 1,
-    modifySkillCheck: (n: number) => n,
-  })),
-}))
 
 const applySuccess = vi.fn()
 const applyFailure = vi.fn()
@@ -55,10 +52,16 @@ describe('SkillCheckPhase', () => {
   let investigatorState: InvestigatorState
 
   beforeEach(() => {
+    vi.clearAllMocks()
+
     t = createGameTestUtils(createTestPhase)
     investigatorState = t.game.context.investigatorStates.get('1')!
     t.expectPhase('test')
-    vi.clearAllMocks()
+
+    mockSpinFateWheel({
+      symbol: 1,
+      modifySkillCheck: (n: number) => n,
+    })
   })
 
   it('executes successful skill check', () => {
@@ -101,7 +104,7 @@ describe('SkillCheckPhase', () => {
   it.each(testCases)(
     `skill check for modifier %s is a %s`,
     (modifier, result) => {
-      vi.mocked(spinFateWheel).mockReturnValueOnce({
+      mockSpinFateWheel({
         symbol: modifier,
         modifySkillCheck: (n: number) => n + modifier,
       })
@@ -117,11 +120,17 @@ describe('SkillCheckPhase', () => {
   )
 
   it('can add card to skill check', () => {
-    // Force of Will has an intelligence modifier of 2
     const cardId = 'ic1'
+    mockGetInvestigatorCard({
+      id: cardId,
+      type: 'skill',
+      name: 'Test Card',
+      description: '',
+      skillModifier: { intelligence: 2 },
+    })
     investigatorState.cardsInHand = [cardId]
 
-    vi.mocked(spinFateWheel).mockReturnValueOnce({
+    mockSpinFateWheel({
       symbol: -2,
       modifySkillCheck: (n: number) => n - 2,
     })
