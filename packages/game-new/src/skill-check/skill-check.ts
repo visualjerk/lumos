@@ -1,8 +1,10 @@
 import { Context } from '../context'
-import { InvestigatorId, Skills } from '../investigator'
+import { InvestigatorCardId, InvestigatorId, Skills } from '../investigator'
 
 export type SkillCheckContext = {
   check: SkillCheck
+  skillModifier: number
+  addedCards: InvestigatorCardId[]
 }
 
 export type SkillCheck = {

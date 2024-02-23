@@ -2,23 +2,32 @@ import { Context } from '../context'
 import { PhaseAction, PhaseBase } from '../phase'
 import { SkillCheck, SkillCheckContext } from './skill-check'
 import { Fate, spinFateWheel } from '../fate'
+import { InvestigatorState } from '../investigator'
 
 export function createSkillCheckPhase(
   context: Context,
   check: SkillCheck
 ): SkillCheckPhase {
-  return new SkillCheckPhase(context, check)
+  return new SkillCheckPhase(context, {
+    check,
+    skillModifier: 0,
+    addedCards: [],
+  })
 }
 
 export class SkillCheckPhase implements PhaseBase {
   type = 'skillCheck'
 
-  constructor(public context: Context, public check: SkillCheck) {}
+  constructor(
+    public context: Context,
+    public skillCheckContext: SkillCheckContext
+  ) {}
 
   get actions() {
     const actions: PhaseAction[] = []
 
-    const { check, context } = this
+    const { skillCheckContext, context } = this
+    const { check } = skillCheckContext
     const { investigatorId } = check
 
     actions.push({
@@ -26,10 +35,43 @@ export class SkillCheckPhase implements PhaseBase {
       investigatorId,
       execute: (coordinator) =>
         coordinator
-          .waitFor(createCommitSkillCheckPhase(context, { check }))
+          .waitFor(createCommitSkillCheckPhase(context, skillCheckContext))
           .toParent(),
     })
 
+    actions.push(...this.cardActions)
+
+    return actions
+  }
+
+  private get check(): SkillCheck {
+    return this.skillCheckContext.check
+  }
+
+  private get investigatorState(): InvestigatorState {
+    return this.context.getInvestigatorState(this.check.investigatorId)
+  }
+
+  private get cardActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
+
+    const cardsInHand = this.investigatorState.getCardsInHand()
+    cardsInHand.forEach((card, index) => {
+      const skillModifier = card.skillModifier[this.check.skill]
+
+      if (skillModifier !== undefined) {
+        actions.push({
+          type: 'addToSkillCheck',
+          investigatorId: this.check.investigatorId,
+          cardIndex: index,
+          execute: () => {
+            this.skillCheckContext.skillModifier += skillModifier
+            this.skillCheckContext.addedCards.push(card.id)
+            this.investigatorState.removeFromHand(index)
+          },
+        })
+      }
+    })
     return actions
   }
 }
@@ -44,19 +86,20 @@ function createCommitSkillCheckPhase(
 export class CommitSkillCheckPhase implements PhaseBase {
   type = 'commitSkillCheck'
   fate: Fate
-  totalSkill: number
 
   constructor(
     public context: Context,
     public skillCheckContext: SkillCheckContext
   ) {
-    const { check } = skillCheckContext
-    const { investigatorId, skill } = check
-
     this.fate = spinFateWheel(context.scenario.fateWheel)
-    const skills = context.getInvestigatorSkills(investigatorId)
+  }
 
-    this.totalSkill = this.fate.modifySkillCheck(skills[skill])
+  public get totalSkill() {
+    const { check, skillModifier } = this.skillCheckContext
+    const { investigatorId, skill } = check
+    const skills = this.context.getInvestigatorSkills(investigatorId)
+
+    return this.fate.modifySkillCheck(skills[skill] + skillModifier)
   }
 
   get actions() {
@@ -71,6 +114,8 @@ export class CommitSkillCheckPhase implements PhaseBase {
       execute: (coordinator) =>
         coordinator
           .apply(() => {
+            this.cleanupAddedCards()
+
             if (difficulty <= this.totalSkill) {
               onSuccess.apply(this.context)
               return
@@ -81,5 +126,13 @@ export class CommitSkillCheckPhase implements PhaseBase {
     })
 
     return actions
+  }
+
+  private cleanupAddedCards() {
+    this.skillCheckContext.addedCards.forEach((cardId) => {
+      this.context
+        .getInvestigatorState(this.skillCheckContext.check.investigatorId)
+        .addToDiscardPile(cardId)
+    })
   }
 }

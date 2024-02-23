@@ -4,6 +4,7 @@ import { PhaseAction, Phase, PhaseBase } from '../phase'
 import { Context } from '../context'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { spinFateWheel } from '../fate'
+import { InvestigatorState } from '../investigator'
 
 vi.mock('../fate', async () => ({
   ...(await vi.importActual('../fate')),
@@ -51,9 +52,11 @@ function createTestPhase(context: Context): Phase {
 
 describe('SkillCheckPhase', () => {
   let t: GameTestUtils
+  let investigatorState: InvestigatorState
 
   beforeEach(() => {
     t = createGameTestUtils(createTestPhase)
+    investigatorState = t.game.context.investigatorStates.get('1')!
     t.expectPhase('test')
     vi.clearAllMocks()
   })
@@ -112,4 +115,24 @@ describe('SkillCheckPhase', () => {
       expect(applyFn).toHaveBeenCalledOnce()
     }
   )
+
+  it('can add card to skill check', () => {
+    // Force of Will has an intelligence modifier of 2
+    const cardId = 'ic1'
+    investigatorState.cardsInHand = [cardId]
+
+    vi.mocked(spinFateWheel).mockReturnValueOnce({
+      symbol: -2,
+      modifySkillCheck: (n: number) => n - 2,
+    })
+
+    t.executeAction({ type: 'startSkillCheck' })
+    t.executeAction({ type: 'addToSkillCheck', cardIndex: 0 })
+    t.executeAction({ type: 'commitSkillCheck' })
+    t.executeAction({ type: 'endSkillCheck' })
+
+    expect(applySuccess).toHaveBeenCalledOnce()
+    expect(investigatorState.cardsInHand).toEqual([])
+    expect(investigatorState.discardPile).toEqual([cardId])
+  })
 })
