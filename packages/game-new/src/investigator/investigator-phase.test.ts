@@ -29,7 +29,20 @@ describe('InvestigatorPhase', () => {
 
   it('can end phase', () => {
     t.executeAction({ type: 'end' })
-    t.expectPhase('end')
+    t.expectPhase('upkeep')
+  })
+
+  it('investigator draws in upkeep', () => {
+    t.executeAction({ type: 'end' })
+    expect(investigatorState.cardsInHand.length).toBe(1)
+  })
+
+  it('ends investigator phase after 3 actions', () => {
+    for (let i = 0; i < 3; i++) {
+      t.executeAction({ type: 'draw' })
+    }
+    t.expectPhase('investigator')
+    t.expectOnlyActions({ type: 'end' })
   })
 
   it('can move to location', () => {

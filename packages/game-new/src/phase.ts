@@ -1,5 +1,5 @@
 import { GamePhaseCoordinator } from './game'
-import { EndPhase, InvestigatorId, InvestigatorPhase } from './investigator'
+import { UpkeepPhase, InvestigatorId, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 import { ActionPhase } from './action'
@@ -8,7 +8,7 @@ import { LocationId } from './location'
 
 export type Phase =
   | InvestigatorPhase
-  | EndPhase
+  | UpkeepPhase
   | SkillCheckPhase
   | CommitSkillCheckPhase
   | ActionPhase

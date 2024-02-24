@@ -35,13 +35,17 @@ export class Game {
     }
   }
 
-  popCurrentPhase() {
-    this.phases.pop()
-  }
-
   setCurrentPhase(phase: Phase) {
     const gamePhase = this.convertToGamePhase(phase)
     this.phases[this.phases.length - 1] = gamePhase
+
+    if (gamePhase.onEnter !== undefined) {
+      gamePhase.onEnter(new GamePhaseCoordinator(this, []))
+    }
+  }
+
+  popCurrentPhase() {
+    this.phases.pop()
   }
 
   private convertToGamePhase(

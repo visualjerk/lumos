@@ -32,7 +32,7 @@ export class DrawActionPhase implements PhaseBase {
   ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
-    return coordinator
+    coordinator
       .waitFor(
         createInvestigatorTargetPhase(this.context, this.investigatorId, {
           type: 'investigator',

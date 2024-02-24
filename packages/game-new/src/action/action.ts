@@ -1,4 +1,3 @@
-import { PhaseBase, PhaseResult } from '../phase'
 import {
   InvestigateAction,
   InvestigateActionPhase,
@@ -24,7 +23,7 @@ export function createActionPhase(
   context: Context,
   investigatorId: InvestigatorId,
   action: Action
-): PhaseBase<PhaseResult> {
+): ActionPhase {
   switch (action.type) {
     case 'investigate':
       return createInvestigateActionPhase(context, investigatorId, action)
