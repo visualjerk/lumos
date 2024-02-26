@@ -16,6 +16,7 @@ import {
   getInvestigatorCard,
 } from './investigator'
 import { Scenario } from './scenario'
+import { DoomState, createInitialDoomState } from './doom'
 
 export function createInitialContext(
   scenario: Scenario,
@@ -30,11 +31,14 @@ export function createInitialContext(
     scenario.startLocation
   )
 
+  const doomState = createInitialDoomState(scenario.doomCards)
+
   return new Context(
     scenario,
     locationStates,
     investigators,
-    investigatorStates
+    investigatorStates,
+    doomState
   )
 }
 
@@ -43,7 +47,8 @@ export class Context {
     public readonly scenario: Scenario,
     public readonly locationStates: LocationStates,
     public readonly investigators: Investigator[],
-    public readonly investigatorStates: InvestigatorStates
+    public readonly investigatorStates: InvestigatorStates,
+    public readonly doomState: DoomState
   ) {}
 
   getTotalInvestigatorClues(): number {

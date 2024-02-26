@@ -1,3 +1,4 @@
+import { DoomCard } from '../doom'
 import { MinusThree, MinusTwo, MinusOne, Zero, PlusOne } from '../fate'
 import { LocationCard } from '../location'
 import { Scenario } from '../scenario'
@@ -65,6 +66,23 @@ const BoardRestaurant: LocationCard = {
   shroud: 3,
 }
 
+export const FIRST_DOOM_CARD: DoomCard = {
+  id: 'first-doom-card',
+  name: 'First Doom Card',
+  story: 'First doom card story',
+  consequence: 'First doom card consequences',
+  treshold: 3,
+  nextDoomCardId: 'second-doom-card',
+}
+
+export const SECOND_DOOM_CARD: DoomCard = {
+  id: 'second-doom-card',
+  name: 'Second Doom Card',
+  story: 'Second doom card story',
+  consequence: 'Second doom card consequences',
+  treshold: 2,
+}
+
 export const MOCK_SCENARIO: Scenario = {
   locationCards: [
     Aisle2,
@@ -96,4 +114,5 @@ export const MOCK_SCENARIO: Scenario = {
     { symbol: 'autoFail', modifySkillCheck: (skill) => 0 },
     { symbol: 'cultist', modifySkillCheck: (skill) => skill - 3 },
   ],
+  doomCards: [FIRST_DOOM_CARD, SECOND_DOOM_CARD],
 }

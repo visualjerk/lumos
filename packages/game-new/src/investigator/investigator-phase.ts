@@ -4,7 +4,7 @@ import { Context } from '../context'
 import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
 import { isConnected } from '../location'
-import { GamePhaseCoordinator } from '../game'
+import { createUpkeepPhase } from '../upkeep'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -28,7 +28,7 @@ export class InvestigatorPhase implements PhaseBase {
     actions.push({
       type: 'end',
       execute: (coordinator) =>
-        coordinator.toNext(new UpkeepPhase(this.context)),
+        coordinator.toNext(createUpkeepPhase(this.context)),
     })
 
     if (this.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
@@ -145,27 +145,5 @@ export class InvestigatorPhase implements PhaseBase {
     })
 
     return actions
-  }
-}
-
-export class UpkeepPhase implements PhaseBase {
-  type = 'upkeep'
-
-  constructor(public context: Context) {}
-
-  onEnter(coordinator: GamePhaseCoordinator) {
-    this.context.investigators.forEach(({ id }) => {
-      coordinator = coordinator.waitFor(
-        createActionPhase(this.context, id, {
-          type: 'draw',
-          amount: 1,
-          target: 'self',
-        })
-      )
-    })
-  }
-
-  get actions() {
-    return []
   }
 }

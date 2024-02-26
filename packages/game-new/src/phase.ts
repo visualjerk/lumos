@@ -1,10 +1,13 @@
 import { GamePhaseCoordinator } from './game'
-import { UpkeepPhase, InvestigatorId, InvestigatorPhase } from './investigator'
+import { InvestigatorId, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
 import { ActionPhase } from './action'
 import { Context } from './context'
 import { LocationId } from './location'
+import { DoomPhase } from './doom'
+import { EndPhase } from './end'
+import { UpkeepPhase } from './upkeep'
 
 export type Phase =
   | InvestigatorPhase
@@ -13,6 +16,8 @@ export type Phase =
   | CommitSkillCheckPhase
   | ActionPhase
   | TargetPhase
+  | DoomPhase
+  | EndPhase
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
   type: string

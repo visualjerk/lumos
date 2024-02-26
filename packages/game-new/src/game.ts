@@ -220,8 +220,18 @@ export class GamePhaseCoordinator<
     })
   }
 
-  toNext(next: Phase) {
-    this.enqueueOrExecute(() => this.game.setCurrentPhase(next))
+  toNext(
+    phase:
+      | Phase
+      | ((results: UnwrapPendingPhaseResult<TPendingPhaseResults>) => Phase)
+  ) {
+    this.enqueueOrExecute(() => {
+      const resolvedPhase =
+        typeof phase === 'function'
+          ? phase(this.unwrappedPendingPhaseResults)
+          : phase
+      this.game.setCurrentPhase(resolvedPhase)
+    })
   }
 
   waitFor<TPhase extends Phase>(
