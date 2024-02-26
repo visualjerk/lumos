@@ -4,42 +4,6 @@ import { LocationCard } from '../location'
 import { Scenario } from '../scenario'
 import { SceneCard } from '../scene'
 
-export const Aisle2: LocationCard = {
-  id: 'aisle-2',
-  name: 'Aisle 2',
-  incomingConnection: 'moon',
-  connections: ['diamond', 'heart', 'circle'],
-  initialClues: 1,
-  shroud: 2,
-}
-
-const Compartment24: LocationCard = {
-  id: 'compartment-24',
-  name: 'Compartment 24',
-  incomingConnection: 'diamond',
-  connections: ['moon'],
-  initialClues: 3,
-  shroud: 3,
-}
-
-const Compartment25: LocationCard = {
-  id: 'compartment-25',
-  name: 'Compartment 25',
-  incomingConnection: 'heart',
-  connections: ['moon'],
-  initialClues: 4,
-  shroud: 2,
-}
-
-export const Aisle3: LocationCard = {
-  id: 'aisle-3',
-  name: 'Aisle 3',
-  incomingConnection: 'circle',
-  connections: ['moon', 'square', 'star', 'triangle'],
-  initialClues: 1,
-  shroud: 0,
-}
-
 export const START_LOCATION: LocationCard = {
   id: 'start-location',
   name: 'Start Location',
@@ -49,22 +13,22 @@ export const START_LOCATION: LocationCard = {
   shroud: 2,
 }
 
-const Compartment35: LocationCard = {
-  id: 'compartment-35',
-  name: 'Compartment 35',
-  incomingConnection: 'star',
-  connections: ['circle'],
-  initialClues: 2,
-  shroud: 2,
+export const SECOND_LOCATION: LocationCard = {
+  id: 'second-location',
+  name: 'Second Location',
+  incomingConnection: 'circle',
+  connections: ['moon', 'square'],
+  initialClues: 1,
+  shroud: 0,
 }
 
-const BoardRestaurant: LocationCard = {
-  id: 'board-restaurant',
-  name: 'Board Restaurant',
-  incomingConnection: 'triangle',
+export const THIRD_LOCATION: LocationCard = {
+  id: 'third-location',
+  name: 'Third Location',
+  incomingConnection: 'moon',
   connections: ['circle'],
-  initialClues: 4,
-  shroud: 3,
+  initialClues: 1,
+  shroud: 2,
 }
 
 export const FIRST_DOOM_CARD: DoomCard = {
@@ -102,24 +66,12 @@ export const SECOND_SCENE_CARD: SceneCard = {
 }
 
 export const MOCK_SCENARIO: Scenario = {
-  locationCards: [
-    Aisle2,
-    Compartment24,
-    Compartment25,
-    Aisle3,
-    START_LOCATION,
-    Compartment35,
-    BoardRestaurant,
-  ],
+  locationCards: [START_LOCATION, SECOND_LOCATION, THIRD_LOCATION],
   startLocation: START_LOCATION.id,
   layout: new Map([
-    [Aisle2.id, [2, 2]],
-    [Compartment24.id, [1, 4]],
-    [Compartment25.id, [3, 4]],
-    [Aisle3.id, [6, 2]],
     [START_LOCATION.id, [5, 4]],
-    [Compartment35.id, [7, 4]],
-    [BoardRestaurant.id, [8, 2]],
+    [SECOND_LOCATION.id, [2, 2]],
+    [THIRD_LOCATION.id, [6, 2]],
   ]),
   fateWheel: [
     MinusThree,

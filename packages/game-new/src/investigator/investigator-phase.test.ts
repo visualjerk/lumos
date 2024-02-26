@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { Game } from '../game'
 import { InvestigatorState, createInvestigatorPhase } from '../investigator'
 import {
-  Aisle2,
-  Aisle3,
+  SECOND_LOCATION,
+  THIRD_LOCATION,
   FIRST_SCENE_CARD,
-  GameTestUtils,
   SECOND_SCENE_CARD,
+  GameTestUtils,
   createGameTestUtils,
   mockGetInvestigatorCard,
   mockSpinFateWheel,
@@ -48,13 +48,13 @@ describe('InvestigatorPhase', () => {
   })
 
   it('can move to location', () => {
-    const locationId = Aisle3.id
+    const locationId = SECOND_LOCATION.id
     t.executeAction({ type: 'move', locationId })
     expect(investigatorState.currentLocation).toBe(locationId)
   })
 
   it('cannot move to unconnected location', () => {
-    const locationId = Aisle2.id
+    const locationId = THIRD_LOCATION.id
     t.expectNoAction({ type: 'move', locationId })
   })
 
