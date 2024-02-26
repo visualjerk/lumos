@@ -5,6 +5,7 @@ import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
 import { isConnected } from '../location'
 import { createUpkeepPhase } from '../upkeep'
+import { createScenePhase } from '../scene'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -65,6 +66,18 @@ export class InvestigatorPhase implements PhaseBase {
             .apply(() => {
               this.actionsMade++
             }),
+      })
+    }
+
+    if (
+      this.context.sceneState.satisfiesThreshold(
+        this.context.totalInvestigatorClues
+      )
+    ) {
+      actions.push({
+        type: 'solveScene',
+        execute: (coordinator) =>
+          coordinator.waitFor(createScenePhase(this.context)),
       })
     }
 

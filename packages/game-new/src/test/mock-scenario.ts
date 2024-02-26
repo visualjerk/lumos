@@ -2,6 +2,7 @@ import { DoomCard } from '../doom'
 import { MinusThree, MinusTwo, MinusOne, Zero, PlusOne } from '../fate'
 import { LocationCard } from '../location'
 import { Scenario } from '../scenario'
+import { SceneCard } from '../scene'
 
 export const Aisle2: LocationCard = {
   id: 'aisle-2',
@@ -83,6 +84,23 @@ export const SECOND_DOOM_CARD: DoomCard = {
   treshold: 2,
 }
 
+export const FIRST_SCENE_CARD: SceneCard = {
+  id: 'first-scene-card',
+  name: 'First Scene Card',
+  story: 'First scene card story',
+  clueTreshold: 3,
+  consequence: 'First scene card consequences',
+  nextSceneCardId: 'second-scene-card',
+}
+
+export const SECOND_SCENE_CARD: SceneCard = {
+  id: 'second-scene-card',
+  name: 'Second Scene Card',
+  story: 'Second scene card story',
+  clueTreshold: 2,
+  consequence: 'Second scene card consequences',
+}
+
 export const MOCK_SCENARIO: Scenario = {
   locationCards: [
     Aisle2,
@@ -115,4 +133,5 @@ export const MOCK_SCENARIO: Scenario = {
     { symbol: 'cultist', modifySkillCheck: (skill) => skill - 3 },
   ],
   doomCards: [FIRST_DOOM_CARD, SECOND_DOOM_CARD],
+  sceneCards: [FIRST_SCENE_CARD, SECOND_SCENE_CARD],
 }

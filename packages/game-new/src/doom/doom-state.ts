@@ -24,7 +24,7 @@ export class DoomState {
   }
 
   get hasReachedThreshold(): boolean {
-    return this.doom >= this.doomCard!.treshold
+    return this.doomCard!.treshold <= this.doom
   }
 
   get hasNextDoomCard(): boolean {

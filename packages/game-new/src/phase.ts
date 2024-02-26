@@ -8,6 +8,7 @@ import { LocationId } from './location'
 import { DoomPhase } from './doom'
 import { EndPhase } from './end'
 import { UpkeepPhase } from './upkeep'
+import { ScenePhase } from './scene'
 
 export type Phase =
   | InvestigatorPhase
@@ -17,6 +18,7 @@ export type Phase =
   | ActionPhase
   | TargetPhase
   | DoomPhase
+  | ScenePhase
   | EndPhase
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {

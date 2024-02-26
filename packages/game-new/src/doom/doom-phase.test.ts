@@ -35,7 +35,7 @@ describe('DoomPhase', () => {
     }
 
     t.executeAction({ type: 'increaseDoom' })
-    t.expectPhase('advanceDoomPhase')
+    t.expectPhase('advanceDoom')
 
     t.executeAction({ type: 'advanceDoom' })
     t.expectPhase('investigator')
@@ -48,7 +48,7 @@ describe('DoomPhase', () => {
     }
 
     t.executeAction({ type: 'increaseDoom' })
-    t.expectPhase('advanceDoomPhase')
+    t.expectPhase('advanceDoom')
 
     t.executeAction({ type: 'advanceDoom' })
     t.expectPhase('end')

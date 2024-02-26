@@ -4,7 +4,9 @@ import { InvestigatorState, createInvestigatorPhase } from '../investigator'
 import {
   Aisle2,
   Aisle3,
+  FIRST_SCENE_CARD,
   GameTestUtils,
+  SECOND_SCENE_CARD,
   createGameTestUtils,
   mockGetInvestigatorCard,
   mockSpinFateWheel,
@@ -110,5 +112,31 @@ describe('InvestigatorPhase', () => {
   it('cannot play action card with empty hand', () => {
     investigatorState.cardsInHand = []
     t.expectNoAction({ type: 'play' })
+  })
+
+  it('can advance scene with enough clues', () => {
+    investigatorState.clues = FIRST_SCENE_CARD.clueTreshold
+    t.executeAction({ type: 'solveScene' })
+    t.expectPhase('advanceScene', 'investigator')
+
+    t.executeAction({ type: 'advanceScene' })
+    t.expectPhase('investigator')
+    expect(investigatorState.clues).toBe(0)
+  })
+
+  it('cannot advance scene with too less clues', () => {
+    investigatorState.clues = FIRST_SCENE_CARD.clueTreshold - 1
+    t.expectNoAction({ type: 'solveScene' })
+  })
+
+  it('game ends after last scene was solved', () => {
+    investigatorState.clues = FIRST_SCENE_CARD.clueTreshold
+    t.executeAction({ type: 'solveScene' })
+    t.executeAction({ type: 'advanceScene' })
+
+    investigatorState.clues = SECOND_SCENE_CARD.clueTreshold
+    t.executeAction({ type: 'solveScene' })
+    t.executeAction({ type: 'advanceScene' })
+    t.expectPhase('end', 'investigator')
   })
 })

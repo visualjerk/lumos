@@ -44,7 +44,7 @@ export function createAdvanceDoomPhase(context: Context) {
 }
 
 export class AdvanceDoomPhase implements PhaseBase {
-  type = 'advanceDoomPhase'
+  type = 'advanceDoom'
 
   constructor(public context: Context) {}
 
