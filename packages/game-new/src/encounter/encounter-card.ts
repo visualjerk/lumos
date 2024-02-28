@@ -1,6 +1,6 @@
 import { Effect } from '../effect'
 
-export type EncounterCardId = string
+export type EncounterCardId = `ec-${string}`
 
 export type EncounterCardBase = {
   id: EncounterCardId
