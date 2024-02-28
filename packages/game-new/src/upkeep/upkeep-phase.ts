@@ -1,4 +1,4 @@
-import { createActionPhase } from '../action'
+import { createEffectPhase } from '../effect'
 import { Context } from '../context'
 import { createDoomPhase } from '../doom'
 import { GamePhaseCoordinator } from '../game'
@@ -16,7 +16,7 @@ export class UpkeepPhase implements PhaseBase {
   onEnter(coordinator: GamePhaseCoordinator) {
     this.context.investigators.forEach(({ id }) => {
       coordinator = coordinator.waitFor(
-        createActionPhase(this.context, id, {
+        createEffectPhase(this.context, id, {
           type: 'draw',
           amount: 1,
           target: 'self',

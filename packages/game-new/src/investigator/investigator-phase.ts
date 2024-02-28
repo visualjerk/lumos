@@ -1,5 +1,5 @@
 import { PhaseBase, PhaseAction } from '../phase'
-import { createActionPhase } from '../action'
+import { createEffectPhase } from '../effect'
 import { Context } from '../context'
 import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
@@ -57,7 +57,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (coordinator) =>
           coordinator
             .waitFor(
-              createActionPhase(this.context, this.investigatorId, {
+              createEffectPhase(this.context, this.investigatorId, {
                 type: 'draw',
                 amount: 1,
                 target: 'self',
@@ -116,7 +116,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (coordinator) =>
           coordinator
             .waitFor(
-              createActionPhase(this.context, this.investigatorId, {
+              createEffectPhase(this.context, this.investigatorId, {
                 type: 'investigate',
                 clueAmount: 1,
                 locationTarget: 'current',
@@ -148,7 +148,7 @@ export class InvestigatorPhase implements PhaseBase {
         execute: (coordinator) =>
           coordinator
             .waitFor(
-              createActionPhase(this.context, this.investigatorId, card.action)
+              createEffectPhase(this.context, this.investigatorId, card.effect)
             )
             .apply(() => {
               this.investigatorState.discard(index)

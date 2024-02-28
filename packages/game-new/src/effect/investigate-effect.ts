@@ -7,32 +7,32 @@ import {
   createInvestigatorTargetPhase,
   createLocactionTargetPhase,
 } from '../target'
-import { CreateAction } from './action'
+import { CreateEffect } from './effect'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 
-export type InvestigateAction = CreateAction<'investigate'> & {
+export type InvestigateEffect = CreateEffect<'investigate'> & {
   clueAmount: number
   locationTarget: LocationTarget
   investigatorTarget: InvestigatorTarget
 }
 
-export function createInvestigateActionPhase(
+export function createInvestigateEffectPhase(
   context: Context,
   investigatorId: InvestigatorId,
-  action: InvestigateAction
-): InvestigateActionPhase {
-  return new InvestigateActionPhase(context, investigatorId, action)
+  effect: InvestigateEffect
+): InvestigateEffectPhase {
+  return new InvestigateEffectPhase(context, investigatorId, effect)
 }
 
-export class InvestigateActionPhase implements PhaseBase {
+export class InvestigateEffectPhase implements PhaseBase {
   type = 'investigate'
   actions = []
 
   constructor(
     public context: Context,
     public investigatorId: InvestigatorId,
-    public action: InvestigateAction
+    public effect: InvestigateEffect
   ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
@@ -41,14 +41,14 @@ export class InvestigateActionPhase implements PhaseBase {
         createInvestigatorTargetPhase(
           this.context,
           this.investigatorId,
-          this.action.investigatorTarget
+          this.effect.investigatorTarget
         )
       )
       .waitFor(
         createLocactionTargetPhase(
           this.context,
           this.investigatorId,
-          this.action.locationTarget
+          this.effect.locationTarget
         )
       )
       .waitFor(([{ investigatorId }, { locationId }]) => {
@@ -60,7 +60,7 @@ export class InvestigateActionPhase implements PhaseBase {
           difficulty: location.shroud,
           onSuccess: {
             type: 'collectClue',
-            amount: this.action.clueAmount,
+            amount: this.effect.clueAmount,
             locationTarget: { locationId },
             investigatorTarget: { investigatorId },
           },

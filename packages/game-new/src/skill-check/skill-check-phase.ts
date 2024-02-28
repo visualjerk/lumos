@@ -3,7 +3,7 @@ import { PhaseAction, PhaseBase } from '../phase'
 import { SkillCheck, SkillCheckContext } from './skill-check'
 import { Fate, spinFateWheel } from '../fate'
 import { InvestigatorState } from '../investigator'
-import { createActionPhase } from '../action'
+import { createEffectPhase } from '../effect'
 
 export function createSkillCheckPhase(
   context: Context,
@@ -128,7 +128,7 @@ export class CommitSkillCheckPhase implements PhaseBase {
           .apply(() => {
             this.cleanupAddedCards()
           })
-          .waitFor(createActionPhase(this.context, investigatorId, action))
+          .waitFor(createEffectPhase(this.context, investigatorId, action))
           .toParent()
       },
     })

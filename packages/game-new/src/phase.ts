@@ -2,7 +2,7 @@ import { GamePhaseCoordinator } from './game'
 import { InvestigatorId, InvestigatorPhase } from './investigator'
 import { TargetPhase } from './target'
 import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
-import { ActionPhase } from './action'
+import { EffectPhase } from './effect'
 import { Context } from './context'
 import { LocationId } from './location'
 import { DoomPhase } from './doom'
@@ -15,7 +15,7 @@ export type Phase =
   | UpkeepPhase
   | SkillCheckPhase
   | CommitSkillCheckPhase
-  | ActionPhase
+  | EffectPhase
   | TargetPhase
   | DoomPhase
   | ScenePhase

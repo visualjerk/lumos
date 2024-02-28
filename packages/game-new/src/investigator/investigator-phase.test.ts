@@ -99,7 +99,7 @@ describe('InvestigatorPhase', () => {
       name: 'Test Card',
       description: '',
       skillModifier: {},
-      action: { type: 'draw', amount: 2, target: 'self' },
+      effect: { type: 'draw', amount: 2, target: 'self' },
     })
     investigatorState.cardsInHand = [cardId]
 

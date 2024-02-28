@@ -1,4 +1,4 @@
-import { Action } from '../action'
+import { Effect } from '../effect'
 import { Skills } from './investigator'
 
 export type InvestigatorCardId = `ic${number}`
@@ -21,7 +21,7 @@ export type PermanentCard = InvestigatorCardBase & {
 
 export type ActionCard = InvestigatorCardBase & {
   type: 'action'
-  action: Action
+  effect: Effect
 }
 
 export type InvestigatorCard = SkillCard | PermanentCard | ActionCard

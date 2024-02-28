@@ -16,7 +16,7 @@ export const InvestigatorCardCollection = new Map<
       name: 'Force Of Will',
       description: 'Draw 2 cards.',
       skillModifier: { intelligence: 2 },
-      action: { type: 'draw', amount: 2, target: 'self' },
+      effect: { type: 'draw', amount: 2, target: 'self' },
     },
   ],
   [

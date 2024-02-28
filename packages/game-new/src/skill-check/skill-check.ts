@@ -1,4 +1,4 @@
-import { Action } from '../action'
+import { Effect } from '../effect'
 import { InvestigatorCardId, InvestigatorId, Skills } from '../investigator'
 
 export type SkillCheckContext = {
@@ -11,6 +11,6 @@ export type SkillCheck = {
   skill: keyof Skills
   investigatorId: InvestigatorId
   difficulty: number
-  onSuccess?: Action
-  onFailure?: Action
+  onSuccess?: Effect
+  onFailure?: Effect
 }

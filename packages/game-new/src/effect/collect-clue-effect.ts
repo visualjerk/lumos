@@ -4,34 +4,34 @@ import {
   createInvestigatorTargetPhase,
   createLocactionTargetPhase,
 } from '../target'
-import { CreateAction } from './action'
+import { CreateEffect } from './effect'
 import { GamePhaseCoordinator } from '../game'
 import { PhaseBase, PhaseResult } from '../phase'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 
-export type CollectClueAction = CreateAction<'collectClue'> & {
+export type CollectClueEffect = CreateEffect<'collectClue'> & {
   amount: number
   locationTarget: LocationTarget
   investigatorTarget: InvestigatorTarget
 }
 
-export function createCollectClueActionPhase(
+export function createCollectClueEffectPhase(
   context: Context,
   investigatorId: InvestigatorId,
-  action: CollectClueAction
-): CollectClueActionPhase {
-  return new CollectClueActionPhase(context, investigatorId, action)
+  effect: CollectClueEffect
+): CollectClueEffectPhase {
+  return new CollectClueEffectPhase(context, investigatorId, effect)
 }
 
-export class CollectClueActionPhase implements PhaseBase {
+export class CollectClueEffectPhase implements PhaseBase {
   type = 'collectClue'
   actions = []
 
   constructor(
     public context: Context,
     public investigatorId: InvestigatorId,
-    public action: CollectClueAction
+    public effect: CollectClueEffect
   ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
@@ -40,18 +40,18 @@ export class CollectClueActionPhase implements PhaseBase {
         createInvestigatorTargetPhase(
           this.context,
           this.investigatorId,
-          this.action.investigatorTarget
+          this.effect.investigatorTarget
         )
       )
       .waitFor(
         createLocactionTargetPhase(
           this.context,
           this.investigatorId,
-          this.action.locationTarget
+          this.effect.locationTarget
         )
       )
       .apply(([{ investigatorId }, { locationId }]) => {
-        for (let i = 0; i < this.action.amount; i++) {
+        for (let i = 0; i < this.effect.amount; i++) {
           this.context.collectClue(investigatorId, locationId)
         }
       })
