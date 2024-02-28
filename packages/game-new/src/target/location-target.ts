@@ -6,13 +6,16 @@ import { InvestigatorId } from '../investigator'
 
 export type LocationTargetScope = 'current'
 
-export type LocationTarget = {
-  type: 'location'
-  scope: LocationTargetScope
-}
+export type LocationTarget = LocationTargetScope | LocationTargetResult
 
 export type LocationTargetResult = {
   locationId: LocationId
+}
+
+function isLocationTargetResult(
+  target: LocationTarget
+): target is LocationTargetResult {
+  return typeof target === 'object' && 'locationId' in target
 }
 
 export function createLocactionTargetPhase(
@@ -33,14 +36,23 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
   ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], LocationTargetResult>) {
+    const target = this.locationTarget
+
+    // Instantly resolve if target is a result
+    if (isLocationTargetResult(target)) {
+      coordinator.applyToParent(() => target)
+      return
+    }
+
     // Instantly resolve if scope is the current location
-    if (this.locationTarget.scope === 'current') {
+    if (target === 'current') {
       const currentLocation = this.context.getInvestigatorLocation(
         this.investigatorId
       )
       coordinator.applyToParent(() => ({
         locationId: currentLocation.id,
       }))
+      return
     }
   }
 

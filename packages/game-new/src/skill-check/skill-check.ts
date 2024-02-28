@@ -1,4 +1,4 @@
-import { Context } from '../context'
+import { Action } from '../action'
 import { InvestigatorCardId, InvestigatorId, Skills } from '../investigator'
 
 export type SkillCheckContext = {
@@ -11,10 +11,6 @@ export type SkillCheck = {
   skill: keyof Skills
   investigatorId: InvestigatorId
   difficulty: number
-  onSuccess: Effect
-  onFailure: Effect
-}
-
-export type Effect = {
-  apply: (context: Context) => Context
+  onSuccess?: Action
+  onFailure?: Action
 }

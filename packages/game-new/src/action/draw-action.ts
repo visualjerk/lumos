@@ -1,7 +1,4 @@
-import {
-  InvestigatorTargetScope,
-  createInvestigatorTargetPhase,
-} from '../target'
+import { InvestigatorTarget, createInvestigatorTargetPhase } from '../target'
 import { CreateAction } from './action'
 import { GamePhaseCoordinator } from '../game'
 import { PhaseBase, PhaseResult } from '../phase'
@@ -10,7 +7,7 @@ import { InvestigatorId } from '../investigator'
 
 export type DrawAction = CreateAction<'draw'> & {
   amount: number
-  target: InvestigatorTargetScope
+  target: InvestigatorTarget
 }
 
 export function createDrawActionPhase(
@@ -34,10 +31,11 @@ export class DrawActionPhase implements PhaseBase {
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
     coordinator
       .waitFor(
-        createInvestigatorTargetPhase(this.context, this.investigatorId, {
-          type: 'investigator',
-          scope: this.action.target,
-        })
+        createInvestigatorTargetPhase(
+          this.context,
+          this.investigatorId,
+          this.action.target
+        )
       )
       .apply(([{ investigatorId }]) => {
         const investigatorState =

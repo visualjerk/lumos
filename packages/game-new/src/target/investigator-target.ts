@@ -5,13 +5,18 @@ import { PhaseBase } from '../phase'
 
 export type InvestigatorTargetScope = 'self'
 
-export type InvestigatorTarget = {
-  type: 'investigator'
-  scope: InvestigatorTargetScope
-}
+export type InvestigatorTarget =
+  | InvestigatorTargetScope
+  | InvestigatorTargetResult
 
 export type InvestigatorTargetResult = {
   investigatorId: InvestigatorId
+}
+
+function isInvestigatorTargetResult(
+  target: InvestigatorTarget
+): target is InvestigatorTargetResult {
+  return typeof target === 'object' && 'investigatorId' in target
 }
 
 export function createInvestigatorTargetPhase(
@@ -38,8 +43,16 @@ export class InvestigatorTargetPhase
   ) {}
 
   onEnter(coordinator: GamePhaseCoordinator<[], InvestigatorTargetResult>) {
+    const target = this.investigatorTarget
+
+    // Instantly resolve if target is already a result
+    if (isInvestigatorTargetResult(target)) {
+      coordinator.applyToParent(() => target)
+      return
+    }
+
     // Instantly resolve if scope is self
-    if (this.investigatorTarget.scope === 'self') {
+    if (target === 'self') {
       coordinator.applyToParent(() => ({
         investigatorId: this.investigatorId,
       }))

@@ -11,18 +11,21 @@ import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { spinFateWheel } from '../fate'
 import { InvestigatorState } from '../investigator'
 
-const applySuccess = vi.fn()
-const applyFailure = vi.fn()
-
 const skillCheck: SkillCheck = {
   skill: 'intelligence',
   investigatorId: '1',
   difficulty: 3,
   onSuccess: {
-    apply: applySuccess,
+    type: 'collectClue',
+    amount: 2,
+    investigatorTarget: 'self',
+    locationTarget: 'current',
   },
   onFailure: {
-    apply: applyFailure,
+    type: 'collectClue',
+    amount: 1,
+    investigatorTarget: 'self',
+    locationTarget: 'current',
   },
 }
 
@@ -50,12 +53,21 @@ function createTestPhase(context: Context): Phase {
 describe('SkillCheckPhase', () => {
   let t: GameTestUtils
   let investigatorState: InvestigatorState
+  let expectSuccess: () => void
+  let expectFailure: () => void
 
   beforeEach(() => {
     vi.clearAllMocks()
 
     t = createGameTestUtils(createTestPhase)
     investigatorState = t.game.context.investigatorStates.get('1')!
+    expectSuccess = () => {
+      expect(investigatorState.clues).toBe(2)
+    }
+    expectFailure = () => {
+      expect(investigatorState.clues).toBe(1)
+    }
+
     t.expectPhase('test')
 
     mockSpinFateWheel({
@@ -74,7 +86,7 @@ describe('SkillCheckPhase', () => {
     t.executeAction({ type: 'endSkillCheck' })
     t.expectPhase('test')
 
-    expect(applySuccess).toHaveBeenCalledWith(t.game.context)
+    expectSuccess()
   })
 
   it('executes failed skill check', () => {
@@ -92,7 +104,7 @@ describe('SkillCheckPhase', () => {
     t.executeAction({ type: 'endSkillCheck' })
     t.expectPhase('test')
 
-    expect(applyFailure).toHaveBeenCalledWith(t.game.context)
+    expectFailure()
   })
 
   const testCases: [modifier: number, result: 'fail' | 'success'][] = [
@@ -113,9 +125,9 @@ describe('SkillCheckPhase', () => {
       t.executeAction({ type: 'commitSkillCheck' })
       t.executeAction({ type: 'endSkillCheck' })
 
-      const applyFn = result === 'success' ? applySuccess : applyFailure
+      const expectFn = result === 'success' ? expectSuccess : expectFailure
 
-      expect(applyFn).toHaveBeenCalledOnce()
+      expectFn()
     }
   )
 
@@ -140,7 +152,7 @@ describe('SkillCheckPhase', () => {
     t.executeAction({ type: 'commitSkillCheck' })
     t.executeAction({ type: 'endSkillCheck' })
 
-    expect(applySuccess).toHaveBeenCalledOnce()
+    expectSuccess()
     expect(investigatorState.cardsInHand).toEqual([])
     expect(investigatorState.discardPile).toEqual([cardId])
   })

@@ -10,10 +10,18 @@ import {
 } from './draw-action'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
+import {
+  CollectClueAction,
+  CollectClueActionPhase,
+  createCollectClueActionPhase,
+} from './collect-clue-action'
 
-export type Action = InvestigateAction | DrawAction
+export type Action = InvestigateAction | DrawAction | CollectClueAction
 
-export type ActionPhase = InvestigateActionPhase | DrawActionPhase
+export type ActionPhase =
+  | InvestigateActionPhase
+  | DrawActionPhase
+  | CollectClueActionPhase
 
 export type CreateAction<Type extends string> = {
   type: Type
@@ -29,5 +37,7 @@ export function createActionPhase(
       return createInvestigateActionPhase(context, investigatorId, action)
     case 'draw':
       return createDrawActionPhase(context, investigatorId, action)
+    case 'collectClue':
+      return createCollectClueActionPhase(context, investigatorId, action)
   }
 }

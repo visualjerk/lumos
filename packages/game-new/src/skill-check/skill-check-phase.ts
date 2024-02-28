@@ -3,6 +3,7 @@ import { PhaseAction, PhaseBase } from '../phase'
 import { SkillCheck, SkillCheckContext } from './skill-check'
 import { Fate, spinFateWheel } from '../fate'
 import { InvestigatorState } from '../investigator'
+import { createActionPhase } from '../action'
 
 export function createSkillCheckPhase(
   context: Context,
@@ -111,18 +112,25 @@ export class CommitSkillCheckPhase implements PhaseBase {
     actions.push({
       type: 'endSkillCheck',
       investigatorId,
-      execute: (coordinator) =>
+      execute: (coordinator) => {
+        const action = difficulty <= this.totalSkill ? onSuccess : onFailure
+
+        if (!action) {
+          coordinator
+            .apply(() => {
+              this.cleanupAddedCards()
+            })
+            .toParent()
+          return
+        }
+
         coordinator
           .apply(() => {
             this.cleanupAddedCards()
-
-            if (difficulty <= this.totalSkill) {
-              onSuccess.apply(this.context)
-              return
-            }
-            onFailure.apply(this.context)
           })
-          .toParent(),
+          .waitFor(createActionPhase(this.context, investigatorId, action))
+          .toParent()
+      },
     })
 
     return actions

@@ -2,8 +2,8 @@ import { PhaseBase, PhaseResult } from '../phase'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { GamePhaseCoordinator } from '../game'
 import {
-  InvestigatorTargetScope,
-  LocationTargetScope,
+  InvestigatorTarget,
+  LocationTarget,
   createInvestigatorTargetPhase,
   createLocactionTargetPhase,
 } from '../target'
@@ -13,8 +13,8 @@ import { InvestigatorId } from '../investigator'
 
 export type InvestigateAction = CreateAction<'investigate'> & {
   clueAmount: number
-  locationTarget: LocationTargetScope
-  investigatorTarget: InvestigatorTargetScope
+  locationTarget: LocationTarget
+  investigatorTarget: InvestigatorTarget
 }
 
 export function createInvestigateActionPhase(
@@ -38,16 +38,18 @@ export class InvestigateActionPhase implements PhaseBase {
   onEnter(coordinator: GamePhaseCoordinator<[], PhaseResult>) {
     coordinator
       .waitFor(
-        createInvestigatorTargetPhase(this.context, this.investigatorId, {
-          type: 'investigator',
-          scope: this.action.investigatorTarget,
-        })
+        createInvestigatorTargetPhase(
+          this.context,
+          this.investigatorId,
+          this.action.investigatorTarget
+        )
       )
       .waitFor(
-        createLocactionTargetPhase(this.context, this.investigatorId, {
-          type: 'location',
-          scope: this.action.locationTarget,
-        })
+        createLocactionTargetPhase(
+          this.context,
+          this.investigatorId,
+          this.action.locationTarget
+        )
       )
       .waitFor(([{ investigatorId }, { locationId }]) => {
         const location = this.context.getLocation(locationId)
@@ -56,11 +58,11 @@ export class InvestigateActionPhase implements PhaseBase {
           investigatorId,
           skill: 'intelligence',
           difficulty: location.shroud,
-          onFailure: () => {},
-          onSuccess: () => {
-            for (let i = 0; i < this.action.clueAmount; i++) {
-              this.context.collectClue(investigatorId, locationId)
-            }
+          onSuccess: {
+            type: 'collectClue',
+            amount: this.action.clueAmount,
+            locationTarget: { locationId },
+            investigatorTarget: { investigatorId },
           },
         }
 
