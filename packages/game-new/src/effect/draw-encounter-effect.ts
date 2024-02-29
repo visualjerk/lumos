@@ -47,25 +47,52 @@ export class DrawEncounterEffectPhase implements PhaseBase {
   }
 
   get actions() {
-    const actions: PhaseAction[] = [
-      {
+    const actions: PhaseAction[] = []
+
+    const investigatorId = this.investigatorId
+    const targetInvestigatorId = this.targetInvestigatorId!
+    const encounterCard = this.encounterCard!
+
+    if (encounterCard.type === 'trap') {
+      actions.push({
         type: 'confirm',
-        investigatorId: this.investigatorId,
+        investigatorId,
         execute: (coordinator) =>
           coordinator
             .waitFor(
               createEffectPhase(
                 this.context,
-                this.targetInvestigatorId!,
-                this.encounterCard!.effect
+                targetInvestigatorId,
+                encounterCard.effect
               )
             )
             .apply(() => {
-              this.context.encounterState.discard(this.encounterCard!.id)
+              this.context.encounterState.discard(encounterCard.id)
             })
             .toParent(),
-      },
-    ]
+      })
+    }
+
+    if (encounterCard.type === 'enemy') {
+      actions.push({
+        type: 'confirm',
+        investigatorId,
+        execute: (coordinator) =>
+          coordinator
+            .apply(() => {
+              const investigatorState =
+                this.context.getInvestigatorState(targetInvestigatorId)
+
+              this.context.enemyStates.add(
+                encounterCard,
+                investigatorState.currentLocation,
+                targetInvestigatorId
+              )
+            })
+            .toParent(),
+      })
+    }
+
     return actions
   }
 }

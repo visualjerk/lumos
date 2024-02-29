@@ -1,4 +1,5 @@
 import { Effect } from '../effect'
+import { EnemyCard } from '../enemy'
 
 export type EncounterCardId = `ec-${string}`
 
@@ -13,4 +14,4 @@ export type TrapCard = EncounterCardBase & {
   effect: Effect
 }
 
-export type EncounterCard = TrapCard
+export type EncounterCard = TrapCard | EnemyCard
