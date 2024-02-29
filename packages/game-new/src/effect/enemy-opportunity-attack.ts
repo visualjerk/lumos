@@ -37,22 +37,18 @@ export class EnemyOpportunityAttackEffectPhase implements PhaseBase {
           this.effect.target
         )
       )
-      .apply(([{ investigatorId }]) => {
+      .waitForAll(([{ investigatorId }]) => {
         const engagedEnemyIndexes =
           this.context.getEngagedEnemies(investigatorId)
 
-        engagedEnemyIndexes.forEach((enemyIndex) => {
-          // TODO: solve type error
-          coordinator = coordinator.waitFor(
-            createEffectPhase(this.context, investigatorId, {
-              type: 'enemyAttack',
-              enemyTarget: { enemyIndex },
-              investigatorTarget: { investigatorId },
-            })
-          )
-        })
-
-        coordinator.toParent()
+        return engagedEnemyIndexes.map((enemyIndex) =>
+          createEffectPhase(this.context, investigatorId, {
+            type: 'enemyAttack',
+            enemyTarget: { enemyIndex },
+            investigatorTarget: { investigatorId },
+          })
+        )
       })
+      .toParent()
   }
 }

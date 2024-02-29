@@ -261,4 +261,22 @@ export class GamePhaseCoordinator<
 
     return coordinator
   }
+
+  waitForAll(
+    phases:
+      | Phase[]
+      | ((results: UnwrapPendingPhaseResult<TPendingPhaseResults>) => Phase[])
+  ) {
+    // TODO: check if this is correct
+    const resolvedPhases =
+      typeof phases === 'function'
+        ? phases(this.unwrappedPendingPhaseResults)
+        : phases
+
+    let newCoordinator: GamePhaseCoordinator = this
+    resolvedPhases.forEach((phase) => {
+      newCoordinator = newCoordinator.waitFor(phase)
+    })
+    return newCoordinator
+  }
 }
