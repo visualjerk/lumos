@@ -58,6 +58,12 @@ export class InvestigatorPhase implements PhaseBase {
           coordinator
             .waitFor(
               createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
                 type: 'draw',
                 amount: 1,
                 target: 'self',
@@ -103,10 +109,17 @@ export class InvestigatorPhase implements PhaseBase {
         type: 'move',
         locationId: location.id,
         execute: (coordinator) =>
-          coordinator.apply(() => {
-            this.context.moveInvestigator(this.investigatorId, location.id)
-            this.actionsMade++
-          }),
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
+            .apply(() => {
+              this.context.moveInvestigator(this.investigatorId, location.id)
+              this.actionsMade++
+            }),
       })
     })
 
@@ -115,6 +128,12 @@ export class InvestigatorPhase implements PhaseBase {
         type: 'investigate',
         execute: (coordinator) =>
           coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
             .waitFor(
               createEffectPhase(this.context, this.investigatorId, {
                 type: 'investigate',
@@ -147,6 +166,12 @@ export class InvestigatorPhase implements PhaseBase {
         cardIndex: index,
         execute: (coordinator) =>
           coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
             .waitFor(
               createEffectPhase(this.context, this.investigatorId, card.effect)
             )

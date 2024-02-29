@@ -9,7 +9,7 @@ import {
 import { InvestigatorState } from '../investigator'
 import { EnemyCard, createEnemyPhase } from '.'
 
-const CARD_ID = 'ec-trap'
+const CARD_ID = 'ec-enemy'
 const ENEMY_CARD: EnemyCard = {
   id: CARD_ID,
   type: 'enemy',

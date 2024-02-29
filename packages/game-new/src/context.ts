@@ -190,4 +190,16 @@ export class Context {
   getEnemyState(enemyIndex: number): EnemyState {
     return this.enemyStates[enemyIndex]
   }
+
+  getEngagedEnemies(investigatorId: InvestigatorId): number[] {
+    const indexes: number[] = []
+
+    this.enemyStates.forEach((enemyState, index) => {
+      if (enemyState.engagedInvestigator === investigatorId) {
+        indexes.push(index)
+      }
+    })
+
+    return indexes
+  }
 }

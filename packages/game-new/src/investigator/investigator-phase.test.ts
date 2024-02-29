@@ -10,7 +10,10 @@ import {
   createGameTestUtils,
   mockGetInvestigatorCard,
   mockSpinFateWheel,
+  MOCK_INVESTIGATOR_ONE,
+  mockGetEncounterCard,
 } from '../test'
+import { EnemyCard } from '../enemy'
 
 describe('InvestigatorPhase', () => {
   let t: GameTestUtils
@@ -28,7 +31,9 @@ describe('InvestigatorPhase', () => {
 
     t = createGameTestUtils(createInvestigatorPhase)
     game = t.game
-    investigatorState = game.context.investigatorStates.get('1')!
+    investigatorState = game.context.investigatorStates.get(
+      MOCK_INVESTIGATOR_ONE.id
+    )!
     t.expectPhase('investigator')
 
     mockSpinFateWheel({
@@ -146,5 +151,74 @@ describe('InvestigatorPhase', () => {
     t.executeAction({ type: 'solveScene' })
     t.executeAction({ type: 'advanceScene' })
     t.expectPhase('end', 'investigator')
+  })
+
+  describe('enemy has opportunity attack', () => {
+    const ENEMY_CARD: EnemyCard = {
+      id: 'ec-enemy',
+      type: 'enemy',
+      name: 'Enemy Card',
+      description: '',
+      attackDamage: 2,
+      health: 3,
+      strength: 2,
+    }
+
+    beforeEach(() => {
+      mockGetEncounterCard(ENEMY_CARD)
+
+      t.game.context.enemyStates.add(
+        ENEMY_CARD,
+        investigatorState.currentLocation,
+        MOCK_INVESTIGATOR_ONE.id
+      )
+    })
+
+    it('when drawing', () => {
+      t.executeAction({ type: 'draw' })
+      t.expectPhase('enemyAttack', 'investigator')
+
+      t.executeAction({ type: 'confirm' })
+      expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
+      t.expectPhase('investigator')
+    })
+
+    it('when moving', () => {
+      t.executeAction({ type: 'move' })
+      t.expectPhase('enemyAttack', 'investigator')
+
+      t.executeAction({ type: 'confirm' })
+      expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
+      t.expectPhase('investigator')
+    })
+
+    it('when investigating', () => {
+      t.executeAction({ type: 'move' })
+      t.expectPhase('enemyAttack', 'investigator')
+
+      t.executeAction({ type: 'confirm' })
+      expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
+      t.expectPhase('investigator')
+    })
+
+    it('when playing card', () => {
+      const cardId = 'ic-test-card'
+      mockGetInvestigatorCard({
+        id: cardId,
+        type: 'action',
+        name: 'Test Card',
+        description: '',
+        skillModifier: {},
+        effect: { type: 'draw', amount: 2, target: 'self' },
+      })
+      investigatorState.cardsInHand = [cardId]
+
+      t.executeAction({ type: 'play' })
+      t.expectPhase('enemyAttack', 'investigator')
+
+      t.executeAction({ type: 'confirm' })
+      expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
+      t.expectPhase('investigator')
+    })
   })
 })
