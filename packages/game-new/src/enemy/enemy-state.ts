@@ -1,4 +1,3 @@
-import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 import { EncounterCardId } from '../encounter'
 import { LocationId } from '../location'
@@ -24,28 +23,12 @@ export class EnemyState implements EnemyStateProps {
     public engagedInvestigator: InvestigatorId | null = null
   ) {}
 
-  addDamage(context: Context, amount: number) {
+  addDamage(amount: number) {
     this.damage += amount
-
-    // TODO: this should be in effect phase
-    if (this.isDefeated()) {
-      context.encounterState.discard(this.cardId)
-      context.enemyStates.remove(this)
-    }
   }
 
   isDefeated(): boolean {
-    return this.damage >= this.health
-  }
-
-  attackEnganged(context: Context) {
-    if (!this.engagedInvestigator) {
-      return
-    }
-    const investigatorState = context.getInvestigatorState(
-      this.engagedInvestigator
-    )
-    investigatorState.addDamage(this.attackDamage)
+    return this.health <= this.damage
   }
 }
 

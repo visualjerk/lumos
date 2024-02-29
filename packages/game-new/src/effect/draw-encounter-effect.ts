@@ -21,8 +21,8 @@ export function createDrawEncounterEffectPhase(
 export class DrawEncounterEffectPhase implements PhaseBase {
   type = 'drawEncounter'
 
-  private encounterCard: EncounterCard | null = null
-  private targetInvestigatorId: InvestigatorId | null = null
+  public encounterCard: EncounterCard | null = null
+  public targetInvestigatorId: InvestigatorId | null = null
 
   constructor(
     public context: Context,

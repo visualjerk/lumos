@@ -30,6 +30,11 @@ import {
   DrawEncounterEffectPhase,
   createDrawEncounterEffectPhase,
 } from './draw-encounter-effect'
+import {
+  EnemyAttackEffect,
+  EnemyAttackEffectPhase,
+  createEnemyAttackEffectPhase,
+} from './enemy-attack-effect'
 
 export type Effect =
   | InvestigateEffect
@@ -38,6 +43,7 @@ export type Effect =
   | DamageEffect
   | SkillCheckEffect
   | DrawEncounterEffect
+  | EnemyAttackEffect
 
 export type EffectPhase =
   | InvestigateEffectPhase
@@ -46,6 +52,7 @@ export type EffectPhase =
   | DamageEffectPhase
   | SkillCheckEffectPhase
   | DrawEncounterEffectPhase
+  | EnemyAttackEffectPhase
 
 export type CreateEffect<Type extends string> = {
   type: Type
@@ -69,5 +76,7 @@ export function createEffectPhase(
       return createSkillCheckEffectPhase(context, investigatorId, effect)
     case 'drawEncounter':
       return createDrawEncounterEffectPhase(context, investigatorId, effect)
+    case 'enemyAttack':
+      return createEnemyAttackEffectPhase(context, investigatorId, effect)
   }
 }

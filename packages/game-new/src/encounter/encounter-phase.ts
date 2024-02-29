@@ -10,6 +10,7 @@ export function createEncounterPhase(context: Context) {
 
 export class EncounterPhase implements PhaseBase {
   type = 'encounter'
+  actions = []
 
   constructor(public context: Context) {}
 
@@ -22,16 +23,6 @@ export class EncounterPhase implements PhaseBase {
         })
       )
     })
-  }
-
-  get actions() {
-    const actions: PhaseAction[] = [
-      {
-        type: 'end',
-        execute: (coordinator) =>
-          coordinator.toNext(createInvestigatorPhase(this.context)),
-      },
-    ]
-    return actions
+    coordinator.toNext(createInvestigatorPhase(this.context))
   }
 }

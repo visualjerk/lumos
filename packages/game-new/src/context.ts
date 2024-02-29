@@ -19,7 +19,7 @@ import { Scenario } from './scenario'
 import { DoomState, createInitialDoomState } from './doom'
 import { SceneState, createInitialSceneState } from './scene'
 import { EncounterState, createInitialEncounterState } from './encounter'
-import { EnemyStates, createInitialEnemyStates } from './enemy'
+import { EnemyState, EnemyStates, createInitialEnemyStates } from './enemy'
 
 export function createInitialContext(
   scenario: Scenario,
@@ -185,5 +185,9 @@ export class Context {
     })
 
     return skills
+  }
+
+  getEnemyState(enemyIndex: number): EnemyState {
+    return this.enemyStates[enemyIndex]
   }
 }

@@ -4,8 +4,8 @@ import { Context } from '../context'
 import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
 import { isConnected } from '../location'
-import { createUpkeepPhase } from '../upkeep'
 import { createScenePhase } from '../scene'
+import { createEnemyPhase } from '../enemy'
 
 export function createInvestigatorPhase(context: Context) {
   return new InvestigatorPhase(context)
@@ -29,7 +29,7 @@ export class InvestigatorPhase implements PhaseBase {
     actions.push({
       type: 'end',
       execute: (coordinator) =>
-        coordinator.toNext(createUpkeepPhase(this.context)),
+        coordinator.toNext(createEnemyPhase(this.context)),
     })
 
     if (this.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
