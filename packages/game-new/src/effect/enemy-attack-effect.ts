@@ -11,6 +11,7 @@ import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 import { getEncounterCard } from '../encounter'
 import { EnemyCard } from '../enemy'
+import { createEndPhase } from '../end'
 
 export type EnemyAttackEffect = CreateEffect<'enemyAttack'> & {
   enemyTarget: EnemyTarget
@@ -72,14 +73,20 @@ export class EnemyAttackEffectPhase implements PhaseBase {
     actions.push({
       type: 'confirm',
       investigatorId,
-      execute: (coordinator) =>
-        coordinator
-          .apply(() => {
-            const investigatorState =
-              this.context.getInvestigatorState(targetInvestigatorId)
-            investigatorState.addDamage(enemyCard.attackDamage)
-          })
-          .toParent(),
+      execute: (coordinator) => {
+        coordinator = coordinator.apply(() => {
+          const investigatorState =
+            this.context.getInvestigatorState(targetInvestigatorId)
+          investigatorState.addDamage(enemyCard.attackDamage)
+        })
+
+        if (this.context.investigatorStates.allDefeated) {
+          coordinator.toNext(createEndPhase(this.context))
+          return
+        }
+
+        coordinator.toParent()
+      },
     })
 
     return actions

@@ -132,7 +132,7 @@ function createInitialInvestigatorState(
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  allDefeated(): boolean {
+  get allDefeated(): boolean {
     return [...this.values()].every((state) => state.isDefeated())
   }
 }
