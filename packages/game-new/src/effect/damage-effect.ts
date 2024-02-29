@@ -4,6 +4,7 @@ import { GamePhaseCoordinator } from '../game'
 import { PhaseBase, PhaseResult } from '../phase'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
+import { createEndPhase } from '../end'
 
 export type DamageEffect = CreateEffect<'damage'> & {
   amount: number
@@ -41,7 +42,13 @@ export class DamageEffectPhase implements PhaseBase {
         const investigatorState =
           this.context.getInvestigatorState(investigatorId)
         investigatorState.addDamage(this.effect.amount)
+
+        if (this.context.investigatorStates.allDefeated) {
+          coordinator.toNext(createEndPhase(this.context))
+          return
+        }
+
+        coordinator.toParent()
       })
-      .toParent()
   }
 }
