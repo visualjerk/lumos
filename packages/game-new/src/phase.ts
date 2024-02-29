@@ -9,6 +9,7 @@ import { DoomPhase } from './doom'
 import { EndPhase } from './end'
 import { UpkeepPhase } from './upkeep'
 import { ScenePhase } from './scene'
+import { EncounterPhase } from './encounter'
 
 export type Phase =
   | InvestigatorPhase
@@ -18,6 +19,7 @@ export type Phase =
   | EffectPhase
   | TargetPhase
   | DoomPhase
+  | EncounterPhase
   | ScenePhase
   | EndPhase
 

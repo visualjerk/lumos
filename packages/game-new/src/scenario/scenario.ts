@@ -2,6 +2,7 @@ import { LocationCard, LocationId, Layout } from '../location'
 import { FateWheel } from '../fate'
 import { DoomCard } from '../doom'
 import { SceneCard } from '../scene'
+import { EncounterCardId } from '../encounter'
 
 export type Scenario = {
   locationCards: LocationCard[]
@@ -10,4 +11,5 @@ export type Scenario = {
   fateWheel: FateWheel
   doomCards: DoomCard[]
   sceneCards: SceneCard[]
+  encounterCards: EncounterCardId[]
 }

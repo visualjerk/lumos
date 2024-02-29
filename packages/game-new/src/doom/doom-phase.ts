@@ -1,6 +1,6 @@
 import { Context } from '../context'
+import { createEncounterPhase } from '../encounter'
 import { createEndPhase } from '../end'
-import { createInvestigatorPhase } from '../investigator'
 import { PhaseAction, PhaseBase } from '../phase'
 
 export type DoomPhase = IncreaseDoomPhase | AdvanceDoomPhase
@@ -31,7 +31,7 @@ export class IncreaseDoomPhase implements PhaseBase {
               if (this.doomState.hasReachedThreshold) {
                 return createAdvanceDoomPhase(this.context)
               }
-              return createInvestigatorPhase(this.context)
+              return createEncounterPhase(this.context)
             }),
       },
     ]
@@ -65,7 +65,7 @@ export class AdvanceDoomPhase implements PhaseBase {
             .apply(() => {
               this.doomState.advanceDoomCards()
             })
-            .toNext(createInvestigatorPhase(this.context))
+            .toNext(createEncounterPhase(this.context))
         },
       },
     ]

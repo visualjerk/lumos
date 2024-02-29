@@ -25,6 +25,11 @@ import {
   SkillCheckEffectPhase,
   createSkillCheckEffectPhase,
 } from './skill-check-effect'
+import {
+  DrawEncounterEffect,
+  DrawEncounterEffectPhase,
+  createDrawEncounterEffectPhase,
+} from './draw-encounter-effect'
 
 export type Effect =
   | InvestigateEffect
@@ -32,6 +37,7 @@ export type Effect =
   | CollectClueEffect
   | DamageEffect
   | SkillCheckEffect
+  | DrawEncounterEffect
 
 export type EffectPhase =
   | InvestigateEffectPhase
@@ -39,6 +45,7 @@ export type EffectPhase =
   | CollectClueEffectPhase
   | DamageEffectPhase
   | SkillCheckEffectPhase
+  | DrawEncounterEffectPhase
 
 export type CreateEffect<Type extends string> = {
   type: Type
@@ -60,5 +67,7 @@ export function createEffectPhase(
       return createDamageEffectPhase(context, investigatorId, effect)
     case 'skillCheck':
       return createSkillCheckEffectPhase(context, investigatorId, effect)
+    case 'drawEncounter':
+      return createDrawEncounterEffectPhase(context, investigatorId, effect)
   }
 }

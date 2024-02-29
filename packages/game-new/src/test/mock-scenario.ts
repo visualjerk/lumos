@@ -86,4 +86,10 @@ export const MOCK_SCENARIO: Scenario = {
   ],
   doomCards: [FIRST_DOOM_CARD, SECOND_DOOM_CARD],
   sceneCards: [FIRST_SCENE_CARD, SECOND_SCENE_CARD],
+  encounterCards: [
+    'ec-void-shock',
+    'ec-void-shock',
+    'ec-void-shock',
+    'ec-void-shock',
+  ],
 }

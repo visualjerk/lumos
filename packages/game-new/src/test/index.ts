@@ -1,4 +1,5 @@
 export * from './mock-fate'
 export * from './mock-investigators'
 export * from './mock-scenario'
+export * from './mock-encounter'
 export * from './utils'
