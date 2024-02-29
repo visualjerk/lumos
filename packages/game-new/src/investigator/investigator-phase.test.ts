@@ -18,6 +18,14 @@ describe('InvestigatorPhase', () => {
   let investigatorState: InvestigatorState
 
   beforeEach(() => {
+    mockGetInvestigatorCard({
+      id: 'ic-test-card',
+      type: 'skill',
+      name: 'Test Card',
+      description: '',
+      skillModifier: {},
+    })
+
     t = createGameTestUtils(createInvestigatorPhase)
     game = t.game
     investigatorState = game.context.investigatorStates.get('1')!
@@ -92,7 +100,7 @@ describe('InvestigatorPhase', () => {
   })
 
   it('can play action card', () => {
-    const cardId = 'ic1'
+    const cardId = 'ic-test-card'
     mockGetInvestigatorCard({
       id: cardId,
       type: 'action',

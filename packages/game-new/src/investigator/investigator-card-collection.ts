@@ -9,9 +9,9 @@ export const InvestigatorCardCollection = new Map<
   InvestigatorCard
 >([
   [
-    'ic1',
+    'ic-force-of-will',
     {
-      id: 'ic1',
+      id: 'ic-force-of-will',
       type: 'action',
       name: 'Force Of Will',
       description: 'Draw 2 cards.',
@@ -20,9 +20,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    'ic2',
+    'ic-lightning-strike',
     {
-      id: 'ic2',
+      id: 'ic-lightning-strike',
       type: 'skill',
       name: 'Lightning Strike',
       description: '',
@@ -30,9 +30,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    'ic3',
+    'ic-boar-strength',
     {
-      id: 'ic3',
+      id: 'ic-boar-strength',
       type: 'skill',
       name: 'Boar Strength',
       description: '',
@@ -40,9 +40,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    'ic4',
+    'ic-serenity',
     {
-      id: 'ic4',
+      id: 'ic-serenity',
       type: 'permanent',
       name: 'Serenity',
       description: '+1 to intelligence checks.',

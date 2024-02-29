@@ -132,7 +132,7 @@ describe('SkillCheckPhase', () => {
   )
 
   it('can add card to skill check', () => {
-    const cardId = 'ic1'
+    const cardId = 'ic-test-card'
     mockGetInvestigatorCard({
       id: cardId,
       type: 'skill',
