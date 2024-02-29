@@ -267,16 +267,27 @@ export class GamePhaseCoordinator<
       | Phase[]
       | ((results: UnwrapPendingPhaseResult<TPendingPhaseResults>) => Phase[])
   ) {
-    // TODO: check if this is correct
-    const resolvedPhases =
-      typeof phases === 'function'
-        ? phases(this.unwrappedPendingPhaseResults)
-        : phases
+    const pendingPhaseResults: PendingPhaseResult[] = []
 
-    let newCoordinator: GamePhaseCoordinator = this
-    resolvedPhases.forEach((phase) => {
-      newCoordinator = newCoordinator.waitFor(phase)
+    this.enqueueOrExecute(() => {
+      const resolvedPhases =
+        typeof phases === 'function'
+          ? phases(this.unwrappedPendingPhaseResults)
+          : phases
+
+      resolvedPhases.forEach((phase) => {
+        const pendingPhaseResult = new PendingPhaseResult()
+        pendingPhaseResults.push(pendingPhaseResult)
+        this.game.addPhase(phase, pendingPhaseResult)
+      })
     })
-    return newCoordinator
+
+    const coordinator = new GamePhaseCoordinator(
+      this.game,
+      [...this.pendingPhaseResults, ...pendingPhaseResults],
+      this.awaitedPhaseResult
+    )
+
+    return coordinator
   }
 }

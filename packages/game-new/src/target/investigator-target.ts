@@ -1,9 +1,9 @@
 import { Context } from '../context'
 import { GamePhaseCoordinator } from '../game'
 import { InvestigatorId } from '../investigator'
-import { PhaseBase } from '../phase'
+import { PhaseAction, PhaseBase } from '../phase'
 
-export type InvestigatorTargetScope = 'self'
+export type InvestigatorTargetScope = 'self' | 'any'
 
 export type InvestigatorTarget =
   | InvestigatorTargetScope
@@ -60,6 +60,22 @@ export class InvestigatorTargetPhase
   }
 
   get actions() {
-    return []
+    const actions: PhaseAction<InvestigatorTargetResult>[] = []
+
+    if (this.investigatorTarget === 'any') {
+      this.context.investigators.forEach((investigator) => {
+        actions.push({
+          type: 'select',
+          investigatorId: investigator.id,
+          execute: (coordinator) => {
+            coordinator.applyToParent(() => ({
+              investigatorId: investigator.id,
+            }))
+          },
+        })
+      })
+    }
+
+    return actions
   }
 }
