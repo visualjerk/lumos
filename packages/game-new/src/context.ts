@@ -202,4 +202,16 @@ export class Context {
 
     return indexes
   }
+
+  getLocationEnemies(locationId: LocationId): number[] {
+    const indexes: number[] = []
+
+    this.enemyStates.forEach((enemyState, index) => {
+      if (enemyState.location === locationId) {
+        indexes.push(index)
+      }
+    })
+
+    return indexes
+  }
 }

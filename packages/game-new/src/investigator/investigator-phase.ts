@@ -39,6 +39,7 @@ export class InvestigatorPhase implements PhaseBase {
     actions.push(...this.generalActions)
     actions.push(...this.locationActions)
     actions.push(...this.cardsInHandActions)
+    actions.push(...this.enemyActions)
 
     return actions
   }
@@ -177,6 +178,36 @@ export class InvestigatorPhase implements PhaseBase {
             )
             .apply(() => {
               this.investigatorState.discard(index)
+              this.actionsMade++
+            }),
+      })
+    })
+
+    return actions
+  }
+
+  private get enemyActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
+
+    const enemies = this.context.getLocationEnemies(
+      this.investigatorState.currentLocation
+    )
+
+    enemies.forEach((enemyIndex) => {
+      actions.push({
+        type: 'attack',
+        enemyIndex,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'attackEnemy',
+                target: {
+                  enemyIndex,
+                },
+              })
+            )
+            .apply(() => {
               this.actionsMade++
             }),
       })

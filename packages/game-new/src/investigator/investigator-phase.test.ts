@@ -12,8 +12,9 @@ import {
   mockSpinFateWheel,
   MOCK_INVESTIGATOR_ONE,
   mockGetEncounterCard,
+  START_LOCATION,
 } from '../test'
-import { EnemyCard } from '../enemy'
+import { EnemyCard, EnemyState } from '../enemy'
 
 describe('InvestigatorPhase', () => {
   let t: GameTestUtils
@@ -31,7 +32,7 @@ describe('InvestigatorPhase', () => {
 
     t = createGameTestUtils(createInvestigatorPhase)
     game = t.game
-    investigatorState = game.context.investigatorStates.get(
+    investigatorState = game.context.getInvestigatorState(
       MOCK_INVESTIGATOR_ONE.id
     )!
     t.expectPhase('investigator')
@@ -219,6 +220,48 @@ describe('InvestigatorPhase', () => {
       t.executeAction({ type: 'confirm' })
       expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
       t.expectPhase('investigator')
+    })
+  })
+
+  describe('enemy actions', () => {
+    const ENEMY_CARD: EnemyCard = {
+      id: 'ec-enemy',
+      type: 'enemy',
+      name: 'Enemy Card',
+      description: '',
+      attackDamage: 2,
+      health: 2,
+      strength: 2,
+    }
+    let enemyState: EnemyState
+
+    beforeEach(() => {
+      game.context.enemyStates.add(ENEMY_CARD, START_LOCATION.id)
+      enemyState = game.context.getEnemyState(0)!
+    })
+
+    it('can attack enemy', () => {
+      t.executeAction({ type: 'attack' })
+      t.executeAction({ type: 'commitSkillCheck' })
+      t.executeAction({ type: 'endSkillCheck' })
+
+      expect(enemyState.damage).toBe(1)
+    })
+
+    it('can attack second enemy', () => {
+      game.context.enemyStates.add(ENEMY_CARD, START_LOCATION.id)
+      const secondEnemyState = game.context.getEnemyState(1)!
+
+      t.executeAction({ type: 'attack', enemyIndex: 1 })
+      t.executeAction({ type: 'commitSkillCheck' })
+      t.executeAction({ type: 'endSkillCheck' })
+
+      expect(secondEnemyState.damage).toBe(1)
+    })
+
+    it('cannot attack enemy at different location', () => {
+      enemyState.location = SECOND_LOCATION.id
+      t.expectNoAction({ type: 'attack' })
     })
   })
 })

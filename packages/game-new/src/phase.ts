@@ -43,6 +43,7 @@ export type PhaseActionFilterParams = {
   investigatorId?: InvestigatorId
   locationId?: LocationId
   cardIndex?: number
+  enemyIndex?: number
 }
 
 export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> =
