@@ -1,75 +1,32 @@
-import { CreatePhase, Phase, PhaseAction } from '../phase'
 import { Context } from '../context'
-import { InvestigatorId, createCleanupPhase } from '../investigator'
+import { createEffectPhase } from '../effect'
+import { GamePhaseCoordinator } from '../game'
+import { PhaseBase } from '../phase'
+import { createUpkeepPhase } from '../upkeep'
 
-export type EnemyPhase = CreatePhase<'enemy'>
-
-export function createEnemyPhase(context: Context): EnemyPhase {
-  const actions: PhaseAction[] = []
-
-  actions.push({
-    type: 'endEnemyPhase',
-    execute: () => {
-      // TODO: add current investigator
-      const investigatorId = context.investigators[0].id
-
-      return createEnemyAttackPhase(context, {
-        investigatorId,
-        nextPhase: (context) => createCleanupPhase(context),
-      })
-    },
-  })
-
-  return {
-    type: 'enemy',
-    context,
-    actions,
-  }
+export function createEnemyPhase(context: Context) {
+  return new EnemyPhase(context)
 }
 
-export type EnemyAttackContext = {
-  investigatorId: InvestigatorId
-  nextPhase: (context: Context) => Phase
-}
+export class EnemyPhase implements PhaseBase {
+  type = 'enemy' as const
+  actions = []
 
-export type EnemyAttackPhase = CreatePhase<'enemyAttack'> & {
-  enemyAttackContext: EnemyAttackContext
-}
+  constructor(public context: Context) {}
 
-export function createEnemyAttackPhase(
-  context: Context,
-  enemyAttackContext: EnemyAttackContext
-): Phase {
-  function getNextEnemy() {
-    return context.getReadyEngangedEnemy(enemyAttackContext.investigatorId)
-  }
-
-  const engagedEnemy = getNextEnemy()
-
-  if (!engagedEnemy) {
-    context
-      .getEngagedEnemies(enemyAttackContext.investigatorId)
-      .forEach((enemy) => {
-        enemy.ready = true
-      })
-    return enemyAttackContext.nextPhase(context)
-  }
-
-  const actions: PhaseAction[] = []
-
-  actions.push({
-    type: 'endEnemyAttack',
-    execute: () => {
-      engagedEnemy.attackEnganged(context)
-
-      return createEnemyAttackPhase(context, enemyAttackContext)
-    },
-  })
-
-  return {
-    type: 'enemyAttack',
-    context,
-    enemyAttackContext,
-    actions,
+  onEnter(coordinator: GamePhaseCoordinator) {
+    this.context.enemyStates.forEach(({ engagedInvestigator }, enemyIndex) => {
+      if (!engagedInvestigator) {
+        return
+      }
+      coordinator = coordinator.waitFor(
+        createEffectPhase(this.context, engagedInvestigator, {
+          type: 'enemyAttack',
+          investigatorTarget: 'self',
+          enemyTarget: { enemyIndex },
+        })
+      )
+    })
+    coordinator.toNext(createUpkeepPhase(this.context))
   }
 }

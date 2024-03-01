@@ -1,118 +1,28 @@
 import { Context } from '../context'
-import { createSkillCheckPhase } from '../skill-check'
-import { CreatePhase, PhaseAction } from '../phase'
+import { createEffectPhase } from '../effect'
+import { GamePhaseCoordinator } from '../game'
 import { createInvestigatorPhase } from '../investigator'
+import { PhaseAction, PhaseBase } from '../phase'
 
-export type EncounterPhase = CreatePhase<'encounter'>
-
-export function createEncounterPhase(context: Context): EncounterPhase {
-  context.encounterState.resetCurrent(context)
-
-  const actions: PhaseAction[] = []
-
-  if (
-    context.encounterState.investigatorId !==
-    context.investigators[context.investigators.length - 1].id
-  ) {
-    actions.push({
-      type: 'drawEncounter',
-      // TODO: add current investigator
-      investigatorId: context.investigators[0].id,
-      execute: () => {
-        context.encounterState.draw()
-        context.encounterState.investigatorId = context.investigators[0].id
-        return createHandleEncounterPhase(context)
-      },
-    })
-  } else {
-    actions.push({
-      type: 'endEncounterPhase',
-      execute: () => {
-        context.encounterState.investigatorId = null
-        return createInvestigatorPhase(context)
-      },
-    })
-  }
-
-  return {
-    type: 'encounter',
-    actions,
-    context,
-  }
+export function createEncounterPhase(context: Context) {
+  return new EncounterPhase(context)
 }
 
-export type HandleEncounterPhase = CreatePhase<'handleEncounter'>
+export class EncounterPhase implements PhaseBase {
+  type = 'encounter' as const
+  actions = []
 
-export function createHandleEncounterPhase(
-  context: Context
-): HandleEncounterPhase {
-  function getActions(): PhaseAction[] {
-    const actions: PhaseAction[] = []
+  constructor(public context: Context) {}
 
-    const encounterCard = context.getEncounterCard(
-      context.encounterState.currentCardId!
-    )
-
-    const investigatorId = context.encounterState.investigatorId!
-    const locationId = context.getInvestigatorLocation(investigatorId).id
-
-    if (encounterCard.type === 'enemy') {
-      actions.push({
-        type: 'endHandleEncounterPhase',
-        execute: () => {
-          context.enemyStates.add(encounterCard, locationId, investigatorId)
-          return createEncounterPhase(context)
-        },
-      })
-
-      return actions
-    }
-
-    const { effect, skillCheck } = encounterCard
-
-    if (effect && !skillCheck) {
-      actions.push({
-        type: 'endHandleEncounterPhase',
-        execute: () => {
-          context = effect.apply(context, {
-            investigatorId,
-            locationId,
-          })
-          return createEncounterPhase(context)
-        },
-      })
-    }
-
-    if (skillCheck) {
-      actions.push({
-        type: 'startSkillCheck',
-        execute: () => {
-          if (effect) {
-            context = effect.apply(context, {
-              investigatorId,
-              locationId,
-            })
-          }
-
-          return createSkillCheckPhase(context, {
-            check: skillCheck,
-            investigatorId: context.encounterState.investigatorId!,
-            locationId: context.getInvestigatorLocation(
-              context.encounterState.investigatorId!
-            ).id,
-            nextPhase: (context) => createEncounterPhase(context),
-            skillModifier: 0,
-            addedCards: [],
-          })
-        },
-      })
-    }
-    return actions
-  }
-
-  return {
-    type: 'handleEncounter',
-    actions: getActions(),
-    context,
+  onEnter(coordinator: GamePhaseCoordinator) {
+    this.context.investigators.forEach(({ id }) => {
+      coordinator = coordinator.waitFor(
+        createEffectPhase(this.context, id, {
+          type: 'drawEncounter',
+          target: 'self',
+        })
+      )
+    })
+    coordinator.toNext(createInvestigatorPhase(this.context))
   }
 }

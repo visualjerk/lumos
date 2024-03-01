@@ -1,55 +1,74 @@
 import { Context } from '../context'
 import { createEncounterPhase } from '../encounter'
-import { CreatePhase, PhaseAction, createEndGamePhase } from '../phase'
+import { createEndPhase } from '../end'
+import { PhaseAction, PhaseBase } from '../phase'
 
-export type DoomPhase = CreatePhase<'doom'>
+export type DoomPhase = IncreaseDoomPhase | AdvanceDoomPhase
 
-export function createDoomPhase(context: Context): DoomPhase {
-  const actions: PhaseAction[] = []
+export function createDoomPhase(context: Context) {
+  return new IncreaseDoomPhase(context)
+}
 
-  actions.push({
-    type: 'endDoomPhase',
-    execute: () => {
-      context.doomState.doom++
+export class IncreaseDoomPhase implements PhaseBase {
+  type = 'doom' as const
 
-      if (context.doomState.doom >= context.getDoomCard().treshold) {
-        return createAdvanceDoomPhase(context)
-      }
+  constructor(public context: Context) {}
 
-      return createEncounterPhase(context)
-    },
-  })
+  private get doomState() {
+    return this.context.doomState
+  }
 
-  return {
-    type: 'doom',
-    actions,
-    context,
+  get actions() {
+    const actions: PhaseAction[] = [
+      {
+        type: 'increaseDoom',
+        execute: (coordinator) =>
+          coordinator
+            .apply(() => {
+              this.doomState.increaseDoom()
+            })
+            .toNext(() => {
+              if (this.doomState.hasReachedThreshold) {
+                return createAdvanceDoomPhase(this.context)
+              }
+              return createEncounterPhase(this.context)
+            }),
+      },
+    ]
+    return actions
   }
 }
 
-export type AdvanceDoomPhase = CreatePhase<'advanceDoom'>
+export function createAdvanceDoomPhase(context: Context) {
+  return new AdvanceDoomPhase(context)
+}
 
-export function createAdvanceDoomPhase(context: Context): AdvanceDoomPhase {
-  const actions: PhaseAction[] = []
+export class AdvanceDoomPhase implements PhaseBase {
+  type = 'advanceDoom' as const
 
-  actions.push({
-    type: 'endAdvanceDoomPhase',
-    execute: () => {
-      const nextDoomCardId = context.getNextDoomCardId()
+  constructor(public context: Context) {}
 
-      if (!nextDoomCardId) {
-        return createEndGamePhase(context)
-      }
+  private get doomState() {
+    return this.context.doomState
+  }
 
-      context.doomState.doomCardId = nextDoomCardId
-      context.doomState.doom = 0
-      return createEncounterPhase(context)
-    },
-  })
-
-  return {
-    type: 'advanceDoom',
-    actions,
-    context,
+  get actions() {
+    const actions: PhaseAction[] = [
+      {
+        type: 'advanceDoom',
+        execute: (coordinator) => {
+          if (!this.doomState.hasNextDoomCard) {
+            coordinator.toNext(createEndPhase(this.context))
+            return
+          }
+          coordinator
+            .apply(() => {
+              this.doomState.advanceDoomCards()
+            })
+            .toNext(createEncounterPhase(this.context))
+        },
+      },
+    ]
+    return actions
   }
 }

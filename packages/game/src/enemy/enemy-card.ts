@@ -1,4 +1,4 @@
-import { EncounterCardBase } from '..'
+import { EncounterCardBase } from '../encounter'
 
 export type EnemyCard = EncounterCardBase & {
   type: 'enemy'

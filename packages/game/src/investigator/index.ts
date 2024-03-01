@@ -1,5 +1,5 @@
-export * from './investigator'
-export * from './investigator-card'
 export * from './investigator-card-collection'
+export * from './investigator-card'
 export * from './investigator-phase'
 export * from './investigator-state'
+export * from './investigator'

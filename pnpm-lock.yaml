@@ -70,12 +70,6 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
-  packages/game-new:
-    devDependencies:
-      '@lumos/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
-
   packages/scenarios:
     dependencies:
       '@lumos/game':

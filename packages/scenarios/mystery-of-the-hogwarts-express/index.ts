@@ -8,7 +8,8 @@ import {
   Zero,
   DoomCard,
   SceneCard,
-  EncounterCard,
+  VoidShock,
+  Dementor,
 } from '@lumos/game'
 
 const Aisle2: LocationCard = {
@@ -115,79 +116,6 @@ const StormWyvern: SceneCard = {
     'You find a baby wyvern in a small cage. You free it and open a window, so it can fly away. Its mother seems to be content and flies away as well.',
 }
 
-const FireTrap: EncounterCard = {
-  id: 'fire-trap',
-  type: 'trap',
-  name: 'Fire Trap',
-  description: 'You are caught in a fire trap. Lose 1 health.',
-  effect: {
-    apply: (context, { investigatorId }) => {
-      context.getInvestigatorState(investigatorId).addDamage(1)
-      return context
-    },
-  },
-}
-
-const SpikeTrap: EncounterCard = {
-  id: 'spike-trap',
-  type: 'trap',
-  name: 'Spike Trap',
-  description: 'Make an agility check (3). If you fail, lose 2 health.',
-  skillCheck: {
-    skill: 'agility',
-    difficulty: 3,
-    onSuccess: {
-      apply: (context) => context,
-    },
-    onFailure: {
-      apply: (context, { investigatorId }) => {
-        context.getInvestigatorState(investigatorId).addDamage(2)
-        return context
-      },
-    },
-  },
-}
-
-const MindSpikes: EncounterCard = {
-  id: 'mind-spikes',
-  type: 'trap',
-  name: 'Mind Spikes',
-  description: 'Make an intelligence check (3). If you fail, lose 2 health.',
-  skillCheck: {
-    skill: 'intelligence',
-    difficulty: 3,
-    onSuccess: {
-      apply: (context) => context,
-    },
-    onFailure: {
-      apply: (context, { investigatorId }) => {
-        context.getInvestigatorState(investigatorId).addDamage(2)
-        return context
-      },
-    },
-  },
-}
-
-const Acromantula: EncounterCard = {
-  id: 'acromantula',
-  type: 'enemy',
-  name: 'Acromantula',
-  description: 'A giant spider jumps at you.',
-  health: 2,
-  strength: 3,
-  attackDamage: 1,
-}
-
-const Dementor: EncounterCard = {
-  id: 'dementor',
-  type: 'enemy',
-  name: 'Dementor',
-  description: 'A dementor is coming for you. You feel cold and hopeless.',
-  health: 5,
-  strength: 4,
-  attackDamage: 2,
-}
-
 export const MisteryOfTheHogwartsExpress: Scenario = {
   locationCards: [
     Aisle2,
@@ -200,14 +128,7 @@ export const MisteryOfTheHogwartsExpress: Scenario = {
   ],
   doomCards: [LightsOut, DarkShadow],
   sceneCards: [AloneInTheDark, StormWyvern],
-  encounterCards: [
-    FireTrap,
-    MindSpikes,
-    SpikeTrap,
-    Acromantula,
-    Acromantula,
-    Dementor,
-  ],
+  encounterCards: [VoidShock.id, VoidShock.id, Dementor.id, Dementor.id],
   startLocation: Compartment34.id,
   layout: new Map([
     [Aisle2.id, [2, 2]],

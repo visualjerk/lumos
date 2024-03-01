@@ -1,8 +1,7 @@
-import { Action } from '../action'
-import { Effect, SkillCheck } from '../skill-check'
+import { Effect } from '../effect'
 import { Skills } from './investigator'
 
-export type InvestigatorCardId = `ic${number}`
+export type InvestigatorCardId = `ic-${string}`
 
 export type InvestigatorCardBase = {
   id: InvestigatorCardId
@@ -20,19 +19,9 @@ export type PermanentCard = InvestigatorCardBase & {
   permanentSkillModifier: Partial<Skills>
 }
 
-export type EffectCard = InvestigatorCardBase & {
-  type: 'effect'
-  effect?: Effect
-  skillCheck?: SkillCheck
-}
-
 export type ActionCard = InvestigatorCardBase & {
   type: 'action'
-  action: Action
+  effect: Effect
 }
 
-export type InvestigatorCard =
-  | SkillCard
-  | PermanentCard
-  | EffectCard
-  | ActionCard
+export type InvestigatorCard = SkillCard | PermanentCard | ActionCard

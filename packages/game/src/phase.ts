@@ -1,71 +1,67 @@
+import { GamePhaseCoordinator } from './game'
+import { InvestigatorId, InvestigatorPhase } from './investigator'
+import { TargetPhase } from './target'
+import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
+import { EffectPhase } from './effect'
 import { Context } from './context'
 import { LocationId } from './location'
-import {
-  InvestigatorId,
-  CleanupPhase,
-  InvestigatorPhase,
-  AdvanceScenePhase,
-  createInvestigatorPhase,
-} from './investigator'
-import { SkillCheckPhase, CommitSkillCheckPhase } from './skill-check'
-import { EncounterPhase, HandleEncounterPhase } from './encounter'
-import { AdvanceDoomPhase, DoomPhase } from './doom'
-import { EnemyAttackPhase, EnemyPhase } from './enemy'
-import { ActionPhase } from './action'
-import { TargetPhase } from './target'
-
-export type PhaseAction = {
-  type: string
-  locationId?: LocationId
-  investigatorId?: InvestigatorId
-  enemyIndex?: number
-  handCardIndex?: number
-  execute: () => Phase
-}
+import { DoomPhase } from './doom'
+import { EndPhase } from './end'
+import { UpkeepPhase } from './upkeep'
+import { ScenePhase } from './scene'
+import { EncounterPhase } from './encounter'
+import { EnemyPhase } from './enemy'
 
 export type Phase =
-  | DoomPhase
-  | AdvanceDoomPhase
-  | AdvanceScenePhase
-  | EncounterPhase
-  | HandleEncounterPhase
   | InvestigatorPhase
-  | EnemyPhase
-  | EnemyAttackPhase
-  | CleanupPhase
-  | EndGamePhase
-  | WinGamePhase
+  | UpkeepPhase
   | SkillCheckPhase
   | CommitSkillCheckPhase
-  | ActionPhase
+  | EffectPhase
   | TargetPhase
+  | DoomPhase
+  | EncounterPhase
+  | EnemyPhase
+  | ScenePhase
+  | EndPhase
 
-export type CreatePhase<Type extends string> = {
-  type: Type
-  actions: PhaseAction[]
+export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
+  readonly type: string
   context: Context
+  onEnter?: (coordinator: GamePhaseCoordinator<[], TPhaseResult>) => void
+  actions: PhaseAction<TPhaseResult>[]
 }
 
-export function createInitialPhase(context: Context): Phase {
-  return createInvestigatorPhase(context)
+export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
+  infer TResult
+>
+  ? TResult
+  : never
+
+export type PhaseActionFilterParams = {
+  type: string
+  investigatorId?: InvestigatorId
+  locationId?: LocationId
+  cardIndex?: number
+  enemyIndex?: number
 }
 
-export type EndGamePhase = CreatePhase<'endGame'>
-
-export function createEndGamePhase(context: Context): EndGamePhase {
-  return {
-    type: 'endGame',
-    actions: [],
-    context,
+export type PhaseAction<TPhaseResult extends PhaseResult = PhaseResult> =
+  PhaseActionFilterParams & {
+    execute: Execute<TPhaseResult>
   }
-}
 
-export type WinGamePhase = CreatePhase<'winGame'>
+export type PhaseResult = Record<string, unknown> | undefined
 
-export function createWinGamePhase(context: Context): WinGamePhase {
-  return {
-    type: 'winGame',
-    actions: [],
-    context,
-  }
+export type Execute<TPhaseResult extends PhaseResult = PhaseResult> = (
+  coordinator: GamePhaseCoordinator<[], TPhaseResult>
+) => void
+
+export function actionMatches(
+  action: PhaseAction<PhaseResult>,
+  filterParams: PhaseActionFilterParams
+): boolean {
+  return Object.entries(filterParams).every(
+    ([key, value]) => action[key as keyof PhaseActionFilterParams] === value
+  )
 }

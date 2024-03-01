@@ -16,28 +16,15 @@ import {
   getInvestigatorCard,
 } from './investigator'
 import { Scenario } from './scenario'
-import { DoomCard, DoomCardId, DoomState } from './doom'
-import { SceneCard, SceneState } from './scene'
-import {
-  EncounterCardId,
-  EncounterState,
-  createInitialEncounterState,
-} from './encounter'
-import {
-  EnemyCard,
-  EnemyState,
-  EnemyStates,
-  createInitialEnemyStates,
-} from './enemy'
+import { DoomState, createInitialDoomState } from './doom'
+import { SceneState, createInitialSceneState } from './scene'
+import { EncounterState, createInitialEncounterState } from './encounter'
+import { EnemyState, EnemyStates, createInitialEnemyStates } from './enemy'
 
 export function createInitialContext(
   scenario: Scenario,
   investigators: Investigator[]
 ): Context {
-  const encounterState = createInitialEncounterState(
-    scenario.encounterCards.map(({ id }) => id)
-  )
-  const enemyStates = createInitialEnemyStates()
   const locationStates = createInitialLocationStates(
     scenario.locationCards,
     scenario.startLocation
@@ -47,56 +34,41 @@ export function createInitialContext(
     scenario.startLocation
   )
 
+  const doomState = createInitialDoomState(scenario.doomCards)
+  const sceneState = createInitialSceneState(scenario.sceneCards)
+  const encounterState = createInitialEncounterState(scenario.encounterCards)
+  const enemieStates = createInitialEnemyStates()
+
   return new Context(
     scenario,
-    { doom: 0, doomCardId: scenario.doomCards[0].id },
-    { sceneCardId: scenario.sceneCards[0].id },
-    encounterState,
-    enemyStates,
     locationStates,
     investigators,
-    investigatorStates
+    investigatorStates,
+    doomState,
+    sceneState,
+    encounterState,
+    enemieStates
   )
 }
 
 export class Context {
   constructor(
-    public scenario: Scenario,
-    public doomState: DoomState,
-    public sceneState: SceneState,
-    public encounterState: EncounterState,
-    public enemyStates: EnemyStates,
-    public locationStates: LocationStates,
-    public investigators: Investigator[],
-    public investigatorStates: InvestigatorStates
+    public readonly scenario: Scenario,
+    public readonly locationStates: LocationStates,
+    public readonly investigators: Investigator[],
+    public readonly investigatorStates: InvestigatorStates,
+    public readonly doomState: DoomState,
+    public readonly sceneState: SceneState,
+    public readonly encounterState: EncounterState,
+    public readonly enemyStates: EnemyStates
   ) {}
 
-  getDoomCard(): DoomCard {
-    return this.scenario.doomCards.find(
-      (card) => card.id === this.doomState.doomCardId
-    )!
-  }
-
-  getNextDoomCardId(): DoomCardId | undefined {
-    return this.getDoomCard().nextDoomCardId
-  }
-
-  getSceneCard(): SceneCard {
-    return this.scenario.sceneCards.find(
-      (card) => card.id === this.sceneState.sceneCardId
-    )!
-  }
-
-  getTotalInvestigatorClues(): number {
+  get totalInvestigatorClues(): number {
     let totalClues = 0
     this.investigatorStates.forEach(({ clues }) => {
       totalClues += clues
     })
     return totalClues
-  }
-
-  getNextSceneCardId(): string | undefined {
-    return this.getSceneCard().nextSceneCardId
   }
 
   getLocationInvestigators(locationId: LocationId): Investigator[] {
@@ -115,35 +87,6 @@ export class Context {
     return this.investigators.find(
       (investigator) => investigator.id === investigatorId
     )!
-  }
-
-  getEncounterCard(encounterCardId: string) {
-    return this.scenario.encounterCards.find(
-      (card) => card.id === encounterCardId
-    )!
-  }
-
-  getLocationEnemies(locationId: LocationId): EnemyState[] {
-    return this.enemyStates.filter((enemy) => enemy.location === locationId)
-  }
-
-  getEngagedEnemies(investigatorId: InvestigatorId): EnemyState[] {
-    return this.enemyStates.filter(
-      (enemy) => enemy.engagedInvestigator === investigatorId
-    )
-  }
-
-  getReadyEngangedEnemy(
-    investigatorId: InvestigatorId
-  ): EnemyState | undefined {
-    return this.getEngagedEnemies(investigatorId).find((enemy) => enemy.ready)
-  }
-
-  getEnemyCard(cardId: EncounterCardId): EnemyCard {
-    // TODO: Ensure this is really an enemy card
-    return this.scenario.encounterCards.find(
-      (card) => card.id === cardId
-    )! as EnemyCard
   }
 
   moveInvestigator(
@@ -165,14 +108,6 @@ export class Context {
     locationState.revealed = true
 
     return this
-  }
-
-  moveEngagedEnemies(investigatorId: InvestigatorId, locationId: LocationId) {
-    const engagedEnemies = this.getEngagedEnemies(investigatorId)
-
-    engagedEnemies.forEach((enemy) => {
-      enemy.location = locationId
-    })
   }
 
   getLocation(locationId: LocationId): LocationCard {
@@ -250,5 +185,33 @@ export class Context {
     })
 
     return skills
+  }
+
+  getEnemyState(enemyIndex: number): EnemyState {
+    return this.enemyStates[enemyIndex]
+  }
+
+  getEngagedEnemies(investigatorId: InvestigatorId): number[] {
+    const indexes: number[] = []
+
+    this.enemyStates.forEach((enemyState, index) => {
+      if (enemyState.engagedInvestigator === investigatorId) {
+        indexes.push(index)
+      }
+    })
+
+    return indexes
+  }
+
+  getLocationEnemies(locationId: LocationId): number[] {
+    const indexes: number[] = []
+
+    this.enemyStates.forEach((enemyState, index) => {
+      if (enemyState.location === locationId) {
+        indexes.push(index)
+      }
+    })
+
+    return indexes
   }
 }

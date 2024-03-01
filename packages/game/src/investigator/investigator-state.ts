@@ -1,8 +1,8 @@
 import { getInvestigatorCard } from './investigator-card-collection'
-import type { LocationId } from '../location'
+import { LocationId } from '../location'
+import { Investigator, InvestigatorId } from './investigator'
+import { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 import { shuffleArray } from '../utils'
-import type { Investigator, InvestigatorId } from './investigator'
-import type { InvestigatorCard, InvestigatorCardId } from './investigator-card'
 
 export type InvestigatorStateProps = {
   damage: number
@@ -132,7 +132,7 @@ function createInitialInvestigatorState(
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
-  allDefeated(): boolean {
+  get allDefeated(): boolean {
     return [...this.values()].every((state) => state.isDefeated())
   }
 }

@@ -4,27 +4,25 @@ export function getInvestigatorCard(cardId: InvestigatorCardId) {
   return InvestigatorCardCollection.get(cardId)!
 }
 
-// TODO: create common actions
-
 export const InvestigatorCardCollection = new Map<
   InvestigatorCardId,
   InvestigatorCard
 >([
   [
-    'ic1',
+    'ic-force-of-will',
     {
-      id: 'ic1',
+      id: 'ic-force-of-will',
       type: 'action',
       name: 'Force Of Will',
-      description: 'An investigator of your choice draws 2 cards.',
+      description: 'Draw 2 cards.',
       skillModifier: { intelligence: 2 },
-      action: { type: 'draw', amount: 2, target: 'investigator' },
+      effect: { type: 'draw', amount: 2, target: 'self' },
     },
   ],
   [
-    'ic2',
+    'ic-lightning-strike',
     {
-      id: 'ic2',
+      id: 'ic-lightning-strike',
       type: 'skill',
       name: 'Lightning Strike',
       description: '',
@@ -32,9 +30,9 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    'ic3',
+    'ic-boar-strength',
     {
-      id: 'ic3',
+      id: 'ic-boar-strength',
       type: 'skill',
       name: 'Boar Strength',
       description: '',
@@ -42,56 +40,14 @@ export const InvestigatorCardCollection = new Map<
     },
   ],
   [
-    'ic4',
+    'ic-serenity',
     {
-      id: 'ic4',
-      type: 'effect',
-      name: 'Meditate',
-      description: 'Heal 2 damage.',
-      skillModifier: { intelligence: 1 },
-      effect: {
-        apply: (context, { investigatorId }) => {
-          context.getInvestigatorState(investigatorId).removeDamage(2)
-          return context
-        },
-      },
-    },
-  ],
-  [
-    'ic5',
-    {
-      id: 'ic5',
+      id: 'ic-serenity',
       type: 'permanent',
       name: 'Serenity',
       description: '+1 to intelligence checks.',
       skillModifier: { intelligence: 1 },
       permanentSkillModifier: { intelligence: 1 },
-    },
-  ],
-  [
-    'ic6',
-    {
-      id: 'ic6',
-      type: 'effect',
-      name: 'Lumos',
-      description:
-        'Make an investigation check. If you succeed, discover 2 clues.',
-      skillModifier: { intelligence: 1 },
-      skillCheck: {
-        skill: 'intelligence',
-        difficulty: (context, { locationId }) =>
-          context.getLocation(locationId).shroud,
-        onSuccess: {
-          apply: (context, { investigatorId, locationId }) => {
-            context.collectClue(investigatorId, locationId)
-            context.collectClue(investigatorId, locationId)
-            return context
-          },
-        },
-        onFailure: {
-          apply: (context) => context,
-        },
-      },
     },
   ],
 ])

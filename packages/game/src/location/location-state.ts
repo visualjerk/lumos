@@ -1,4 +1,4 @@
-import type { LocationId, LocationCard } from './location-card'
+import { LocationId, LocationCard } from './location-card'
 
 export type LocationState = {
   revealed: boolean

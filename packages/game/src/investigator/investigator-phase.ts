@@ -1,317 +1,218 @@
+import { PhaseBase, PhaseAction } from '../phase'
+import { createEffectPhase } from '../effect'
 import { Context } from '../context'
-import { LocationId, isConnected } from '../location'
 import { InvestigatorId } from './investigator'
-import { createSkillCheckPhase } from '../skill-check'
-import { createDoomPhase } from '../doom'
-import { CreatePhase, Phase, PhaseAction, createWinGamePhase } from '../phase'
-import { createEnemyAttackPhase, createEnemyPhase } from '../enemy'
-import { createActionPhase } from '../action'
+import { InvestigatorState } from './investigator-state'
+import { isConnected } from '../location'
+import { createScenePhase } from '../scene'
+import { createEnemyPhase } from '../enemy'
 
-export type InvestigatorContext = {
-  actionsMade: number
+export function createInvestigatorPhase(context: Context) {
+  return new InvestigatorPhase(context)
 }
 
 export const INVESTIGATOR_ACTIONS_PER_TURN = 3
 
-export type InvestigatorPhase = CreatePhase<'investigator'> & {
-  investigatorContext: InvestigatorContext
-}
+export class InvestigatorPhase implements PhaseBase {
+  type = 'investigator' as const
+  actionsMade: number = 0
+  investigatorId: InvestigatorId
 
-export function createInvestigatorPhase(
-  context: Context,
-  investigatorContext: InvestigatorContext = { actionsMade: 0 }
-): InvestigatorPhase {
-  // TODO: add current investigator
-  const investigatorId = context.investigators[0].id
-
-  function executeAction(nextPhase: (context: Context) => Phase) {
-    investigatorContext.actionsMade++
-
-    return createEnemyAttackPhase(context, {
-      investigatorId,
-      nextPhase,
-    })
+  constructor(public context: Context) {
+    // TODO: support multiple investigators
+    this.investigatorId = context.investigators[0].id
   }
 
-  function getActions() {
+  get actions() {
     const actions: PhaseAction[] = []
-    const investigatorState = context.getInvestigatorState(investigatorId)
 
     actions.push({
-      type: 'endInvestigationPhase',
-      investigatorId,
-      execute: () => createEnemyPhase(context),
+      type: 'end',
+      execute: (coordinator) =>
+        coordinator.toNext(createEnemyPhase(this.context)),
     })
 
-    if (investigatorContext.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
+    if (this.actionsMade >= INVESTIGATOR_ACTIONS_PER_TURN) {
       return actions
     }
 
-    if (investigatorState.canDraw()) {
+    actions.push(...this.generalActions)
+    actions.push(...this.locationActions)
+    actions.push(...this.cardsInHandActions)
+    actions.push(...this.enemyActions)
+
+    return actions
+  }
+
+  private get investigatorState(): InvestigatorState {
+    return this.context.getInvestigatorState(this.investigatorId)
+  }
+
+  private get generalActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
+
+    if (this.investigatorState.canDraw()) {
       actions.push({
         type: 'draw',
-        investigatorId,
-        execute: () =>
-          executeAction((context) => {
-            investigatorState.draw()
-            return createInvestigatorPhase(context, investigatorContext)
-          }),
+        investigatorId: this.investigatorId,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'draw',
+                amount: 1,
+                target: 'self',
+              })
+            )
+            .apply(() => {
+              this.actionsMade++
+            }),
       })
     }
 
-    const cardsInHand = investigatorState.getCardsInHand()
-    cardsInHand.forEach((card, index) => {
-      if (card.type === 'permanent') {
-        actions.push({
-          type: 'play',
-          investigatorId,
-          handCardIndex: index,
-          execute: () =>
-            executeAction((context) => {
-              investigatorState.play(index)
-              return createInvestigatorPhase(context, investigatorContext)
-            }),
-        })
-      }
-
-      if (card.type === 'effect') {
-        actions.push({
-          type: 'play',
-          investigatorId,
-          handCardIndex: index,
-          execute: () =>
-            executeAction((context) => {
-              if (card.effect) {
-                context = card.effect.apply(context, {
-                  investigatorId,
-                  locationId: investigatorState.currentLocation,
-                })
-              }
-
-              investigatorState.discard(index)
-
-              const skillCheck = card.skillCheck
-              if (skillCheck) {
-                return createSkillCheckPhase(context, {
-                  investigatorId,
-                  locationId: investigatorState.currentLocation,
-                  skillModifier: 0,
-                  addedCards: [],
-                  check: skillCheck,
-                  nextPhase: (context) =>
-                    createInvestigatorPhase(context, investigatorContext),
-                })
-              }
-
-              return createInvestigatorPhase(context, investigatorContext)
-            }),
-        })
-      }
-
-      if (card.type === 'action') {
-        actions.push({
-          type: 'play',
-          investigatorId,
-          handCardIndex: index,
-          execute: () =>
-            executeAction((context) => {
-              return createActionPhase(context, {
-                action: card.action,
-                nextPhase: (context) => {
-                  investigatorState.discard(index)
-                  return createInvestigatorPhase(context, investigatorContext)
-                },
-              })
-            }),
-        })
-      }
-    })
-
-    context.locationStates.forEach((state, locationId) => {
-      const locationActions = getLocationActions(locationId, investigatorId)
-      actions.push(...locationActions)
-    })
-
-    actions.push(...getEnemyActions(investigatorId))
+    if (
+      this.context.sceneState.satisfiesThreshold(
+        this.context.totalInvestigatorClues
+      )
+    ) {
+      actions.push({
+        type: 'solveScene',
+        execute: (coordinator) =>
+          coordinator.waitFor(createScenePhase(this.context)),
+      })
+    }
 
     return actions
   }
 
-  function getLocationActions(
-    locationId: LocationId,
-    investigatorId: InvestigatorId
-  ): PhaseAction[] {
+  private get locationActions(): PhaseAction[] {
     const actions: PhaseAction[] = []
 
-    const currentLocation = context.getInvestigatorLocation(investigatorId)
-    const location = context.getLocation(locationId)
+    const currentLocation = this.context.getLocation(
+      this.investigatorState.currentLocation
+    )
 
-    if (isConnected(currentLocation, location)) {
+    const connectedLocations = this.context.scenario.locationCards.filter(
+      ({ id }) => {
+        const location = this.context.getLocation(id)
+        return isConnected(currentLocation, location)
+      }
+    )
+
+    connectedLocations.forEach((location) => {
       actions.push({
         type: 'move',
-        investigatorId,
-        locationId,
-        execute: () =>
-          executeAction((context) => {
-            context.moveInvestigator(investigatorId, locationId)
-            context.moveEngagedEnemies(investigatorId, locationId)
-
-            return createInvestigatorPhase(context, investigatorContext)
-          }),
-      })
-    }
-
-    if (currentLocation.id === locationId) {
-      const locationState = context.locationStates.get(locationId)
-
-      if (locationState && locationState.clues > 0) {
-        actions.push({
-          type: 'investigate',
-          investigatorId,
-          locationId,
-          execute: () =>
-            executeAction((context) =>
-              createSkillCheckPhase(context, {
-                investigatorId,
-                locationId,
-                skillModifier: 0,
-                addedCards: [],
-                check: {
-                  skill: 'intelligence',
-                  difficulty: location.shroud,
-                  onSuccess: {
-                    apply: (context) =>
-                      context.collectClue(investigatorId, locationId),
-                  },
-                  onFailure: {
-                    apply: (context) => context,
-                  },
-                },
-                nextPhase: (context) => {
-                  const scene = context.getSceneCard()
-                  const totalClues = context.getTotalInvestigatorClues()
-                  if (scene.clueTreshold <= totalClues) {
-                    context.investigatorStates.forEach((state) => {
-                      state.clues = 0
-                    })
-                    return createAdvanceScenePhase(context, investigatorContext)
-                  }
-
-                  return createInvestigatorPhase(context, investigatorContext)
-                },
+        locationId: location.id,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
               })
-            ),
-        })
-      }
+            )
+            .apply(() => {
+              this.context.moveInvestigator(this.investigatorId, location.id)
+              this.actionsMade++
+            }),
+      })
+    })
+
+    if (this.context.locationStates.get(currentLocation.id)!.clues > 0) {
+      actions.push({
+        type: 'investigate',
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'investigate',
+                clueAmount: 1,
+                locationTarget: 'current',
+                investigatorTarget: 'self',
+              })
+            )
+            .apply(() => {
+              this.actionsMade++
+            }),
+      })
     }
 
     return actions
   }
 
-  function getEnemyActions(investigatorId: InvestigatorId): PhaseAction[] {
+  private get cardsInHandActions(): PhaseAction[] {
     const actions: PhaseAction[] = []
 
-    const investigator = context.getInvestigatorState(investigatorId)
-    const locationId = investigator.currentLocation
-    const enemies = context.getLocationEnemies(locationId)
+    this.investigatorState.cardsInHand.forEach((cardId, index) => {
+      const card = this.context.getInvestigatorCard(cardId)
 
-    if (enemies) {
-      enemies.forEach((enemy, index) => {
-        actions.push({
-          type: 'attack',
-          investigatorId,
-          locationId,
-          enemyIndex: index,
-          execute: () =>
-            createSkillCheckPhase(context, {
-              check: {
-                skill: 'strength',
-                difficulty: enemy.strength,
-                onSuccess: {
-                  apply: (context) => {
-                    enemy.addDamage(context, 1)
-                    return context
-                  },
-                },
-                onFailure: {
-                  apply: (context) => context,
-                },
-              },
-              investigatorId,
-              locationId,
-              skillModifier: 0,
-              addedCards: [],
-              nextPhase: (context) => {
-                investigatorContext.actionsMade++
-                return createInvestigatorPhase(context, investigatorContext)
-              },
+      if (card.type !== 'action') {
+        return
+      }
+
+      actions.push({
+        type: 'play',
+        cardIndex: index,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'enemyOpportunityAttack',
+                target: 'self',
+              })
+            )
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, card.effect)
+            )
+            .apply(() => {
+              this.investigatorState.discard(index)
+              this.actionsMade++
             }),
-        })
       })
-    }
+    })
 
     return actions
   }
 
-  return {
-    type: 'investigator',
-    context,
-    investigatorContext,
-    actions: getActions(),
-  }
-}
+  private get enemyActions(): PhaseAction[] {
+    const actions: PhaseAction[] = []
 
-export type CleanupPhase = CreatePhase<'cleanup'>
+    const enemies = this.context.getLocationEnemies(
+      this.investigatorState.currentLocation
+    )
 
-export function createCleanupPhase(context: Context): CleanupPhase {
-  const actions: PhaseAction[] = []
-
-  actions.push({
-    type: 'endCleanupPhase',
-    execute: () => {
-      context.investigators.forEach((investigator) => {
-        context.getInvestigatorState(investigator.id).draw()
+    enemies.forEach((enemyIndex) => {
+      actions.push({
+        type: 'attack',
+        enemyIndex,
+        execute: (coordinator) =>
+          coordinator
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, {
+                type: 'attackEnemy',
+                target: {
+                  enemyIndex,
+                },
+              })
+            )
+            .apply(() => {
+              this.actionsMade++
+            }),
       })
+    })
 
-      return createDoomPhase(context)
-    },
-  })
-
-  return {
-    type: 'cleanup',
-    actions,
-    context,
-  }
-}
-
-export type AdvanceScenePhase = CreatePhase<'advanceScene'> & {
-  investigatorContext: InvestigatorContext
-}
-
-export function createAdvanceScenePhase(
-  context: Context,
-  investigatorContext: InvestigatorContext
-): AdvanceScenePhase {
-  const actions: PhaseAction[] = []
-
-  actions.push({
-    type: 'endAdvanceScenePhase',
-    execute: () => {
-      const nextSceneCardId = context.getNextSceneCardId()
-
-      if (!nextSceneCardId) {
-        return createWinGamePhase(context)
-      }
-
-      context.sceneState.sceneCardId = nextSceneCardId
-      return createInvestigatorPhase(context, investigatorContext)
-    },
-  })
-
-  return {
-    type: 'advanceScene',
-    actions,
-    context,
-    investigatorContext,
+    return actions
   }
 }

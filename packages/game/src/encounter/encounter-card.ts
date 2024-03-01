@@ -1,7 +1,7 @@
-import { Effect, SkillCheck } from '../skill-check'
+import { Effect } from '../effect'
 import { EnemyCard } from '../enemy'
 
-export type EncounterCardId = string
+export type EncounterCardId = `ec-${string}`
 
 export type EncounterCardBase = {
   id: EncounterCardId
@@ -11,8 +11,7 @@ export type EncounterCardBase = {
 
 export type TrapCard = EncounterCardBase & {
   type: 'trap'
-  effect?: Effect
-  skillCheck?: SkillCheck
+  effect: Effect
 }
 
 export type EncounterCard = TrapCard | EnemyCard

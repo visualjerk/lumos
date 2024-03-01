@@ -1,4 +1,4 @@
-import type { InvestigatorCardId } from './investigator-card'
+import { InvestigatorCardId } from './investigator-card'
 
 export type InvestigatorId = string
 
