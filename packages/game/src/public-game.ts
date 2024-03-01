@@ -1,5 +1,15 @@
-import { Game, GamePhase } from './game'
+import { Game, GamePhase, createInitialGame } from './game'
+import { Investigator } from './investigator'
 import { Phase, PhaseAction } from './phase'
+import { Scenario } from './scenario'
+
+export function createInitialPublicGame(
+  scenario: Scenario,
+  investigators: Investigator[]
+) {
+  const game = createInitialGame(scenario, investigators)
+  return new PublicGame(game)
+}
 
 type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any
   ? Omit<T, Prop> & { [K in Prop]: PropType }
@@ -49,10 +59,13 @@ export class PublicGame {
       get: (target, prop) => {
         if (prop === 'actions') {
           // Convert actions to PublicAction objects on-the-fly
-          return target[prop].map((action) => {
-            action.execute()
-            this.notifyObservers()
-          })
+          return target[prop].map((action) => ({
+            ...action,
+            execute: () => {
+              action.execute()
+              this.notifyObservers()
+            },
+          }))
         }
         return target[prop as keyof GamePhase]
       },

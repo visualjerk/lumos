@@ -29,5 +29,5 @@ export const Dementor: EncounterCard = {
 }
 
 export const EncounterCardCollection = new Map<EncounterCardId, EncounterCard>(
-  [VoidShock].map((card) => [card.id, card])
+  [VoidShock, Dementor].map((card) => [card.id, card])
 )

@@ -1,5 +1,16 @@
-import { Context } from './context'
+import { Context, createInitialContext } from './context'
+import { Investigator, createInvestigatorPhase } from './investigator'
 import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
+import { Scenario } from './scenario'
+
+export function createInitialGame(
+  scenario: Scenario,
+  investigators: Investigator[]
+) {
+  const context = createInitialContext(scenario, investigators)
+  const phase = createInvestigatorPhase(context)
+  return new Game(context, phase)
+}
 
 export type GamePhase = {
   type: string
