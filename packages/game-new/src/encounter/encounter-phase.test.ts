@@ -35,7 +35,7 @@ describe('EncounterPhase', () => {
   })
 
   it('can draw and confirm encounter card', () => {
-    t.expectPhase('drawEncounter', 'encounter')
+    t.expectPhase('drawEncounterEffect', 'encounter')
     expect(encounterState.deck).toHaveLength(
       t.game.context.scenario.encounterCards.length - 1
     )
@@ -46,10 +46,10 @@ describe('EncounterPhase', () => {
   })
 
   it('can end encounter phase', () => {
-    t.expectPhase('drawEncounter', 'encounter')
+    t.expectPhase('drawEncounterEffect', 'encounter')
     t.executeAction({ type: 'confirm' })
 
-    t.expectPhase('drawEncounter', 'encounter')
+    t.expectPhase('drawEncounterEffect', 'encounter')
     t.executeAction({ type: 'confirm' })
 
     t.expectPhase('investigator')

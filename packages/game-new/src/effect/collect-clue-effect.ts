@@ -25,7 +25,7 @@ export function createCollectClueEffectPhase(
 }
 
 export class CollectClueEffectPhase implements PhaseBase {
-  type = 'collectClue'
+  type = 'collectClueEffect' as const
   actions = []
 
   constructor(

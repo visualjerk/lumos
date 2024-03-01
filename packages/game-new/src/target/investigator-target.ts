@@ -34,7 +34,7 @@ export function createInvestigatorTargetPhase(
 export class InvestigatorTargetPhase
   implements PhaseBase<InvestigatorTargetResult>
 {
-  type = 'investigatorTarget'
+  type = 'investigatorTarget' as const
 
   constructor(
     public context: Context,

@@ -177,7 +177,7 @@ describe('InvestigatorPhase', () => {
 
     it('when drawing', () => {
       t.executeAction({ type: 'draw' })
-      t.expectPhase('enemyAttack', 'investigator')
+      t.expectPhase('enemyAttackEffect', 'investigator')
 
       t.executeAction({ type: 'confirm' })
       expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
@@ -186,7 +186,7 @@ describe('InvestigatorPhase', () => {
 
     it('when moving', () => {
       t.executeAction({ type: 'move' })
-      t.expectPhase('enemyAttack', 'investigator')
+      t.expectPhase('enemyAttackEffect', 'investigator')
 
       t.executeAction({ type: 'confirm' })
       expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
@@ -195,7 +195,7 @@ describe('InvestigatorPhase', () => {
 
     it('when investigating', () => {
       t.executeAction({ type: 'move' })
-      t.expectPhase('enemyAttack', 'investigator')
+      t.expectPhase('enemyAttackEffect', 'investigator')
 
       t.executeAction({ type: 'confirm' })
       expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
@@ -215,7 +215,7 @@ describe('InvestigatorPhase', () => {
       investigatorState.cardsInHand = [cardId]
 
       t.executeAction({ type: 'play' })
-      t.expectPhase('enemyAttack', 'investigator')
+      t.expectPhase('enemyAttackEffect', 'investigator')
 
       t.executeAction({ type: 'confirm' })
       expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)

@@ -6,7 +6,7 @@ export function createEndPhase(context: Context) {
 }
 
 export class EndPhase implements PhaseBase {
-  type = 'end'
+  type = 'end' as const
 
   constructor(public context: Context) {}
 

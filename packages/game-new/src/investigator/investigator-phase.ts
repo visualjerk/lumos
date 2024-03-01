@@ -14,7 +14,7 @@ export function createInvestigatorPhase(context: Context) {
 export const INVESTIGATOR_ACTIONS_PER_TURN = 3
 
 export class InvestigatorPhase implements PhaseBase {
-  type = 'investigator'
+  type = 'investigator' as const
   actionsMade: number = 0
   investigatorId: InvestigatorId
 

@@ -47,13 +47,13 @@ describe('EnemyPhase', () => {
   })
 
   it('enemy attacks investigator', () => {
-    t.expectPhase('enemyAttack', 'enemy')
+    t.expectPhase('enemyAttackEffect', 'enemy')
     t.executeAction({ type: 'confirm' })
     expect(investigatorState.damage).toBe(ENEMY_CARD.attackDamage)
   })
 
   it('enemy end enemy phase', () => {
-    t.expectPhase('enemyAttack', 'enemy')
+    t.expectPhase('enemyAttackEffect', 'enemy')
     t.executeAction({ type: 'confirm' })
     t.executeAction({ type: 'confirm' })
     t.expectPhase('upkeep')

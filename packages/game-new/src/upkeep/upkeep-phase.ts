@@ -9,7 +9,7 @@ export function createUpkeepPhase(context: Context) {
 }
 
 export class UpkeepPhase implements PhaseBase {
-  type = 'upkeep'
+  type = 'upkeep' as const
 
   constructor(public context: Context) {}
 

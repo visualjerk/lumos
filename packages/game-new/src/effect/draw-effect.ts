@@ -19,7 +19,7 @@ export function createDrawEffectPhase(
 }
 
 export class DrawEffectPhase implements PhaseBase {
-  type = 'draw'
+  type = 'drawEffect' as const
   actions = []
 
   constructor(

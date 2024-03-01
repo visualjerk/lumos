@@ -20,7 +20,7 @@ export function createSkillCheckEffectPhase(
 }
 
 export class SkillCheckEffectPhase implements PhaseBase {
-  type = 'skillCheck'
+  type = 'skillCheckEffect' as const
   actions = []
 
   constructor(

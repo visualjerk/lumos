@@ -20,7 +20,7 @@ export function createDamageEffectPhase(
 }
 
 export class DamageEffectPhase implements PhaseBase {
-  type = 'damage'
+  type = 'damageEffect' as const
   actions = []
 
   constructor(

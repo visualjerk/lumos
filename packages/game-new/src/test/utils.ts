@@ -31,7 +31,7 @@ function createTestGameFromPhase(createPhase: (context: Context) => Phase) {
 export function createGameTestUtils(createPhase: (context: Context) => Phase) {
   const game = createTestGameFromPhase(createPhase)
 
-  function expectPhase(type: string, parentType?: string) {
+  function expectPhase(type: Phase['type'], parentType?: Phase['type']) {
     parentType = parentType ?? type
     expect(game.phase.type).toBe(type)
     expect(game.parentPhase.type).toBe(parentType)

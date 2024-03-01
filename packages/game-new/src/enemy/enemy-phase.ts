@@ -9,7 +9,7 @@ export function createEnemyPhase(context: Context) {
 }
 
 export class EnemyPhase implements PhaseBase {
-  type = 'enemy'
+  type = 'enemy' as const
   actions = []
 
   constructor(public context: Context) {}

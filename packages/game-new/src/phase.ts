@@ -26,7 +26,7 @@ export type Phase =
   | EndPhase
 
 export type PhaseBase<TPhaseResult extends PhaseResult = PhaseResult> = {
-  type: string
+  readonly type: string
   context: Context
   onEnter?: (coordinator: GamePhaseCoordinator<[], TPhaseResult>) => void
   actions: PhaseAction<TPhaseResult>[]

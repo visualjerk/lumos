@@ -9,7 +9,7 @@ export function createScenePhase(context: Context) {
 }
 
 export class AdvanceScenePhase implements PhaseBase {
-  type = 'advanceScene'
+  type = 'advanceScene' as const
   constructor(public context: Context) {}
 
   private get sceneState() {

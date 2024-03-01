@@ -26,7 +26,7 @@ describe('DoomPhase', () => {
     t.executeAction({ type: 'increaseDoom' })
 
     expect(doomState.doom).toBe(1)
-    t.expectPhase('drawEncounter', 'encounter')
+    t.expectPhase('drawEncounterEffect', 'encounter')
   })
 
   it('advances doom card after treshold is reached', () => {
@@ -38,7 +38,7 @@ describe('DoomPhase', () => {
     t.expectPhase('advanceDoom')
 
     t.executeAction({ type: 'advanceDoom' })
-    t.expectPhase('drawEncounter', 'encounter')
+    t.expectPhase('drawEncounterEffect', 'encounter')
   })
 
   it('ends game after last doom card treshold is reached', () => {

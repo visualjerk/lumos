@@ -1,7 +1,7 @@
 import { InvestigatorTarget, createInvestigatorTargetPhase } from '../target'
 import { CreateEffect, createEffectPhase } from './effect'
 import { GamePhaseCoordinator } from '../game'
-import { PhaseBase, PhaseResult } from '../phase'
+import { Phase, PhaseBase, PhaseResult } from '../phase'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 
@@ -19,8 +19,10 @@ export function createEnemyOpportunityAttackEffectPhase(
 }
 
 export class EnemyOpportunityAttackEffectPhase implements PhaseBase {
-  type = 'enemyOpportunityAttack'
+  type = 'enemyOpportunityAttackEffect' as const
   actions = []
+
+  FOOO = 'BAR'
 
   constructor(
     public context: Context,

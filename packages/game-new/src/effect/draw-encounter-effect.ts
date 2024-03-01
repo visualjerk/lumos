@@ -19,7 +19,7 @@ export function createDrawEncounterEffectPhase(
 }
 
 export class DrawEncounterEffectPhase implements PhaseBase {
-  type = 'drawEncounter'
+  type = 'drawEncounterEffect' as const
 
   public encounterCard: EncounterCard | null = null
   public targetInvestigatorId: InvestigatorId | null = null

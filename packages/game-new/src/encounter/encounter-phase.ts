@@ -9,7 +9,7 @@ export function createEncounterPhase(context: Context) {
 }
 
 export class EncounterPhase implements PhaseBase {
-  type = 'encounter'
+  type = 'encounter' as const
   actions = []
 
   constructor(public context: Context) {}

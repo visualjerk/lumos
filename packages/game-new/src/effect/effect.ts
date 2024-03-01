@@ -39,7 +39,7 @@ import {
   EnemyOpportunityAttackEffect,
   EnemyOpportunityAttackEffectPhase,
   createEnemyOpportunityAttackEffectPhase,
-} from './enemy-opportunity-attack'
+} from './enemy-opportunity-attack-effect'
 import {
   DamageEnemyEffect,
   DamageEnemyEffectPhase,

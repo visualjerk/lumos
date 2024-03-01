@@ -17,7 +17,7 @@ export function createSkillCheckPhase(
 }
 
 export class SkillCheckPhase implements PhaseBase {
-  type = 'skillCheck'
+  type = 'skillCheck' as const
 
   constructor(
     public context: Context,
@@ -85,7 +85,7 @@ function createCommitSkillCheckPhase(
 }
 
 export class CommitSkillCheckPhase implements PhaseBase {
-  type = 'commitSkillCheck'
+  type = 'commitSkillCheck' as const
   fate: Fate
 
   constructor(

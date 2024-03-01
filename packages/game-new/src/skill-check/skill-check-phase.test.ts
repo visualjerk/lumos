@@ -29,8 +29,10 @@ const skillCheck: SkillCheck = {
   },
 }
 
+const TEST_PHASE_TYPE = 'test' as any
+
 class TestPhase implements PhaseBase {
-  type = 'test'
+  type = TEST_PHASE_TYPE
 
   constructor(public context: Context) {}
 
@@ -68,7 +70,7 @@ describe('SkillCheckPhase', () => {
       expect(investigatorState.clues).toBe(1)
     }
 
-    t.expectPhase('test')
+    t.expectPhase(TEST_PHASE_TYPE)
 
     mockSpinFateWheel({
       symbol: 1,
@@ -78,13 +80,13 @@ describe('SkillCheckPhase', () => {
 
   it('executes successful skill check', () => {
     t.executeAction({ type: 'startSkillCheck' })
-    t.expectPhase('skillCheck', 'test')
+    t.expectPhase('skillCheck', TEST_PHASE_TYPE)
 
     t.executeAction({ type: 'commitSkillCheck' })
-    t.expectPhase('commitSkillCheck', 'test')
+    t.expectPhase('commitSkillCheck', TEST_PHASE_TYPE)
 
     t.executeAction({ type: 'endSkillCheck' })
-    t.expectPhase('test')
+    t.expectPhase(TEST_PHASE_TYPE)
 
     expectSuccess()
   })
@@ -96,13 +98,13 @@ describe('SkillCheckPhase', () => {
     })
 
     t.executeAction({ type: 'startSkillCheck' })
-    t.expectPhase('skillCheck', 'test')
+    t.expectPhase('skillCheck', TEST_PHASE_TYPE)
 
     t.executeAction({ type: 'commitSkillCheck' })
-    t.expectPhase('commitSkillCheck', 'test')
+    t.expectPhase('commitSkillCheck', TEST_PHASE_TYPE)
 
     t.executeAction({ type: 'endSkillCheck' })
-    t.expectPhase('test')
+    t.expectPhase(TEST_PHASE_TYPE)
 
     expectFailure()
   })

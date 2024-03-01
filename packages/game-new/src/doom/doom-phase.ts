@@ -10,7 +10,7 @@ export function createDoomPhase(context: Context) {
 }
 
 export class IncreaseDoomPhase implements PhaseBase {
-  type = 'doom'
+  type = 'doom' as const
 
   constructor(public context: Context) {}
 
@@ -44,7 +44,7 @@ export function createAdvanceDoomPhase(context: Context) {
 }
 
 export class AdvanceDoomPhase implements PhaseBase {
-  type = 'advanceDoom'
+  type = 'advanceDoom' as const
 
   constructor(public context: Context) {}
 

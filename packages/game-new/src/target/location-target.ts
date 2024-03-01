@@ -27,7 +27,7 @@ export function createLocactionTargetPhase(
 }
 
 export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
-  type = 'locationTarget'
+  type = 'locationTarget' as const
 
   constructor(
     public context: Context,

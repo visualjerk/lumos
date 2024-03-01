@@ -26,7 +26,7 @@ export function createInvestigateEffectPhase(
 }
 
 export class InvestigateEffectPhase implements PhaseBase {
-  type = 'investigate'
+  type = 'investigateEffect' as const
   actions = []
 
   constructor(

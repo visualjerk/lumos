@@ -26,7 +26,7 @@ export function createEnemyAttackEffectPhase(
 }
 
 export class EnemyAttackEffectPhase implements PhaseBase {
-  type = 'enemyAttack'
+  type = 'enemyAttackEffect' as const
 
   public enemyCard: EnemyCard | null = null
   public targetInvestigatorId: InvestigatorId | null = null

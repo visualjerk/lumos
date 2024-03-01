@@ -22,7 +22,7 @@ export function createEnemyTargetPhase(
 }
 
 export class EnemyTargetPhase implements PhaseBase<EnemyTargetResult> {
-  type = 'investigatorTarget'
+  type = 'enemyTarget' as const
 
   constructor(
     public context: Context,
