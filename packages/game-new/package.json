@@ -7,7 +7,6 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@lumos/tsconfig": "workspace:*",
-    "@lumos/scenarios": "workspace:*"
+    "@lumos/tsconfig": "workspace:*"
   }
 }

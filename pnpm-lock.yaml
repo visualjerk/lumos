@@ -72,9 +72,6 @@ importers:
 
   packages/game-new:
     devDependencies:
-      '@lumos/scenarios':
-        specifier: workspace:*
-        version: link:../scenarios
       '@lumos/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
