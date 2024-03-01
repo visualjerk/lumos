@@ -42,13 +42,20 @@ export default function GameUI() {
       <div>
         <div className="text-2xl ">Phase: {phase.type}</div>
         <div>Parent Phase: {parentPhase.type}</div>
-        <div className="grid gap-2">
+        <div>
           {actions.map((action, index) => (
             <ActionButton key={index} onClick={() => action.execute()}>
               {action.type}
             </ActionButton>
           ))}
         </div>
+        <pre>
+          {JSON.stringify(
+            phase.context.getInvestigatorState(investigator.id),
+            null,
+            '  '
+          )}
+        </pre>
       </div>
     </div>
   )

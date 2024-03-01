@@ -12,17 +12,19 @@ export function useGame(scenario: Scenario, investigators: Investigator[]) {
     game.current = createInitialPublicGame(scenario, investigators)
   }
 
-  const [projection, setProjection] = useState(projectGame(game.current))
+  const [gameProjection, setGameProjection] = useState(
+    projectGame(game.current)
+  )
 
   useEffect(
     () =>
       game.current!.onChange(() => {
-        setProjection(projectGame(game.current!))
+        setGameProjection(projectGame(game.current!))
       }),
     []
   )
 
-  return projection
+  return gameProjection
 }
 
 function projectGame(game: PublicGame) {
