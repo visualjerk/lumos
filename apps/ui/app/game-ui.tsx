@@ -40,7 +40,7 @@ export default function GameUI() {
   return (
     <div className="max-w-screen-xl">
       <div>
-        <div className="text-2xl ">Phase: {phase.type}</div>
+        <div className="text-2xl">Phase: {phase.type}</div>
         <div>Parent Phase: {parentPhase.type}</div>
         <div>
           {actions.map((action, index) => (
@@ -49,13 +49,6 @@ export default function GameUI() {
             </ActionButton>
           ))}
         </div>
-        <pre>
-          {JSON.stringify(
-            phase.context.getInvestigatorState(investigator.id),
-            null,
-            '  '
-          )}
-        </pre>
       </div>
     </div>
   )
