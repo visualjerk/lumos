@@ -24,6 +24,14 @@ export class SkillCheckPhase implements PhaseBase {
     public skillCheckContext: SkillCheckContext
   ) {}
 
+  public get totalSkill() {
+    const { check, skillModifier } = this.skillCheckContext
+    const { investigatorId, skill } = check
+    const skills = this.context.getInvestigatorSkills(investigatorId)
+
+    return skills[skill] + skillModifier
+  }
+
   get actions() {
     const actions: PhaseAction[] = []
 

@@ -19,9 +19,13 @@ export function createInitialPublicGame(
 
 export function getMatchingAction(
   actions: PublicPhaseAction[],
-  filter: PhaseActionFilterParams
+  filter: PhaseActionFilterParams | PhaseActionFilterParams[]
 ) {
-  return actions.find((action) => actionMatches(action, filter))
+  return actions.find((action) =>
+    Array.isArray(filter)
+      ? filter.some((singleFilter) => actionMatches(action, singleFilter))
+      : actionMatches(action, filter)
+  )
 }
 
 type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any

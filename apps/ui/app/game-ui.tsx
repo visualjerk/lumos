@@ -11,6 +11,7 @@ import React from 'react'
 import { useGame } from './use-game'
 import ActionButton from './action-button'
 import InvestigatorOverview from './investigator/investigator-overview'
+import SkillCheckOverlay from './skill-check/skill-check-overlay'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -59,6 +60,9 @@ export default function GameUI() {
           actions={actions}
         />
       </div>
+      {(phase.type === 'skillCheck' || phase.type === 'commitSkillCheck') && (
+        <SkillCheckOverlay phase={phase} actions={actions} />
+      )}
     </div>
   )
 }

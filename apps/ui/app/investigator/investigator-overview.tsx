@@ -1,10 +1,4 @@
-import {
-  Context,
-  Investigator,
-  PublicPhaseAction,
-  Skill,
-  getMatchingAction,
-} from '@lumos/game'
+import { Context, Investigator, PublicPhaseAction, Skill } from '@lumos/game'
 import Artwork from '../shared/artwork'
 import { AttributeItem } from '../shared/attribute-item'
 import InvestigatorCard from './investigator-card'
