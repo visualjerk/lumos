@@ -8,6 +8,7 @@ import {
 import GameIcon from '../shared/game-icon'
 import InvestigatorCard from '../investigator/investigator-card'
 import ActionButton from '../action-button'
+import { classNames } from '../utils'
 
 export type SkillCheckOverlayProps = {
   phase: PublicPhaseOf<SkillCheckPhase> | PublicPhaseOf<CommitSkillCheckPhase>
@@ -33,6 +34,19 @@ export default function SkillCheckOverlay({
 
   const fate = phase.type === 'commitSkillCheck' ? phase.fate.symbol : '?'
 
+  function getState() {
+    if (phase.type !== 'commitSkillCheck') {
+      return 'check'
+    }
+    return difficulty <= totalSkill ? 'success' : 'failure'
+  }
+
+  const stateClasses = {
+    check: 'bg-stone-300 border-stone-400',
+    success: 'bg-green-50 border-green-400',
+    failure: 'bg-red-50 border-red-400',
+  }
+
   return (
     <div className="fixed inset-0 flex justify-center items-center pointer-events-none">
       <div className="flex items-center gap-3">
@@ -41,7 +55,12 @@ export default function SkillCheckOverlay({
             <InvestigatorCard key={index} id={id} index={index} actions={[]} />
           ))}
         </div>
-        <div className="grid gap-3 bg-stone-300 p-4 rounded-sm border border-stone-400 shadow-lg pointer-events-auto">
+        <div
+          className={classNames(
+            'grid gap-3 p-4 rounded-sm border-2 shadow-xl pointer-events-auto',
+            stateClasses[getState()]
+          )}
+        >
           <h2 className="text-2xl">
             <GameIcon kind={skill} /> {skill} Check
           </h2>
