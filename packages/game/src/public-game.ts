@@ -1,7 +1,12 @@
 import { Context } from './context'
 import { Game, GamePhase, createInitialGame } from './game'
 import { Investigator } from './investigator'
-import { Phase, PhaseAction } from './phase'
+import {
+  Phase,
+  PhaseAction,
+  PhaseActionFilterParams,
+  actionMatches,
+} from './phase'
 import { Scenario } from './scenario'
 
 export function createInitialPublicGame(
@@ -10,6 +15,13 @@ export function createInitialPublicGame(
 ) {
   const game = createInitialGame(scenario, investigators)
   return new PublicGame(game)
+}
+
+export function getMatchingAction(
+  actions: PublicPhaseAction[],
+  filter: PhaseActionFilterParams
+) {
+  return actions.find((action) => actionMatches(action, filter))
 }
 
 type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any

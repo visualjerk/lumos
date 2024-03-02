@@ -53,7 +53,11 @@ export default function GameUI() {
         </div>
       </div>
       <div>
-        <InvestigatorOverview investigator={investigator} context={context} />
+        <InvestigatorOverview
+          investigator={investigator}
+          context={context}
+          actions={actions}
+        />
       </div>
     </div>
   )

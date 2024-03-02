@@ -58,7 +58,7 @@ export type Execute<TPhaseResult extends PhaseResult = PhaseResult> = (
 ) => void
 
 export function actionMatches(
-  action: PhaseAction<PhaseResult>,
+  action: PhaseActionFilterParams,
   filterParams: PhaseActionFilterParams
 ): boolean {
   return Object.entries(filterParams).every(

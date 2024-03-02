@@ -1,4 +1,10 @@
-import { Context, Investigator, Skill } from '@lumos/game'
+import {
+  Context,
+  Investigator,
+  PublicPhaseAction,
+  Skill,
+  getMatchingAction,
+} from '@lumos/game'
 import Artwork from '../shared/artwork'
 import { AttributeItem } from '../shared/attribute-item'
 import InvestigatorCard from './investigator-card'
@@ -6,11 +12,13 @@ import InvestigatorCard from './investigator-card'
 export type InvestigatorOverviewProps = {
   investigator: Investigator
   context: Context
+  actions: PublicPhaseAction[]
 }
 
 export default function InvestigatorOverview({
   investigator,
   context,
+  actions,
 }: InvestigatorOverviewProps) {
   const skills = Object.entries(investigator.baseSkills).map(
     ([skill, value]) => ({
@@ -46,7 +54,12 @@ export default function InvestigatorOverview({
       </div>
       <div className="flex gap-2">
         {state.cardsInHand.map((id, index) => (
-          <InvestigatorCard key={index} id={id} />
+          <InvestigatorCard
+            key={index}
+            id={id}
+            index={index}
+            actions={actions}
+          />
         ))}
       </div>
     </div>
