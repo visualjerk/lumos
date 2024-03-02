@@ -2,6 +2,8 @@ import { Context, Investigator, PublicPhaseAction, Skill } from '@lumos/game'
 import Artwork from '../shared/artwork'
 import { AttributeItem } from '../shared/attribute-item'
 import InvestigatorCard from './investigator-card'
+import InvestigatorDeck from './investigator-deck'
+import InvestigatorDiscardPile from './investigator-discard-pile'
 
 export type InvestigatorOverviewProps = {
   investigator: Investigator
@@ -25,6 +27,12 @@ export default function InvestigatorOverview({
 
   return (
     <div className="p-4 flex items-center gap-3">
+      <div>
+        <InvestigatorDiscardPile
+          investigator={investigator}
+          context={context}
+        />
+      </div>
       <Artwork
         id={investigator.id}
         className="w-40 h-40 rounded-full object-cover border-2 border-stone-400 shadow-sm"
@@ -45,6 +53,13 @@ export default function InvestigatorOverview({
             <AttributeItem attribute="clues" value={clues} />
           </div>
         </div>
+      </div>
+      <div>
+        <InvestigatorDeck
+          investigator={investigator}
+          context={context}
+          actions={actions}
+        />
       </div>
       <div className="flex gap-2">
         {state.cardsInHand.map((id, index) => (

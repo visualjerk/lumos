@@ -48,7 +48,7 @@ export default function InvestigatorCard({
   return (
     <div
       className={classNames(
-        'rounded border shadow w-40',
+        'rounded border shadow w-40 h-52',
         action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
           : 'bg-stone-300 border-stone-400'
