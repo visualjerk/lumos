@@ -28,11 +28,12 @@ export function useGame(scenario: Scenario, investigators: Investigator[]) {
 }
 
 function projectGame(game: PublicGame) {
-  const { phase, parentPhase, actions } = game
+  const { phase, parentPhase, actions, context } = game
 
   return {
     phase,
     parentPhase,
     actions,
+    context,
   }
 }

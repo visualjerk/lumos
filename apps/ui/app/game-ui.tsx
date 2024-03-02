@@ -10,6 +10,7 @@ import {
 import React from 'react'
 import { useGame } from './use-game'
 import ActionButton from './action-button'
+import InvestigatorOverview from './investigator/investigator-overview'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',
@@ -33,13 +34,14 @@ const investigator: Investigator = {
 }
 
 export default function GameUI() {
-  const { phase, parentPhase, actions } = useGame(MisteryOfTheHogwartsExpress, [
-    investigator,
-  ])
+  const { phase, parentPhase, actions, context } = useGame(
+    MisteryOfTheHogwartsExpress,
+    [investigator]
+  )
 
   return (
-    <div className="max-w-screen-xl">
-      <div>
+    <div className="h-screen flex flex-col">
+      <div className="flex-grow p-4">
         <div className="text-2xl">Phase: {phase.type}</div>
         <div>Parent Phase: {parentPhase.type}</div>
         <div>
@@ -49,6 +51,9 @@ export default function GameUI() {
             </ActionButton>
           ))}
         </div>
+      </div>
+      <div>
+        <InvestigatorOverview investigator={investigator} context={context} />
       </div>
     </div>
   )

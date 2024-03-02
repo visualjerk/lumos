@@ -1,3 +1,4 @@
+import { Context } from './context'
 import { Game, GamePhase, createInitialGame } from './game'
 import { Investigator } from './investigator'
 import { Phase, PhaseAction } from './phase'
@@ -46,6 +47,10 @@ export class PublicGame {
 
   get actions(): PublicPhaseAction[] {
     return this.phase.actions
+  }
+
+  get context(): Context {
+    return this.game.context
   }
 
   onChange(observer: PublicGameObserver) {
