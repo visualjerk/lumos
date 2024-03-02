@@ -9,7 +9,7 @@ export type GameIconProps = {
 } & React.HTMLAttributes<HTMLSpanElement>
 
 const GAME_ICONS: Record<GameIconKind, string> = {
-  agility: '🏃',
+  agility: '🏃🏽‍♂️',
   strength: '💪',
   intelligence: '🧠',
   health: '❤️',
