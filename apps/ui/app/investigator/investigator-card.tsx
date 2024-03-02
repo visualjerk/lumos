@@ -27,14 +27,21 @@ export default function InvestigatorCard({
     value,
   }))
 
-  const playAction = getMatchingAction(actions, {
+  let action = getMatchingAction(actions, {
     type: 'play',
     cardIndex: index,
   })
 
+  if (!action) {
+    action = getMatchingAction(actions, {
+      type: 'addToSkillCheck',
+      cardIndex: index,
+    })
+  }
+
   function handleClick() {
-    if (playAction) {
-      playAction.execute()
+    if (action) {
+      action.execute()
     }
   }
 
@@ -42,7 +49,7 @@ export default function InvestigatorCard({
     <div
       className={classNames(
         'rounded border shadow w-40',
-        playAction
+        action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
           : 'bg-stone-300 border-stone-400'
       )}
