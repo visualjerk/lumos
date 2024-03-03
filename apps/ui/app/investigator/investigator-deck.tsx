@@ -27,7 +27,7 @@ export default function InvestigatorDeck({
 
   return (
     <div className="p-4 relative rounded bg-stone-500 text-stone-100 border border-stone-600 shadow w-40 h-52">
-      <div className="text-xs bg-stone-700 rounded-full absolute top-1 left-1 p-1 font-semibold">
+      <div className="text-xs bg-stone-700 rounded-full absolute top-1 right-1 p-1 px-2 font-semibold">
         {deck.length}
       </div>
       {drawAction && (

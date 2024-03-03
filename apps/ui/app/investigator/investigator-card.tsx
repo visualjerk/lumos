@@ -54,7 +54,7 @@ export default function InvestigatorCard({
     <div
       ref={ref}
       className={cn(
-        'rounded border shadow w-40 h-52',
+        'rounded border shadow w-40 h-52 text-stone-800',
         action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
           : 'bg-stone-300 border-stone-400'
