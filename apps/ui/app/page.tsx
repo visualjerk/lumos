@@ -4,7 +4,7 @@ import {
   Investigator,
   ForceOfWill,
   LightningStrike,
-  BoarStrength,
+  BearStrength,
   Serenity,
 } from '@lumos/game'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
@@ -25,8 +25,8 @@ const investigator: Investigator = {
     ForceOfWill.id,
     LightningStrike.id,
     LightningStrike.id,
-    BoarStrength.id,
-    BoarStrength.id,
+    BearStrength.id,
+    BearStrength.id,
     Serenity.id,
     Serenity.id,
   ],

@@ -16,7 +16,7 @@ export default function Artwork({ id, ...attributes }: ArtworkProps) {
 
   const mergedAttributes = {
     ...attributes,
-    src: `/artworks/${imgId}-MOCK.png`,
+    src: `/artworks/${imgId}.jpg`,
     alt: id,
   }
 

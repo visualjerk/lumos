@@ -21,10 +21,10 @@ export const LightningStrike: InvestigatorCard = {
   skillModifier: { intelligence: 2, agility: 1 },
 }
 
-export const BoarStrength: InvestigatorCard = {
-  id: 'ic-boar-strength',
+export const BearStrength: InvestigatorCard = {
+  id: 'ic-bear-strength',
   type: 'skill',
-  name: 'Boar Strength',
+  name: 'Bear Strength',
   description: '',
   skillModifier: { agility: 1, strength: 2 },
 }
@@ -42,7 +42,7 @@ export const InvestigatorCardCollection = new Map<
   InvestigatorCardId,
   InvestigatorCard
 >(
-  [ForceOfWill, LightningStrike, BoarStrength, Serenity].map((card) => [
+  [ForceOfWill, LightningStrike, BearStrength, Serenity].map((card) => [
     card.id,
     card,
   ])
