@@ -7,7 +7,10 @@ import {
 } from '@lumos/game'
 import Artwork from '../shared/artwork'
 import { AttributeItem } from '../shared/attribute-item'
-import { classNames } from '../utils'
+import { cn } from '../utils'
+import { SparklesCore } from '../shared/sparkles'
+import { useHoverDirty } from 'react-use'
+import { useRef } from 'react'
 
 export type InvestigatorCardProps = {
   id: InvestigatorCardId
@@ -21,6 +24,8 @@ export default function InvestigatorCard({
   actions,
 }: InvestigatorCardProps) {
   const card = getInvestigatorCard(id)
+  const ref = useRef(null)
+  const isHovered = useHoverDirty(ref)
 
   const skills = Object.entries(card.skillModifier).map(([skill, value]) => ({
     skill: skill as Skill,
@@ -47,7 +52,8 @@ export default function InvestigatorCard({
 
   return (
     <div
-      className={classNames(
+      ref={ref}
+      className={cn(
         'rounded border shadow w-40 h-52',
         action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
@@ -56,7 +62,20 @@ export default function InvestigatorCard({
       onClick={handleClick}
     >
       <h3 className="p-2 leading-none">{card.name}</h3>
-      <Artwork id={id} className="object-cover w-full aspect-video" />
+      <div className="relative">
+        <Artwork id={id} className="object-cover w-full aspect-video" />
+        {isHovered && (
+          <SparklesCore
+            id={`investigator-card-${index}`}
+            background="transparent"
+            minSize={0.4}
+            maxSize={1}
+            particleDensity={1200}
+            className="absolute inset-0"
+            particleColor="#FFFFFF"
+          />
+        )}
+      </div>
       <div className="p-2 flex gap-4">
         {skills.map(({ skill, value }) => (
           <AttributeItem key={skill} attribute={skill} value={value} />

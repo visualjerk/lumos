@@ -8,7 +8,7 @@ import {
 import GameIcon from '../shared/game-icon'
 import InvestigatorCard from '../investigator/investigator-card'
 import ActionButton from '../action-button'
-import { classNames } from '../utils'
+import { cn } from '../utils'
 
 export type SkillCheckOverlayProps = {
   phase: PublicPhaseOf<SkillCheckPhase> | PublicPhaseOf<CommitSkillCheckPhase>
@@ -56,7 +56,7 @@ export default function SkillCheckOverlay({
           ))}
         </div>
         <div
-          className={classNames(
+          className={cn(
             'grid gap-3 p-4 rounded-sm border-2 shadow-xl pointer-events-auto',
             stateClasses[getState()]
           )}

@@ -4,7 +4,7 @@ import { Aleo } from 'next/font/google'
 const aleo = Aleo({ subsets: ['latin'] })
 
 import './globals.css'
-import { classNames } from './utils'
+import { cn } from './utils'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,9 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={classNames(aleo.className, 'bg-stone-200 text-stone-900')}
-      >
+      <body className={cn(aleo.className, 'bg-stone-200 text-stone-900')}>
         {children}
       </body>
     </html>
