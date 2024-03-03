@@ -8,10 +8,10 @@ import {
   Serenity,
 } from '@lumos/game'
 import React from 'react'
-import { useGame } from './use-game'
-import ActionButton from './shared/action-button'
-import InvestigatorOverview from './investigator/investigator-overview'
-import SkillCheckOverlay from './skill-check/skill-check-overlay'
+import { useGame } from '@/use-game'
+import ActionButton from '@/shared/action-button'
+import InvestigatorOverview from '@/investigator/investigator-overview'
+import SkillCheckOverlay from '@/skill-check/skill-check-overlay'
 
 const investigator: Investigator = {
   id: 'isabel-brimble',

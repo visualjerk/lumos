@@ -1,5 +1,4 @@
 import { Context, Investigator } from '@lumos/game'
-import InvestigatorCard from './investigator-card'
 
 export type InvestigatorDiscardPileProps = {
   investigator: Investigator

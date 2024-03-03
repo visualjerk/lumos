@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import { Aleo } from 'next/font/google'
+import './globals.css'
+import { cn } from '@/utils'
 
 const aleo = Aleo({ subsets: ['latin'] })
-
-import './globals.css'
-import { cn } from './utils'
 
 export const metadata: Metadata = {
   title: 'Create Next App',

@@ -5,10 +5,10 @@ import {
   SkillCheckPhase,
   getMatchingAction,
 } from '@lumos/game'
-import GameIcon from '../shared/game-icon'
-import ActionButton from '../shared/action-button'
-import { cn } from '../utils'
-import InvestigatorCardStack from '../investigator/investigator-card-stack'
+import GameIcon from '@/shared/game-icon'
+import ActionButton from '@/shared/action-button'
+import { cn } from '@/utils'
+import InvestigatorCardStack from '@/investigator/investigator-card-stack'
 
 export type SkillCheckOverlayProps = {
   phase: PublicPhaseOf<SkillCheckPhase> | PublicPhaseOf<CommitSkillCheckPhase>

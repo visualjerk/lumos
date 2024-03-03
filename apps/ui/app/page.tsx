@@ -1,4 +1,4 @@
-import GameUI from './game-ui'
+import GameUI from '@/game-ui'
 
 export default function Home() {
   return (

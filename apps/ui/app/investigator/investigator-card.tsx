@@ -5,10 +5,10 @@ import {
   getInvestigatorCard,
   getMatchingAction,
 } from '@lumos/game'
-import Artwork from '../shared/artwork'
-import { AttributeItem } from '../shared/attribute-item'
-import { cn } from '../utils'
-import { SparklesCore } from '../shared/sparkles'
+import Artwork from '@/shared/artwork'
+import { AttributeItem } from '@/shared/attribute-item'
+import { cn } from '@/utils'
+import { SparklesCore } from '@/shared/sparkles'
 import { useHoverDirty } from 'react-use'
 import { useRef } from 'react'
 

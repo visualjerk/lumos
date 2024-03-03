@@ -1,6 +1,6 @@
 import { Context, Investigator, PublicPhaseAction, Skill } from '@lumos/game'
-import Artwork from '../shared/artwork'
-import { AttributeItem } from '../shared/attribute-item'
+import Artwork from '@/shared/artwork'
+import { AttributeItem } from '@/shared/attribute-item'
 import InvestigatorDeck from './investigator-deck'
 import InvestigatorDiscardPile from './investigator-discard-pile'
 import InvestigatorCardsInHand from './investigator-cards-in-hand'
