@@ -26,13 +26,16 @@ export default function InvestigatorDeck({
   })
 
   return (
-    <div className="p-4 relative rounded bg-stone-500 text-stone-100 border border-stone-600 shadow w-40 h-52">
-      <div className="text-xs bg-stone-700 rounded-full absolute top-1 right-1 p-1 px-2 font-semibold">
-        {deck.length}
+    <div className="rounded bg-stone-500 text-stone-100 border border-stone-600 shadow p-2 grid gap-3">
+      <div className="flex items-center gap-2">
+        Deck
+        <div className="bg-stone-700 rounded-full p-1 px-2 font-semibold">
+          {deck.length}
+        </div>
       </div>
-      {drawAction && (
-        <ActionButton onClick={() => drawAction.execute()}>Draw</ActionButton>
-      )}
+      <ActionButton onClick={drawAction?.execute} disabled={!drawAction}>
+        Draw
+      </ActionButton>
     </div>
   )
 }

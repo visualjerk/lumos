@@ -26,8 +26,7 @@ export default function InvestigatorOverview({
   const { health, damage, clues } = state
 
   return (
-    <div className="p-4 flex items-center gap-3">
-      <InvestigatorDiscardPile investigator={investigator} context={context} />
+    <div className="p-4 flex items-center gap-6">
       <Artwork
         id={investigator.id}
         className="w-40 h-40 rounded-full object-cover border-2 border-stone-400 shadow-sm"
@@ -49,11 +48,17 @@ export default function InvestigatorOverview({
           </div>
         </div>
       </div>
-      <InvestigatorDeck
-        investigator={investigator}
-        context={context}
-        actions={actions}
-      />
+      <div className="grid gap-4">
+        <InvestigatorDeck
+          investigator={investigator}
+          context={context}
+          actions={actions}
+        />
+        <InvestigatorDiscardPile
+          investigator={investigator}
+          context={context}
+        />
+      </div>
       <InvestigatorCardsInHand
         investigator={investigator}
         context={context}
