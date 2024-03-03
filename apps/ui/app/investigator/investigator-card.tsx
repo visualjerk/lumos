@@ -70,7 +70,7 @@ export default function InvestigatorCard({
             background="transparent"
             minSize={0.4}
             maxSize={1}
-            particleDensity={1200}
+            particleDensity={800}
             className="absolute inset-0"
             particleColor="#FFFFFF"
           />
