@@ -118,7 +118,26 @@ export class InvestigatorPhase implements PhaseBase {
               })
             )
             .apply(() => {
+              // TODO: create move effect
+              const engagedEnemyIndexes = this.context.getEngagedEnemies(
+                this.investigatorId
+              )
+              engagedEnemyIndexes.forEach((index) => {
+                const enemyState = this.context.getEnemyState(index)
+                enemyState.disengage()
+              })
+
               this.context.moveInvestigator(this.investigatorId, location.id)
+
+              this.context
+                .getLocationEnemies(location.id)
+                .map((index) => this.context.getEnemyState(index))
+                .forEach((enemyState) => {
+                  if (enemyState.isReady()) {
+                    enemyState.engage(this.investigatorId)
+                  }
+                })
+
               this.actionsMade++
             }),
       })

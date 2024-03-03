@@ -30,6 +30,18 @@ export class EnemyState implements EnemyStateProps {
   isDefeated(): boolean {
     return this.health <= this.damage
   }
+
+  isReady(): boolean {
+    return this.engagedInvestigator === null
+  }
+
+  engage(investigator: InvestigatorId) {
+    this.engagedInvestigator = investigator
+  }
+
+  disengage() {
+    this.engagedInvestigator = null
+  }
 }
 
 function createInitialEnemyState(
