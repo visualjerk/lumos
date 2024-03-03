@@ -127,6 +127,7 @@ export class InvestigatorPhase implements PhaseBase {
     if (this.context.locationStates.get(currentLocation.id)!.clues > 0) {
       actions.push({
         type: 'investigate',
+        locationId: currentLocation.id,
         execute: (coordinator) =>
           coordinator
             .waitFor(

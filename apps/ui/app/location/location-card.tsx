@@ -12,10 +12,16 @@ export function LocationCard({ id }: { id: LocationId }) {
 
   const investigators = context.getLocationInvestigators(id)
 
-  const action = getMatchingAction(actions, {
-    type: 'move',
-    locationId: id,
-  })
+  const action = getMatchingAction(actions, [
+    {
+      type: 'move',
+      locationId: id,
+    },
+    {
+      type: 'investigate',
+      locationId: id,
+    },
+  ])
 
   return (
     <div
