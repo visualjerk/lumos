@@ -23,7 +23,7 @@ export default function InvestigatorCardsInHand({
 
   return (
     <div
-      className="grid w-96"
+      className="grid w-96 h-60"
       style={{
         gridTemplateColumns: 'repeat(auto-fit,  minmax(10px, max-content))',
       }}
