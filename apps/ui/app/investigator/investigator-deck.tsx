@@ -1,22 +1,9 @@
-import {
-  Context,
-  Investigator,
-  PublicPhaseAction,
-  getMatchingAction,
-} from '@lumos/game'
+import { getMatchingAction } from '@lumos/game'
 import ActionButton from '@/shared/action-button'
+import { useGame } from '@/game'
 
-export type InvestigatorDeckProps = {
-  investigator: Investigator
-  context: Context
-  actions: PublicPhaseAction[]
-}
-
-export default function InvestigatorDeck({
-  investigator,
-  context,
-  actions,
-}: InvestigatorDeckProps) {
+export default function InvestigatorDeck() {
+  const { investigator, context, actions } = useGame()
   const state = context.getInvestigatorState(investigator.id)
   const { deck } = state
 

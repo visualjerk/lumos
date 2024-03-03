@@ -1,23 +1,11 @@
-import {
-  Context,
-  Investigator,
-  InvestigatorCardId,
-  PublicPhaseAction,
-} from '@lumos/game'
+import { InvestigatorCardId, PublicPhaseAction } from '@lumos/game'
 import { useCss } from 'react-use'
 import InvestigatorCard from './investigator-card'
+import { useGame } from '@/game'
 
-export type InvestigatorCardsInHandProps = {
-  investigator: Investigator
-  context: Context
-  actions: PublicPhaseAction[]
-}
+export default function InvestigatorCardsInHand() {
+  const { investigator, context, actions } = useGame()
 
-export default function InvestigatorCardsInHand({
-  investigator,
-  context,
-  actions,
-}: InvestigatorCardsInHandProps) {
   const state = context.getInvestigatorState(investigator.id)
   const { cardsInHand } = state
 

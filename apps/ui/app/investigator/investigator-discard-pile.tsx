@@ -1,14 +1,7 @@
-import { Context, Investigator } from '@lumos/game'
+import { useGame } from '@/game'
 
-export type InvestigatorDiscardPileProps = {
-  investigator: Investigator
-  context: Context
-}
-
-export default function InvestigatorDiscardPile({
-  investigator,
-  context,
-}: InvestigatorDiscardPileProps) {
+export default function InvestigatorDiscardPile() {
+  const { investigator, context } = useGame()
   const state = context.getInvestigatorState(investigator.id)
   const { discardPile } = state
 

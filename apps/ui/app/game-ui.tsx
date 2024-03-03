@@ -1,44 +1,12 @@
 'use client'
-import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import {
-  BoarStrength,
-  ForceOfWill,
-  Investigator,
-  LightningStrike,
-  Serenity,
-} from '@lumos/game'
 import React from 'react'
-import { useGame } from '@/use-game'
 import ActionButton from '@/shared/action-button'
 import InvestigatorOverview from '@/investigator/investigator-overview'
 import SkillCheckOverlay from '@/skill-check/skill-check-overlay'
-
-const investigator: Investigator = {
-  id: 'isabel-brimble',
-  name: 'Isabel Brimble',
-  baseSkills: {
-    intelligence: 4,
-    strength: 5,
-    agility: 3,
-  },
-  health: 8,
-  baseDeck: [
-    ForceOfWill.id,
-    ForceOfWill.id,
-    LightningStrike.id,
-    LightningStrike.id,
-    BoarStrength.id,
-    BoarStrength.id,
-    Serenity.id,
-    Serenity.id,
-  ],
-}
+import { useGame } from './game'
 
 export default function GameUI() {
-  const { phase, parentPhase, actions, context } = useGame(
-    MisteryOfTheHogwartsExpress,
-    [investigator]
-  )
+  const { phase, parentPhase, actions } = useGame()
 
   return (
     <div className="h-screen flex flex-col">
@@ -54,15 +22,9 @@ export default function GameUI() {
         </div>
       </div>
       <div>
-        <InvestigatorOverview
-          investigator={investigator}
-          context={context}
-          actions={actions}
-        />
+        <InvestigatorOverview />
       </div>
-      {(phase.type === 'skillCheck' || phase.type === 'commitSkillCheck') && (
-        <SkillCheckOverlay phase={phase} actions={actions} />
-      )}
+      <SkillCheckOverlay />
     </div>
   )
 }

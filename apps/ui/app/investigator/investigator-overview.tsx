@@ -1,21 +1,14 @@
-import { Context, Investigator, PublicPhaseAction, Skill } from '@lumos/game'
+import { Skill } from '@lumos/game'
 import Artwork from '@/shared/artwork'
 import { AttributeItem } from '@/shared/attribute-item'
 import InvestigatorDeck from './investigator-deck'
 import InvestigatorDiscardPile from './investigator-discard-pile'
 import InvestigatorCardsInHand from './investigator-cards-in-hand'
+import { useGame } from '@/game'
 
-export type InvestigatorOverviewProps = {
-  investigator: Investigator
-  context: Context
-  actions: PublicPhaseAction[]
-}
+export default function InvestigatorOverview() {
+  const { investigator, context, actions } = useGame()
 
-export default function InvestigatorOverview({
-  investigator,
-  context,
-  actions,
-}: InvestigatorOverviewProps) {
   const skills = Object.entries(investigator.baseSkills).map(
     ([skill, value]) => ({
       skill: skill as Skill,
@@ -49,21 +42,10 @@ export default function InvestigatorOverview({
         </div>
       </div>
       <div className="grid gap-4">
-        <InvestigatorDeck
-          investigator={investigator}
-          context={context}
-          actions={actions}
-        />
-        <InvestigatorDiscardPile
-          investigator={investigator}
-          context={context}
-        />
+        <InvestigatorDeck />
+        <InvestigatorDiscardPile />
       </div>
-      <InvestigatorCardsInHand
-        investigator={investigator}
-        context={context}
-        actions={actions}
-      />
+      <InvestigatorCardsInHand />
     </div>
   )
 }

@@ -1,12 +1,18 @@
 import {
   Investigator,
   PublicGame,
+  PublicPhase,
+  PublicPhaseAction,
   Scenario,
   createInitialPublicGame,
+  Context,
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 
-export function useGame(scenario: Scenario, investigators: Investigator[]) {
+export function useInitialGame(
+  scenario: Scenario,
+  investigators: Investigator[]
+) {
   const game = useRef<PublicGame>()
   if (!game.current) {
     game.current = createInitialPublicGame(scenario, investigators)
@@ -27,7 +33,15 @@ export function useGame(scenario: Scenario, investigators: Investigator[]) {
   return gameProjection
 }
 
-function projectGame(game: PublicGame) {
+export type ProjectedGame = {
+  phase: PublicPhase
+  parentPhase: PublicPhase
+  actions: PublicPhaseAction[]
+  context: Context
+  investigator: Investigator
+}
+
+function projectGame(game: PublicGame): ProjectedGame {
   const { phase, parentPhase, actions, context } = game
 
   return {
@@ -35,5 +49,7 @@ function projectGame(game: PublicGame) {
     parentPhase,
     actions,
     context,
+    // TODO: Investigator should be selected by the user
+    investigator: context.investigators[0],
   }
 }

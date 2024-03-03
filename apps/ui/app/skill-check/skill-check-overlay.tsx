@@ -1,24 +1,17 @@
-import {
-  CommitSkillCheckPhase,
-  PublicPhaseAction,
-  PublicPhaseOf,
-  SkillCheckPhase,
-  getMatchingAction,
-} from '@lumos/game'
+import { getMatchingAction } from '@lumos/game'
 import GameIcon from '@/shared/game-icon'
 import ActionButton from '@/shared/action-button'
 import { cn } from '@/utils'
 import InvestigatorCardStack from '@/investigator/investigator-card-stack'
+import { useGame } from '@/game'
 
-export type SkillCheckOverlayProps = {
-  phase: PublicPhaseOf<SkillCheckPhase> | PublicPhaseOf<CommitSkillCheckPhase>
-  actions: PublicPhaseAction[]
-}
+export default function SkillCheckOverlay() {
+  const { phase, actions } = useGame()
 
-export default function SkillCheckOverlay({
-  phase,
-  actions,
-}: SkillCheckOverlayProps) {
+  if (phase.type !== 'skillCheck' && phase.type !== 'commitSkillCheck') {
+    return
+  }
+
   const { skillCheckContext, totalSkill } = phase
   const { check, addedCards } = skillCheckContext
   const { skill, difficulty } = check
