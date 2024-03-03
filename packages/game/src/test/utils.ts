@@ -5,10 +5,19 @@ import { expect } from 'vitest'
 import { Context, createInitialContext } from '../context'
 
 function createTestContext() {
-  return createInitialContext(MOCK_SCENARIO, [
+  const context = createInitialContext(MOCK_SCENARIO, [
     MOCK_INVESTIGATOR_ONE,
     MOCK_INVESTIGATOR_TWO,
   ])
+
+  // Start tests with no cards in hand
+  context.investigatorStates.forEach((state) => {
+    while (state.cardsInHand.length > 0) {
+      state.deck.push(state.cardsInHand.pop()!)
+    }
+  })
+
+  return context
 }
 
 function executeAction(

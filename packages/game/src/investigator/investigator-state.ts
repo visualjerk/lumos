@@ -119,7 +119,7 @@ function createInitialInvestigatorState(
   investigator: Investigator,
   currentLocation: LocationId
 ): InvestigatorState {
-  return new InvestigatorState(
+  const state = new InvestigatorState(
     investigator.health,
     0,
     0,
@@ -129,6 +129,8 @@ function createInitialInvestigatorState(
     shuffleArray(investigator.baseDeck),
     []
   )
+  state.draw(3)
+  return state
 }
 
 export class InvestigatorStates extends Map<InvestigatorId, InvestigatorState> {
