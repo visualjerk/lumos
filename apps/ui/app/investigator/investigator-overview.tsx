@@ -19,25 +19,31 @@ export default function InvestigatorOverview() {
   const { health, damage, clues } = state
 
   return (
-    <div className="p-4 flex items-center gap-6">
-      <Artwork
-        id={investigator.id}
-        className="w-40 h-40 rounded-full object-cover border-2 border-stone-400 shadow-sm"
-      />
-      <div className="w-40 grid gap-2">
-        <div>{investigator.name}</div>
-        <div className="flex justify-between p-2 bg-stone-300 rounded-sm border border-stone-400 shadow-sm">
-          {skills.map(({ skill, value }) => (
-            <AttributeItem key={skill} attribute={skill} value={value} />
-          ))}
+    <div className="p-4 px-6 flex items-center gap-6">
+      <div className="relative flex items-center p-4 pl-44 gap-4 bg-stone-500 border-2 rounded border-stone-700 shadow-lg">
+        <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10">
+          <Artwork
+            id={investigator.id}
+            className="w-full h-full rounded-full object-cover border-2 border-stone-800 shadow-lg"
+          />
         </div>
-        <div className="flex justify-between">
-          <div className="flex justify-between p-2 bg-stone-300 rounded-sm border border-stone-400 shadow-sm gap-2">
-            <AttributeItem attribute="health" value={health} />
-            <AttributeItem attribute="damage" value={damage} />
+        <div className="w-40 grid gap-2 text-stone-50">
+          <h2>{investigator.name}</h2>
+          <div className="flex justify-between">
+            {skills.map(({ skill, value }) => (
+              <div className="bg-stone-700 p-1 px-2 rounded-full" key={skill}>
+                <AttributeItem attribute={skill} value={value} />
+              </div>
+            ))}
           </div>
-          <div className="flex justify-between p-2 bg-stone-300 rounded-sm border border-stone-400 shadow-sm">
-            <AttributeItem attribute="clues" value={clues} />
+          <div className="flex justify-between">
+            <div className="flex gap-2 bg-stone-700 p-1 px-2 rounded-full">
+              <AttributeItem attribute="health" value={health} />
+              <AttributeItem attribute="damage" value={damage} />
+            </div>
+            <div className="bg-stone-700 p-1 px-2 rounded-full">
+              <AttributeItem attribute="clues" value={clues} />
+            </div>
           </div>
         </div>
       </div>
