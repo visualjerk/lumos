@@ -2,7 +2,12 @@ import { useGame } from '@/game'
 import Artwork from '@/shared/artwork'
 import { AttributeItem } from '@/shared/attribute-item'
 import { cn } from '@/utils'
-import { LocationId, getMatchingAction } from '@lumos/game'
+import {
+  EnemyCard,
+  LocationId,
+  getEncounterCard,
+  getMatchingAction,
+} from '@lumos/game'
 
 export function LocationCard({ id }: { id: LocationId }) {
   const { context, actions } = useGame()
@@ -11,6 +16,13 @@ export function LocationCard({ id }: { id: LocationId }) {
   const { clues, revealed } = state
 
   const investigators = context.getLocationInvestigators(id)
+  const enemyIndexes = context.getLocationEnemies(id)
+  const enemies = enemyIndexes.map((index) => {
+    const enemyState = context.getEnemyState(index)
+    const enemyCard = getEncounterCard(enemyState.cardId)
+
+    return enemyCard as EnemyCard
+  })
 
   const action = getMatchingAction(actions, [
     {
@@ -43,14 +55,25 @@ export function LocationCard({ id }: { id: LocationId }) {
           <AttributeItem attribute="clues" value={clues} />
         </div>
       )}
-      <div className="absolute -bottom-4 -right-4 flex gap-2">
-        {investigators.map((investigator) => (
-          <Artwork
-            key={investigator.id}
-            id={investigator.id}
-            className="w-12 h-12 rounded-full object-cover border-2 border-stone-400 shadow-sm"
-          />
-        ))}
+      <div className="absolute -bottom-4 -left-4 -right-4 flex gap-4 justify-between">
+        <div className="flex gap-2">
+          {enemies.map((enemy) => (
+            <Artwork
+              key={enemy.id}
+              id={enemy.id}
+              className="w-12 h-12 rounded-full object-cover border-2 border-stone-400 shadow-sm"
+            />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {investigators.map((investigator) => (
+            <Artwork
+              key={investigator.id}
+              id={investigator.id}
+              className="w-12 h-12 rounded-full object-cover border-2 border-stone-400 shadow-sm"
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
