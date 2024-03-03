@@ -15,6 +15,7 @@ const GAME_ICONS: Record<GameIconKind, string> = {
   health: '❤️',
   clues: '🔮',
   damage: '💢',
+  shroud: '👁',
 }
 
 export default function GameIcon({ kind, ...attributes }: GameIconProps) {

@@ -3,6 +3,7 @@ import {
   LocationId,
   LocationCard,
   createInitialLocationStates,
+  LocationState,
 } from './location'
 import {
   Investigator,
@@ -89,31 +90,28 @@ export class Context {
     )!
   }
 
-  moveInvestigator(
-    investigatorId: InvestigatorId,
-    locationId: LocationId
-  ): Context {
-    const investigatorState = this.investigatorStates.get(investigatorId)
-    const locationState = this.locationStates.get(locationId)
-
-    if (!investigatorState) {
-      throw new Error('Investigator not found')
-    }
-
-    if (!locationState) {
-      throw new Error('Location not found')
-    }
+  moveInvestigator(investigatorId: InvestigatorId, locationId: LocationId) {
+    const investigatorState = this.getInvestigatorState(investigatorId)
+    const locationState = this.getLocationState(locationId)
 
     investigatorState.currentLocation = locationId
     locationState.revealed = true
-
-    return this
   }
 
   getLocation(locationId: LocationId): LocationCard {
     return this.scenario.locationCards.find(
       (location) => location.id === locationId
     )!
+  }
+
+  getLocationState(locationId: LocationId): LocationState {
+    const locationState = this.locationStates.get(locationId)
+
+    if (!locationState) {
+      throw new Error('Location not found')
+    }
+
+    return locationState
   }
 
   getInvestigatorLocation(investigatorId: InvestigatorId): LocationCard {

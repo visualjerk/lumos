@@ -4,13 +4,14 @@ import ActionButton from '@/shared/action-button'
 import InvestigatorOverview from '@/investigator/investigator-overview'
 import SkillCheckOverlay from '@/skill-check/skill-check-overlay'
 import { useGame } from './game'
+import { LocationMap } from './location/location-map'
 
 export default function GameUI() {
   const { phase, parentPhase, actions } = useGame()
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="flex-grow p-4">
+      <div className="p-4">
         <div className="text-2xl">Phase: {phase.type}</div>
         <div>Parent Phase: {parentPhase.type}</div>
         <div>
@@ -21,9 +22,10 @@ export default function GameUI() {
           ))}
         </div>
       </div>
-      <div>
-        <InvestigatorOverview />
+      <div className="flex-grow">
+        <LocationMap />
       </div>
+      <InvestigatorOverview />
       <SkillCheckOverlay />
     </div>
   )

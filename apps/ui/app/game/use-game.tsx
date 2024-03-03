@@ -13,7 +13,7 @@ export function GameProvider({
   return <GameContext.Provider value={game}>{children}</GameContext.Provider>
 }
 
-export function useGame() {
+export function useGame(): ProjectedGame {
   const game = useContext(GameContext)
   if (!game) {
     throw new Error('useGame must be used within a GameProvider')
