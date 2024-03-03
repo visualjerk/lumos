@@ -58,8 +58,8 @@ function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
 
   const className = useCss({
     transform: `rotate(${rotation}deg) translateY(${translateY}rem)`,
-    transition: 'transform 0.3s',
     '&:hover': {
+      transition: 'transform 0.3s',
       transform: `scale(1.3) translateY(-3rem)`,
       zIndex: 100,
     },

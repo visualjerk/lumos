@@ -33,8 +33,8 @@ export type CardInStackProps = {
 function CardInStack({ id, index }: CardInStackProps) {
   const className = useCss({
     transform: `scale(0.8) rotate(-3deg)`,
-    transition: 'transform 0.3s',
     '&:hover': {
+      transition: 'transform 0.3s',
       transform: `scale(1.3) translateY(-3rem)`,
       zIndex: 100,
     },
