@@ -7,7 +7,7 @@ import InvestigatorCardsInHand from './investigator-cards-in-hand'
 import { useGame } from '@/game'
 
 export default function InvestigatorOverview() {
-  const { investigator, context, actions } = useGame()
+  const { investigator, context } = useGame()
 
   const skills = Object.entries(investigator.baseSkills).map(
     ([skill, value]) => ({
@@ -19,7 +19,7 @@ export default function InvestigatorOverview() {
   const { health, damage, clues } = state
 
   return (
-    <div className="p-4 px-6 flex items-center gap-6">
+    <div className="p-4 pl-12 flex items-center gap-6">
       <div className="relative flex items-center p-4 pl-44 gap-4 bg-stone-500 border-2 rounded border-stone-700 shadow-lg">
         <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10">
           <Artwork
