@@ -6,9 +6,9 @@ import {
   getMatchingAction,
 } from '@lumos/game'
 import GameIcon from '../shared/game-icon'
-import InvestigatorCard from '../investigator/investigator-card'
 import ActionButton from '../shared/action-button'
 import { cn } from '../utils'
+import InvestigatorCardStack from '../investigator/investigator-card-stack'
 
 export type SkillCheckOverlayProps = {
   phase: PublicPhaseOf<SkillCheckPhase> | PublicPhaseOf<CommitSkillCheckPhase>
@@ -49,15 +49,11 @@ export default function SkillCheckOverlay({
 
   return (
     <div className="fixed inset-0 flex justify-center items-center pointer-events-none">
-      <div className="flex items-center gap-3">
-        <div className="flex gap-2">
-          {addedCards.map((id, index) => (
-            <InvestigatorCard key={index} id={id} index={index} actions={[]} />
-          ))}
-        </div>
+      <div className="flex items-center gap-3 pointer-events-auto">
+        <InvestigatorCardStack ids={addedCards} />
         <div
           className={cn(
-            'grid gap-3 p-4 rounded-sm border-2 shadow-xl pointer-events-auto',
+            'grid gap-3 p-4 rounded-sm border-2 shadow-xl',
             stateClasses[getState()]
           )}
         >
@@ -73,9 +69,9 @@ export default function SkillCheckOverlay({
             </ActionButton>
           )}
         </div>
-        <div>
+        <div className="w-40">
           <h3 className="text-xl">Fate</h3>
-          <div className="text-4xl text-center">{fate}</div>
+          <div className="text-4xl">{fate}</div>
         </div>
       </div>
     </div>
