@@ -35,13 +35,13 @@ export default function SkillCheckOverlay() {
   }
 
   const stateClasses = {
-    check: 'bg-stone-300 border-stone-400',
+    check: 'bg-stone-400 border-stone-500',
     success: 'bg-green-50 border-green-400',
     failure: 'bg-red-50 border-red-400',
   }
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center pointer-events-none">
+    <div className="fixed inset-0 flex justify-center items-center pointer-events-none bg-white bg-opacity-30">
       <div className="flex items-center gap-3 pointer-events-auto">
         <InvestigatorCardStack ids={addedCards} />
         <div
@@ -62,7 +62,7 @@ export default function SkillCheckOverlay() {
             </ActionButton>
           )}
         </div>
-        <div className="w-40">
+        <div className="w-40 p-4 rounded-sm bg-stone-800 text-stone-100 text-center">
           <h3 className="text-xl">Fate</h3>
           <div className="text-4xl">{fate}</div>
         </div>

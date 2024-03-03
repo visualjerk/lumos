@@ -2,12 +2,7 @@ import { useGame } from '@/game'
 import Artwork from '@/shared/artwork'
 import { AttributeItem } from '@/shared/attribute-item'
 import { cn } from '@/utils'
-import {
-  EnemyCard,
-  LocationId,
-  getEncounterCard,
-  getMatchingAction,
-} from '@lumos/game'
+import { LocationId, getEncounterCard, getMatchingAction } from '@lumos/game'
 
 export function LocationCard({ id }: { id: LocationId }) {
   const { context, actions } = useGame()
@@ -21,7 +16,7 @@ export function LocationCard({ id }: { id: LocationId }) {
     const enemyState = context.getEnemyState(index)
     const enemyCard = getEncounterCard(enemyState.cardId)
 
-    return enemyCard as EnemyCard
+    return enemyCard
   })
 
   const action = getMatchingAction(actions, [
