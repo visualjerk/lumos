@@ -10,6 +10,8 @@ export function LocationCard({ id }: { id: LocationId }) {
   const state = context.getLocationState(id)
   const { clues, revealed } = state
 
+  const investigators = context.getLocationInvestigators(id)
+
   const action = getMatchingAction(actions, {
     type: 'move',
     locationId: id,
@@ -18,7 +20,7 @@ export function LocationCard({ id }: { id: LocationId }) {
   return (
     <div
       className={cn(
-        'rounded border shadow w-40 h-40 text-stone-800',
+        'relative rounded border shadow w-40 h-40 text-stone-800',
         action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
           : 'bg-stone-300 border-stone-400'
@@ -35,6 +37,15 @@ export function LocationCard({ id }: { id: LocationId }) {
           <AttributeItem attribute="clues" value={clues} />
         </div>
       )}
+      <div className="absolute -bottom-4 -right-4 flex gap-2">
+        {investigators.map((investigator) => (
+          <Artwork
+            key={investigator.id}
+            id={investigator.id}
+            className="w-12 h-12 rounded-full object-cover border-2 border-stone-400 shadow-sm"
+          />
+        ))}
+      </div>
     </div>
   )
 }
