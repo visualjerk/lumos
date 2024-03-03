@@ -1,4 +1,10 @@
-import { Context, Investigator, PublicPhaseAction } from '@lumos/game'
+import {
+  Context,
+  Investigator,
+  InvestigatorCardId,
+  PublicPhaseAction,
+} from '@lumos/game'
+import { useCss } from 'react-use'
 import InvestigatorCard from './investigator-card'
 
 export type InvestigatorCardsInHandProps = {
@@ -23,20 +29,26 @@ export default function InvestigatorCardsInHand({
       }}
     >
       {cardsInHand.map((id, index) => (
-        <div key={index} style={cardStyle(index, cardsInHand.length)}>
-          <InvestigatorCard
-            key={index}
-            id={id}
-            index={index}
-            actions={actions}
-          />
-        </div>
+        <CardInHand
+          key={index}
+          id={id}
+          index={index}
+          totalCards={cardsInHand.length}
+          actions={actions}
+        />
       ))}
     </div>
   )
 }
 
-function cardStyle(index: number, totalCards: number) {
+export type CardInHandProps = {
+  id: InvestigatorCardId
+  index: number
+  totalCards: number
+  actions: PublicPhaseAction[]
+}
+
+function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
   const center = (totalCards + 1) / 2
   const position = index + 1
   const diff = position - center
@@ -44,7 +56,18 @@ function cardStyle(index: number, totalCards: number) {
   const rotation = diff * 3
   const translateY = Math.abs(diff * 0.3)
 
-  return {
+  const className = useCss({
     transform: `rotate(${rotation}deg) translateY(${translateY}rem)`,
-  }
+    transition: 'transform 0.3s',
+    '&:hover': {
+      transform: `scale(1.3) translateY(-3rem)`,
+      zIndex: 100,
+    },
+  })
+
+  return (
+    <div key={index} className={className}>
+      <InvestigatorCard key={index} id={id} index={index} actions={actions} />
+    </div>
+  )
 }
