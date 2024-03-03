@@ -53,9 +53,10 @@ function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
     },
   })
 
+  //TODO: fix card key (use index of card in deck)
   return (
     <div key={index} className={className}>
-      <InvestigatorCard key={index} id={id} index={index} actions={actions} />
+      <InvestigatorCard id={id} index={index} actions={actions} />
     </div>
   )
 }
