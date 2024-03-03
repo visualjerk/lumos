@@ -7,7 +7,7 @@ import {
 } from '@lumos/game'
 import GameIcon from '../shared/game-icon'
 import InvestigatorCard from '../investigator/investigator-card'
-import ActionButton from '../action-button'
+import ActionButton from '../shared/action-button'
 import { cn } from '../utils'
 
 export type SkillCheckOverlayProps = {

@@ -4,7 +4,7 @@ import {
   PublicPhaseAction,
   getMatchingAction,
 } from '@lumos/game'
-import ActionButton from '../action-button'
+import ActionButton from '../shared/action-button'
 
 export type InvestigatorDeckProps = {
   investigator: Investigator
