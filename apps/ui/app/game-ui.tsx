@@ -22,7 +22,7 @@ export default function GameUI() {
           ))}
         </div>
       </div>
-      <div className="flex-grow">
+      <div className="flex-grow grid place-items-center">
         <LocationMap />
       </div>
       <InvestigatorOverview />
