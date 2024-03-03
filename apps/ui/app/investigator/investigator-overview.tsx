@@ -22,13 +22,21 @@ export default function InvestigatorOverview() {
   return (
     <div className="p-4 pl-12 flex items-center gap-6">
       <div className="relative flex items-center p-4 pl-44 gap-4 bg-stone-500 border-2 rounded border-stone-700 shadow-lg">
-        <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10">
+        <Artwork
+          id="bg-stone"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+        />
+        <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10 overflow-hidden">
+          <Artwork
+            id="bg-stone"
+            className="absolute inset-0 w-full h-full object-cover opacity-60"
+          />
           <Artwork
             id={investigator.id}
-            className="w-full h-full rounded-full object-cover border-2 border-stone-800 shadow-lg"
+            className="relative w-full h-full rounded-full object-cover border-2 border-stone-800 shadow-lg"
           />
         </div>
-        <div className="w-40 grid gap-2 text-stone-50">
+        <div className="relative  w-40 grid gap-2 text-stone-50">
           <h2>{investigator.name}</h2>
           <div className="flex justify-between">
             {skills.map(({ skill, value }) => (

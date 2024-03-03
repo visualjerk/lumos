@@ -54,35 +54,41 @@ export default function InvestigatorCard({
     <div
       ref={ref}
       className={cn(
-        'rounded border shadow w-40 h-52 text-stone-800',
+        'relative rounded border-2 shadow w-40 h-52 text-stone-800',
         action
-          ? 'cursor-pointer outline outline-blue-400 bg-blue-50 border-blue-300'
-          : 'bg-stone-300 border-stone-400'
+          ? 'cursor-pointer outline outline-blue-400 bg-blue-200 border-blue-400'
+          : 'bg-stone-300 border-stone-600'
       )}
       onClick={handleClick}
     >
-      <h3 className="p-2 leading-none">{card.name}</h3>
+      <Artwork
+        id="bg-card"
+        className="absolute inset-0 w-full h-full object-cover opacity-40"
+      />
       <div className="relative">
-        <Artwork id={id} className="object-cover w-full aspect-video" />
-        {isHovered && (
-          <SparklesCore
-            id={`investigator-card-${index}`}
-            background="transparent"
-            minSize={0.4}
-            maxSize={1}
-            particleDensity={800}
-            className="absolute inset-0"
-            particleColor="#FFFFFF"
-          />
-        )}
-      </div>
-      <div className="p-2 flex gap-4">
-        {skills.map(({ skill, value }) => (
-          <AttributeItem key={skill} attribute={skill} value={value} />
-        ))}
-      </div>
-      <div className="p-2">
-        <div className="text-xs">{card.description}</div>
+        <h3 className="p-2 leading-none">{card.name}</h3>
+        <div className="relative">
+          <Artwork id={id} className="object-cover w-full aspect-video" />
+          {isHovered && (
+            <SparklesCore
+              id={`investigator-card-${index}`}
+              background="transparent"
+              minSize={0.4}
+              maxSize={1}
+              particleDensity={800}
+              className="absolute inset-0"
+              particleColor="#FFFFFF"
+            />
+          )}
+        </div>
+        <div className="p-2 flex gap-4">
+          {skills.map(({ skill, value }) => (
+            <AttributeItem key={skill} attribute={skill} value={value} />
+          ))}
+        </div>
+        <div className="p-2">
+          <div className="text-xs">{card.description}</div>
+        </div>
       </div>
     </div>
   )
