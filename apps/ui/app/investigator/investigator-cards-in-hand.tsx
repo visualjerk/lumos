@@ -18,7 +18,7 @@ export default function InvestigatorCardsInHand() {
     >
       {cardsInHand.map((id, index) => (
         <CardInHand
-          key={index}
+          key={`${id}-${index}`}
           id={id}
           index={index}
           totalCards={cardsInHand.length}
@@ -53,9 +53,8 @@ function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
     },
   })
 
-  //TODO: fix card key (use index of card in deck)
   return (
-    <div key={index} className={className}>
+    <div className={className}>
       <InvestigatorCard id={id} index={index} actions={actions} />
     </div>
   )

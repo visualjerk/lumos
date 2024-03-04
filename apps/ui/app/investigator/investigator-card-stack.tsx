@@ -18,7 +18,7 @@ export default function InvestigatorCardStack({
         }}
       >
         {ids.map((id, index) => (
-          <CardInStack key={index} id={id} index={index} />
+          <CardInStack key={`${id}-${index}`} id={id} index={index} />
         ))}
       </div>
     </div>
