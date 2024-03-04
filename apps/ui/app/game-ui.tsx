@@ -4,6 +4,8 @@ import InvestigatorOverview from '@/investigator/investigator-overview'
 import SkillCheckOverlay from '@/skill-check/skill-check-overlay'
 import { LocationMap } from './location/location-map'
 import Artwork from './shared/artwork'
+import { SceneOverview } from './scene'
+import { DoomOverview } from './doom'
 
 export default function GameUI() {
   return (
@@ -12,6 +14,10 @@ export default function GameUI() {
         id="bg-table"
         className="absolute inset-0 w-full h-full object-cover opacity-90"
       />
+      <div className="relative p-4 flex gap-4 justify-center items-center">
+        <DoomOverview />
+        <SceneOverview />
+      </div>
       <div className="flex-grow grid place-items-center">
         <LocationMap />
       </div>

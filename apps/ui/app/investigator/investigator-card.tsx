@@ -44,12 +44,6 @@ export default function InvestigatorCard({
     })
   }
 
-  function handleClick() {
-    if (action) {
-      action.execute()
-    }
-  }
-
   return (
     <div
       ref={ref}
@@ -59,7 +53,7 @@ export default function InvestigatorCard({
           ? 'cursor-pointer outline outline-blue-400 bg-blue-200 border-blue-400'
           : 'bg-stone-300 border-stone-600'
       )}
-      onClick={handleClick}
+      onClick={action?.execute}
     >
       <Artwork
         id="bg-card"

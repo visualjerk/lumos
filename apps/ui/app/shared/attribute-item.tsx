@@ -10,9 +10,9 @@ export type AttributeItemProps = {
 
 export function AttributeItem({ attribute, value }: AttributeItemProps) {
   return (
-    <div className="flex items-center gap-1">
+    <span className="inline-flex items-center gap-1 not-italic">
       <GameIcon kind={attribute} />
       <span className=" font-semibold">{value}</span>
-    </div>
+    </span>
   )
 }
