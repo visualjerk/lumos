@@ -2,7 +2,7 @@ import { getMatchingAction } from '@lumos/game'
 import ActionButton from '@/shared/action-button'
 import { useGame } from '@/game'
 import Artwork from '@/shared/artwork'
-import { EncounterCard } from '.'
+import { EncounterCard } from './encounter-card'
 
 export function EncounterOverlay() {
   const { phase, actions } = useGame()

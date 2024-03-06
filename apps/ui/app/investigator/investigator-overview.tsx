@@ -5,10 +5,10 @@ import InvestigatorDeck from './investigator-deck'
 import InvestigatorDiscardPile from './investigator-discard-pile'
 import InvestigatorCardsInHand from './investigator-cards-in-hand'
 import { useGame } from '@/game'
-import ActionButton from '@/shared/action-button'
+import { PhaseOverview } from '@/phase'
 
 export default function InvestigatorOverview() {
-  const { phase, parentPhase, investigator, context, actions } = useGame()
+  const { investigator, context } = useGame()
 
   const skills = Object.entries(investigator.baseSkills).map(
     ([skill, value]) => ({
@@ -61,16 +61,8 @@ export default function InvestigatorOverview() {
         <InvestigatorDiscardPile />
       </div>
       <InvestigatorCardsInHand />
-      <div className="p-4 ml-auto w-80">
-        <div className="text-2xl">Phase: {phase.type}</div>
-        <div>Parent Phase: {parentPhase.type}</div>
-        <div className="flex gap-2 flex-wrap">
-          {actions.map((action, index) => (
-            <ActionButton key={index} onClick={() => action.execute()}>
-              {action.type}
-            </ActionButton>
-          ))}
-        </div>
+      <div className="ml-auto">
+        <PhaseOverview />
       </div>
     </div>
   )

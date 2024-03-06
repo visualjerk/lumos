@@ -2,7 +2,7 @@ import { Context } from '../context'
 import { createEffectPhase } from '../effect'
 import { GamePhaseCoordinator } from '../game'
 import { createInvestigatorPhase } from '../investigator'
-import { PhaseAction, PhaseBase } from '../phase'
+import { PhaseBase } from '../phase'
 
 export function createEncounterPhase(context: Context) {
   return new EncounterPhase(context)
