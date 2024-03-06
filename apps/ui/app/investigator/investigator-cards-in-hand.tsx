@@ -1,5 +1,6 @@
+'use client'
+
 import { InvestigatorCardId, PublicPhaseAction } from '@lumos/game'
-import { useCss } from 'react-use'
 import InvestigatorCard from './investigator-card'
 import { useGame } from '@/game'
 
@@ -44,17 +45,15 @@ function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
   const rotation = diff * 3
   const translateY = Math.abs(diff * 0.3)
 
-  const className = useCss({
-    transform: `rotate(${rotation}deg) translateY(${translateY}rem)`,
-    '&:hover': {
-      transition: 'transform 0.3s',
-      transform: `scale(1.3) translateY(-3rem)`,
-      zIndex: 100,
-    },
-  })
-
   return (
-    <div className={className}>
+    <div
+      className="translate-y-[--card-translate-y] rotate-[--card-rotate] duration-300 hover:transition-transform hover:scale-125 hover:-translate-y-12 hover:rotate-0 hover:z-10"
+      style={{
+        // @ts-expect-error - css variables not typed in react
+        '--card-rotate': `${rotation}deg`,
+        '--card-translate-y': `${translateY}rem`,
+      }}
+    >
       <InvestigatorCard id={id} index={index} actions={actions} />
     </div>
   )

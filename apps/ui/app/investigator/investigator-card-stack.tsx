@@ -1,5 +1,4 @@
 import { InvestigatorCardId } from '@lumos/game'
-import { useCss } from 'react-use'
 import InvestigatorCard from './investigator-card'
 
 export type InvestigatorCardStackProps = {
@@ -31,17 +30,11 @@ export type CardInStackProps = {
 }
 
 function CardInStack({ id, index }: CardInStackProps) {
-  const className = useCss({
-    transform: `scale(0.8) rotate(-3deg)`,
-    '&:hover': {
-      transition: 'transform 0.3s',
-      transform: `scale(1.3) translateY(-3rem)`,
-      zIndex: 100,
-    },
-  })
-
   return (
-    <div key={index} className={className}>
+    <div
+      key={index}
+      className="scale-75 -rotate-3 duration-300 hover:transition-transform hover:scale-125 hover:rotate-0 hover:-translate-y-12 hover:z-10"
+    >
       <InvestigatorCard key={index} id={id} index={index} actions={[]} />
     </div>
   )
