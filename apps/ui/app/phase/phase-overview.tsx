@@ -22,28 +22,37 @@ export function PhaseOverview() {
   ])
 
   return (
-    <div className="relative bg-stone-600 border-2 rounded border-stone-800 text-stone-100 shadow-lg">
+    <div className="relative bg-stone-600 border-2 rounded border-stone-800 text-stone-100 shadow-lg w-96 p-4 grid gap-2">
       <Artwork
         id="bg-stone"
         className="absolute inset-0 w-full h-full object-cover opacity-40"
       />
-      <div className="relative grid grid-cols-2 gap-2 w-80 h-40 p-4">
-        <h2 className="grid content-center">
-          <span className="text-xs">Current Phase</span>
-          <span className="text-xl">{phase.type}</span>
-          <span className="text-xs">({parentPhase.type})</span>
-        </h2>
+      <div className="relative grid grid-cols-2 gap-2 h-40">
+        <div className="flex flex-col gap-2 justify-between">
+          <h2 className="grid content-start">
+            <span className="text-xs">Current Phase</span>
+            <span className="capitalize">{phase.type}</span>
+            <span className="capitalize text-xs">({parentPhase.type})</span>
+          </h2>
+          {parentPhase.type === 'investigator' && (
+            <p>{3 - parentPhase.actionsMade} actions left</p>
+          )}
+        </div>
         <ActionButton onClick={action?.execute} disabled={!action}>
           Next
         </ActionButton>
       </div>
-      <div className="relative flex gap-2 flex-wrap p-4 w-80">
+      {/* <div className="relative flex gap-2 flex-wrap">
         {actions.map((action, index) => (
-          <ActionButton onClick={action.execute} key={index}>
+          <button
+            onClick={action.execute}
+            key={index}
+            className="text-xs font-semibold"
+          >
             {action.type}
-          </ActionButton>
+          </button>
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }
