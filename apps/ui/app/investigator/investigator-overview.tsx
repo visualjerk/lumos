@@ -1,4 +1,4 @@
-import { Skill } from '@lumos/game'
+import { EnemyCard, Skill, getEncounterCard } from '@lumos/game'
 import Artwork from '@/shared/artwork'
 import { AttributeItem } from '@/shared/attribute-item'
 import InvestigatorDeck from './investigator-deck'
@@ -6,6 +6,7 @@ import InvestigatorDiscardPile from './investigator-discard-pile'
 import InvestigatorCardsInHand from './investigator-cards-in-hand'
 import { useGame } from '@/game'
 import { PhaseOverview } from '@/phase'
+import { EnemyToken } from '@/enemy'
 
 export default function InvestigatorOverview() {
   const { investigator, context } = useGame()
@@ -19,6 +20,14 @@ export default function InvestigatorOverview() {
   const state = context.getInvestigatorState(investigator.id)
   const { health, damage, clues } = state
 
+  const enemyIndexes = context.getEngagedEnemies(investigator.id)
+  const enemies = enemyIndexes.map((index) => {
+    const enemyState = context.getEnemyState(index)
+    const enemyCard = getEncounterCard(enemyState.cardId)
+
+    return enemyCard as EnemyCard
+  })
+
   return (
     <div className="p-4 pl-12 flex items-center gap-6">
       <div className="relative flex items-center p-4 pl-44 gap-4 bg-stone-500 border-2 rounded border-stone-700 shadow-lg">
@@ -26,6 +35,11 @@ export default function InvestigatorOverview() {
           id="bg-stone"
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
+        <div className="absolute -top-8 right-4 flex gap-2">
+          {enemies.map((enemy) => (
+            <EnemyToken key={enemy.id} card={enemy} />
+          ))}
+        </div>
         <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10 overflow-hidden">
           <Artwork
             id="bg-stone"
