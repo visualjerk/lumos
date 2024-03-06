@@ -48,7 +48,7 @@ export default function InvestigatorCard({
     <div
       ref={ref}
       className={cn(
-        'relative rounded border-2 shadow w-40 h-52 text-stone-800',
+        'relative rounded border-2 shadow w-40 h-60 text-stone-800',
         action
           ? 'cursor-pointer outline outline-blue-400 bg-blue-200 border-blue-400'
           : 'bg-stone-300 border-stone-600'
@@ -80,7 +80,7 @@ export default function InvestigatorCard({
             <AttributeItem key={skill} attribute={skill} value={value} />
           ))}
         </div>
-        <div className="p-2">
+        <div className="p-2 pt-0">
           <div className="text-xs">{card.description}</div>
         </div>
       </div>

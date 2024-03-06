@@ -12,7 +12,7 @@ export default function InvestigatorCardsInHand() {
 
   return (
     <div
-      className="grid w-96 h-60"
+      className="grid w-96 h-72"
       style={{
         gridTemplateColumns: 'repeat(auto-fit,  minmax(10px, max-content))',
       }}
@@ -47,7 +47,7 @@ function CardInHand({ id, index, totalCards, actions }: CardInHandProps) {
 
   return (
     <div
-      className="translate-y-[--card-translate-y] rotate-[--card-rotate] duration-300 hover:transition-transform hover:scale-125 hover:-translate-y-12 hover:rotate-0 hover:z-10"
+      className="translate-y-[--card-translate-y] rotate-[--card-rotate] hover:duration-300 hover:transition-transform hover:scale-125 hover:-translate-y-12 hover:rotate-0 hover:z-10"
       style={{
         // @ts-expect-error - css variables not typed in react
         '--card-rotate': `${rotation}deg`,

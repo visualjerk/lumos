@@ -193,13 +193,13 @@ export class InvestigatorPhase implements PhaseBase {
                 target: 'self',
               })
             )
-            .waitFor(
-              createEffectPhase(this.context, this.investigatorId, card.effect)
-            )
             .apply(() => {
               this.investigatorState.discard(index)
               this.actionsMade++
-            }),
+            })
+            .waitFor(
+              createEffectPhase(this.context, this.investigatorId, card.effect)
+            ),
       })
     })
 

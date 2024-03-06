@@ -31,11 +31,17 @@ export const BearStrength: InvestigatorCard = {
 
 export const Serenity: InvestigatorCard = {
   id: 'ic-serenity',
-  type: 'permanent',
+  type: 'action',
   name: 'Serenity',
-  description: '+1 to intelligence checks.',
+  description:
+    'Investigate at your current location. If you succeed, discover 2 clues.',
   skillModifier: { intelligence: 1 },
-  permanentSkillModifier: { intelligence: 1 },
+  effect: {
+    type: 'investigate',
+    clueAmount: 2,
+    investigatorTarget: 'self',
+    locationTarget: 'current',
+  },
 }
 
 export const InvestigatorCardCollection = new Map<
