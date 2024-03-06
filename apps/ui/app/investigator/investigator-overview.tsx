@@ -21,12 +21,6 @@ export default function InvestigatorOverview() {
   const { health, damage, clues } = state
 
   const enemyIndexes = context.getEngagedEnemies(investigator.id)
-  const enemies = enemyIndexes.map((index) => {
-    const enemyState = context.getEnemyState(index)
-    const enemyCard = getEncounterCard(enemyState.cardId)
-
-    return enemyCard as EnemyCard
-  })
 
   return (
     <div className="p-4 pl-12 flex items-center gap-6">
@@ -36,8 +30,8 @@ export default function InvestigatorOverview() {
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
         <div className="absolute -top-8 right-4 flex gap-2">
-          {enemies.map((enemy) => (
-            <EnemyToken key={enemy.id} card={enemy} />
+          {enemyIndexes.map((index) => (
+            <EnemyToken key={index} enemyIndex={index} />
           ))}
         </div>
         <div className="w-52 h-52 p-2 bg-stone-500 border-2 border-stone-700 shadow-lg rounded-full absolute -left-10 overflow-hidden">

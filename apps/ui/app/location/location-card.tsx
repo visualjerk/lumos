@@ -19,12 +19,6 @@ export function LocationCard({ id }: { id: LocationId }) {
 
   const investigators = context.getLocationInvestigators(id)
   const enemyIndexes = context.getLocationEnemies(id)
-  const enemies = enemyIndexes.map((index) => {
-    const enemyState = context.getEnemyState(index)
-    const enemyCard = getEncounterCard(enemyState.cardId)
-
-    return enemyCard as EnemyCard
-  })
 
   const action = getMatchingAction(actions, [
     {
@@ -65,8 +59,8 @@ export function LocationCard({ id }: { id: LocationId }) {
       </div>
       <div className="absolute -bottom-4 -left-4 -right-4 flex gap-4 justify-between">
         <div className="flex gap-2">
-          {enemies.map((enemy) => (
-            <EnemyToken key={enemy.id} card={enemy} />
+          {enemyIndexes.map((index) => (
+            <EnemyToken key={index} enemyIndex={index} />
           ))}
         </div>
         <div className="flex gap-2">
