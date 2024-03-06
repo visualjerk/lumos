@@ -6,6 +6,7 @@ import { LocationMap } from './location/location-map'
 import Artwork from './shared/artwork'
 import { SceneOverview } from './scene'
 import { DoomOverview } from './doom'
+import { EncounterOverlay } from './encounter'
 
 export default function GameUI() {
   return (
@@ -25,6 +26,7 @@ export default function GameUI() {
         <InvestigatorOverview />
       </div>
       <SkillCheckOverlay />
+      <EncounterOverlay />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import ActionButton from '@/shared/action-button'
 import { cn } from '@/utils'
 import InvestigatorCardStack from '@/investigator/investigator-card-stack'
 import { useGame } from '@/game'
+import Artwork from '@/shared/artwork'
 
 export default function SkillCheckOverlay() {
   const { phase, actions } = useGame()
@@ -35,9 +36,9 @@ export default function SkillCheckOverlay() {
   }
 
   const stateClasses = {
-    check: 'bg-stone-400 border-stone-500',
-    success: 'bg-green-50 border-green-400',
-    failure: 'bg-red-50 border-red-400',
+    check: 'bg-stone-500 border-stone-700',
+    success: 'bg-green-500 border-green-700',
+    failure: 'bg-red-500 border-red-700',
   }
 
   return (
@@ -46,25 +47,37 @@ export default function SkillCheckOverlay() {
         <InvestigatorCardStack ids={addedCards} />
         <div
           className={cn(
-            'grid gap-3 p-4 rounded-sm border-2 shadow-xl',
+            'relative rounded border-2 shadow-xl',
             stateClasses[getState()]
           )}
         >
-          <h2 className="text-2xl">
-            <GameIcon kind={skill} /> {skill} Check
-          </h2>
-          <div className="text-4xl text-center">
-            {totalSkill} vs {difficulty}
+          <Artwork
+            id="bg-stone"
+            className="absolute inset-0 w-full h-full object-cover opacity-40 rounded"
+          />
+          <div className="relative grid gap-3 p-4 text-stone-100">
+            <h2 className="text-2xl">
+              <GameIcon kind={skill} /> {skill} Check
+            </h2>
+            <div className="text-4xl text-center">
+              {totalSkill} vs {difficulty}
+            </div>
+            {action && (
+              <ActionButton onClick={() => action.execute()}>
+                {action.type}
+              </ActionButton>
+            )}
           </div>
-          {action && (
-            <ActionButton onClick={() => action.execute()}>
-              {action.type}
-            </ActionButton>
-          )}
         </div>
-        <div className="w-40 p-4 rounded-sm bg-stone-800 text-stone-100 text-center">
-          <h3 className="text-xl">Fate</h3>
-          <div className="text-4xl">{fate}</div>
+        <div className="relative rounded bg-stone-700 text-stone-100 border-2 border-stone-900 shadow-xl">
+          <Artwork
+            id="bg-stone"
+            className="absolute inset-0 w-full h-full object-cover opacity-40 rounded"
+          />
+          <div className="w-40 p-4 relative text-stone-100 text-center">
+            <h3 className="text-xl">Fate</h3>
+            <div className="text-4xl">{fate}</div>
+          </div>
         </div>
       </div>
     </div>
