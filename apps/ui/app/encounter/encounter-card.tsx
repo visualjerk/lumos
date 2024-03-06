@@ -1,11 +1,16 @@
 import { EncounterCard } from '@lumos/game'
 import Artwork from '@/shared/artwork'
+import { EnemyCard } from '@/enemy'
 
 export type EncounterCardProps = {
   card: EncounterCard
 }
 
 export function EncounterCard({ card }: EncounterCardProps) {
+  if (card.type === 'enemy') {
+    return <EnemyCard card={card} />
+  }
+
   return (
     <div className="relative rounded border-2 shadow w-40 h-52 text-stone-800 bg-stone-300 border-stone-600">
       <Artwork

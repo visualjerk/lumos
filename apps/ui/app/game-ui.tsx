@@ -7,6 +7,7 @@ import Artwork from './shared/artwork'
 import { SceneOverview } from './scene'
 import { DoomOverview } from './doom'
 import { EncounterOverlay } from './encounter'
+import { EnemyAttackOverlay } from './enemy'
 
 export default function GameUI() {
   return (
@@ -27,6 +28,7 @@ export default function GameUI() {
       </div>
       <SkillCheckOverlay />
       <EncounterOverlay />
+      <EnemyAttackOverlay />
     </div>
   )
 }

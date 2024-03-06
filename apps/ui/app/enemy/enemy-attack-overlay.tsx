@@ -2,18 +2,18 @@ import { getMatchingAction } from '@lumos/game'
 import ActionButton from '@/shared/action-button'
 import { useGame } from '@/game'
 import Artwork from '@/shared/artwork'
-import { EncounterCard } from './encounter-card'
+import { EnemyCard } from './enemy-card'
 
-export function EncounterOverlay() {
+export function EnemyAttackOverlay() {
   const { phase, actions } = useGame()
 
-  if (phase.type !== 'drawEncounterEffect') {
+  if (phase.type !== 'enemyAttackEffect') {
     return
   }
 
-  const { encounterCard } = phase
+  const { enemyCard } = phase
 
-  if (!encounterCard) {
+  if (!enemyCard) {
     return
   }
 
@@ -31,9 +31,9 @@ export function EncounterOverlay() {
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
         <div className="relative grid gap-3 p-4 text-stone-100">
-          <h2 className="text-2xl text-center">Encounter</h2>
+          <h2 className="text-2xl text-center">You Are Attacked</h2>
           <div className="flex justify-center">
-            <EncounterCard card={encounterCard} />
+            <EnemyCard card={enemyCard} />
           </div>
           {action && (
             <ActionButton onClick={action?.execute}>{action.type}</ActionButton>
