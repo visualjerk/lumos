@@ -185,6 +185,10 @@ export class Context {
     return skills
   }
 
+  getEnemyIndexes(): number[] {
+    return this.enemyStates.map((_, index) => index)
+  }
+
   getEnemyState(enemyIndex: number): EnemyState {
     return this.enemyStates[enemyIndex]
   }

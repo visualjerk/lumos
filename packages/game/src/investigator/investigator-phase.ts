@@ -185,21 +185,26 @@ export class InvestigatorPhase implements PhaseBase {
       actions.push({
         type: 'play',
         cardIndex: index,
-        execute: (coordinator) =>
-          coordinator
-            .waitFor(
+        execute: (coordinator) => {
+          if (card.effect.type !== 'attackEnemy') {
+            // TODO: Fix typing
+            coordinator = coordinator.waitFor(
               createEffectPhase(this.context, this.investigatorId, {
                 type: 'enemyOpportunityAttack',
                 target: 'self',
               })
-            )
+            ) as any
+          }
+
+          coordinator
             .apply(() => {
               this.investigatorState.discard(index)
               this.actionsMade++
             })
             .waitFor(
               createEffectPhase(this.context, this.investigatorId, card.effect)
-            ),
+            )
+        },
       })
     })
 
@@ -222,6 +227,8 @@ export class InvestigatorPhase implements PhaseBase {
             .waitFor(
               createEffectPhase(this.context, this.investigatorId, {
                 type: 'attackEnemy',
+                skill: 'strength',
+                amount: 1,
                 target: {
                   enemyIndex,
                 },

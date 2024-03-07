@@ -1,9 +1,9 @@
 import { Context } from '../context'
 import { GamePhaseCoordinator } from '../game'
 import { InvestigatorId } from '../investigator'
-import { PhaseBase } from '../phase'
+import { PhaseAction, PhaseBase } from '../phase'
 
-export type EnemyTarget = EnemyTargetResult
+export type EnemyTarget = EnemyTargetResult | 'any'
 
 export type EnemyTargetResult = {
   enemyIndex: number
@@ -41,6 +41,22 @@ export class EnemyTargetPhase implements PhaseBase<EnemyTargetResult> {
   }
 
   get actions() {
-    return []
+    const actions: PhaseAction<EnemyTargetResult>[] = []
+
+    if (this.enemyTarget === 'any') {
+      const enemyIndexes = this.context.getEnemyIndexes()
+
+      enemyIndexes.forEach((enemyIndex) => {
+        actions.push({
+          type: 'choose',
+          enemyIndex,
+          execute(coordinator) {
+            coordinator.applyToParent(() => ({ enemyIndex }))
+          },
+        })
+      })
+    }
+
+    return actions
   }
 }

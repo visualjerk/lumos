@@ -15,10 +15,17 @@ export const ForceOfWill: InvestigatorCard = {
 
 export const LightningStrike: InvestigatorCard = {
   id: 'ic-lightning-strike',
-  type: 'skill',
+  type: 'action',
   name: 'Lightning Strike',
-  description: '',
+  description:
+    'Attack an enemy at any location using your intelligence. Deal 2 damage.',
   skillModifier: { intelligence: 2, agility: 1 },
+  effect: {
+    type: 'attackEnemy',
+    amount: 2,
+    skill: 'intelligence',
+    target: 'any',
+  },
 }
 
 export const BearStrength: InvestigatorCard = {

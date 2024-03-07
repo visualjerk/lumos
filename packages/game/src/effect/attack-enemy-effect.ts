@@ -4,10 +4,12 @@ import { GamePhaseCoordinator } from '../game'
 import { EnemyTarget, createEnemyTargetPhase } from '../target'
 import { CreateEffect } from './effect'
 import { Context } from '../context'
-import { InvestigatorId } from '../investigator'
+import { InvestigatorId, Skill } from '../investigator'
 
 export type AttackEnemyEffect = CreateEffect<'attackEnemy'> & {
   target: EnemyTarget
+  skill: Skill
+  amount: number
 }
 
 export function createAttackEnemyEffectPhase(
@@ -43,11 +45,11 @@ export class AttackEnemyEffectPhase implements PhaseBase {
 
         const skillCheck: SkillCheck = {
           investigatorId,
-          skill: 'strength',
+          skill: this.effect.skill,
           difficulty: enemyState.strength,
           onSuccess: {
             type: 'damageEnemy',
-            amount: 1,
+            amount: this.effect.amount,
             target: { enemyIndex },
           },
         }

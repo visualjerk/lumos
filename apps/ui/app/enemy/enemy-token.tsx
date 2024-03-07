@@ -18,6 +18,10 @@ export function EnemyToken({ enemyIndex }: EnemyTokenProps) {
       type: 'attack',
       enemyIndex,
     },
+    {
+      type: 'choose',
+      enemyIndex,
+    },
   ])
 
   return (
