@@ -1,5 +1,5 @@
 import { PhaseBase, PhaseAction } from '../phase'
-import { createEffectPhase } from '../effect'
+import { canUseEffect, createEffectPhase } from '../effect'
 import { Context } from '../context'
 import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
@@ -179,6 +179,10 @@ export class InvestigatorPhase implements PhaseBase {
       const card = this.context.getInvestigatorCard(cardId)
 
       if (card.type !== 'action') {
+        return
+      }
+
+      if (!canUseEffect(this.context, this.investigatorId, card.effect)) {
         return
       }
 

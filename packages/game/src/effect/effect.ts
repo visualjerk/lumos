@@ -48,6 +48,7 @@ import {
 import {
   AttackEnemyEffect,
   AttackEnemyEffectPhase,
+  canUseAttackEnemyEffect,
   createAttackEnemyEffectPhase,
 } from './attack-enemy-effect'
 
@@ -109,5 +110,18 @@ export function createEffectPhase(
       return createDamageEnemyEffectPhase(context, investigatorId, effect)
     case 'attackEnemy':
       return createAttackEnemyEffectPhase(context, investigatorId, effect)
+  }
+}
+
+export function canUseEffect(
+  context: Context,
+  investigatorId: InvestigatorId,
+  effect: Effect
+): boolean {
+  switch (effect.type) {
+    case 'attackEnemy':
+      return canUseAttackEnemyEffect(context, investigatorId, effect)
+    default:
+      return true
   }
 }
