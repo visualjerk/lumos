@@ -30,10 +30,11 @@ export const LightningStrike: InvestigatorCard = {
 
 export const BearStrength: InvestigatorCard = {
   id: 'ic-bear-strength',
-  type: 'skill',
+  type: 'action',
   name: 'Bear Strength',
-  description: '',
+  description: 'Deal 1 damage to an enemy at any location.',
   skillModifier: { agility: 1, strength: 2 },
+  effect: { type: 'damageEnemy', amount: 1, target: 'any' },
 }
 
 export const Serenity: InvestigatorCard = {

@@ -49,3 +49,17 @@ export class DamageEnemyEffectPhase implements PhaseBase {
       .toParent()
   }
 }
+
+export function canUseDamageEnemyEffect(
+  context: Context,
+  investigatorId: InvestigatorId,
+  effect: DamageEnemyEffect
+) {
+  const enemyIndexes = context.getEnemyIndexes()
+
+  if (enemyIndexes.length === 0) {
+    return false
+  }
+
+  return true
+}

@@ -43,6 +43,7 @@ import {
 import {
   DamageEnemyEffect,
   DamageEnemyEffectPhase,
+  canUseDamageEnemyEffect,
   createDamageEnemyEffectPhase,
 } from './damage-enemy-effect'
 import {
@@ -121,6 +122,8 @@ export function canUseEffect(
   switch (effect.type) {
     case 'attackEnemy':
       return canUseAttackEnemyEffect(context, investigatorId, effect)
+    case 'damageEnemy':
+      return canUseDamageEnemyEffect(context, investigatorId, effect)
     default:
       return true
   }
