@@ -11,16 +11,20 @@
   "dependencies": {
     "@lumos/game": "workspace:*",
     "@lumos/scenarios": "workspace:*",
+    "@radix-ui/react-tooltip": "1.0.7",
     "@tsparticles/engine": "3.3.0",
     "@tsparticles/react": "3.0.0",
     "@tsparticles/slim": "3.3.0",
+    "class-variance-authority": "0.7.0",
     "clsx": "2.1.0",
     "framer-motion": "11.0.8",
+    "lucide-react": "0.350.0",
     "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-use": "17.5.0",
-    "tailwind-merge": "2.2.1"
+    "tailwind-merge": "2.2.1",
+    "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
     "@lumos/tsconfig": "workspace:*",

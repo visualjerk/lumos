@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Aleo } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/utils'
+import { TooltipProvider } from '@/shared/ui/tooltip'
 
 const aleo = Aleo({ subsets: ['latin'] })
 
@@ -16,9 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn(aleo.className, 'bg-stone-200 text-stone-900')}>
-        {children}
-      </body>
+      <TooltipProvider>
+        <body className={cn(aleo.className, 'bg-stone-200 text-stone-900')}>
+          {children}
+        </body>
+      </TooltipProvider>
     </html>
   )
 }
