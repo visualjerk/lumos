@@ -12,7 +12,7 @@ export function ActionTooltip({ action, children }: ActionTooltipProps) {
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       {action && (
         <TooltipContent
-          onClick={action?.execute}
+          onClickCapture={action?.execute}
           className="cursor-pointer bg-blue-800 border-blue-900"
         >
           <button>{action.type}</button>

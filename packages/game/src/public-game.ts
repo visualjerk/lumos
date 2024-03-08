@@ -50,6 +50,7 @@ export type PublicGameObserver = (game: PublicGame) => void
 
 export class PublicGame {
   private observers: PublicGameObserver[] = []
+  private canExecuteActions = true
 
   constructor(private game: Game) {}
 
@@ -83,8 +84,16 @@ export class PublicGame {
           return target[prop].map((action) => ({
             ...action,
             execute: () => {
+              if (!this.canExecuteActions) {
+                return
+              }
+              this.canExecuteActions = false
               action.execute()
               this.notifyObservers()
+              requestAnimationFrame(() => {
+                this.canExecuteActions = true
+                this.notifyObservers()
+              })
             },
           }))
         }

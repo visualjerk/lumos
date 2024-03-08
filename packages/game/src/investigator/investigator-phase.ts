@@ -1,5 +1,9 @@
 import { PhaseBase, PhaseAction } from '../phase'
-import { canUseEffect, createEffectPhase } from '../effect'
+import {
+  canUseEffect,
+  createEffectPhase,
+  provokesOpportunityAttack,
+} from '../effect'
 import { Context } from '../context'
 import { InvestigatorId } from './investigator'
 import { InvestigatorState } from './investigator-state'
@@ -190,7 +194,7 @@ export class InvestigatorPhase implements PhaseBase {
         type: 'play',
         cardIndex: index,
         execute: (coordinator) => {
-          if (card.effect.type !== 'attackEnemy') {
+          if (provokesOpportunityAttack(card.effect)) {
             // TODO: Fix typing
             coordinator = coordinator.waitFor(
               createEffectPhase(this.context, this.investigatorId, {

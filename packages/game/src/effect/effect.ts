@@ -128,3 +128,9 @@ export function canUseEffect(
       return true
   }
 }
+
+const ATTACK_ENEMY_EFFECTS: Effect['type'][] = ['attackEnemy', 'damageEnemy']
+
+export function provokesOpportunityAttack(effect: Effect): boolean {
+  return !ATTACK_ENEMY_EFFECTS.includes(effect.type)
+}
