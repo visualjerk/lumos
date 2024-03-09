@@ -52,11 +52,26 @@ export const Serenity: InvestigatorCard = {
   },
 }
 
+export const Scry: InvestigatorCard = {
+  id: 'ic-scry',
+  type: 'action',
+  name: 'Scry',
+  description:
+    'Investigate at any revealed location. If you succeed, discover 1 clue.',
+  skillModifier: { intelligence: 2 },
+  effect: {
+    type: 'investigate',
+    clueAmount: 1,
+    investigatorTarget: 'self',
+    locationTarget: 'revealed',
+  },
+}
+
 export const InvestigatorCardCollection = new Map<
   InvestigatorCardId,
   InvestigatorCard
 >(
-  [ForceOfWill, LightningStrike, BearStrength, Serenity].map((card) => [
+  [ForceOfWill, LightningStrike, BearStrength, Serenity, Scry].map((card) => [
     card.id,
     card,
   ])

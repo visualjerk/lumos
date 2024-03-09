@@ -114,6 +114,18 @@ export class Context {
     return locationState
   }
 
+  getRevealedLocations(): LocationId[] {
+    const locations: LocationId[] = []
+
+    this.locationStates.forEach((locationState, locationId) => {
+      if (locationState.revealed) {
+        locations.push(locationId)
+      }
+    })
+
+    return locations
+  }
+
   getInvestigatorLocation(investigatorId: InvestigatorId): LocationCard {
     const investigator = this.investigatorStates.get(investigatorId)
 

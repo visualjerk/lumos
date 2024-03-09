@@ -4,7 +4,7 @@ import { LocationId } from '../location'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 
-export type LocationTargetScope = 'current'
+export type LocationTargetScope = 'current' | 'revealed' | 'any'
 
 export type LocationTarget = LocationTargetScope | LocationTargetResult
 
@@ -58,6 +58,31 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
 
   get actions() {
     const actions: PhaseAction<LocationTargetResult>[] = []
+
+    if (this.locationTarget === 'revealed') {
+      const revealedLocations = this.context.getRevealedLocations()
+      revealedLocations.forEach((locationId) => {
+        actions.push({
+          type: 'choose',
+          locationId,
+          execute(coordinator) {
+            coordinator.applyToParent(() => ({ locationId }))
+          },
+        })
+      })
+    }
+
+    if (this.locationTarget === 'any') {
+      this.context.locationStates.forEach((_, locationId) => {
+        actions.push({
+          type: 'choose',
+          locationId,
+          execute(coordinator) {
+            coordinator.applyToParent(() => ({ locationId }))
+          },
+        })
+      })
+    }
 
     return actions
   }

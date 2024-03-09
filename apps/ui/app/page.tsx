@@ -6,6 +6,7 @@ import {
   LightningStrike,
   BearStrength,
   Serenity,
+  Scry,
 } from '@lumos/game'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
 import { useInitialGame } from './game/use-initial-game'
@@ -21,6 +22,9 @@ const investigator: Investigator = {
   },
   health: 8,
   baseDeck: [
+    Scry.id,
+    Scry.id,
+    Scry.id,
     ForceOfWill.id,
     ForceOfWill.id,
     ForceOfWill.id,

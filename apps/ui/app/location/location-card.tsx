@@ -25,6 +25,10 @@ export function LocationCard({ id }: { id: LocationId }) {
       type: 'investigate',
       locationId: id,
     },
+    {
+      type: 'choose',
+      locationId: id,
+    },
   ])
 
   return (
