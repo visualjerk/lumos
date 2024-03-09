@@ -42,8 +42,8 @@ export default function SkillCheckOverlay() {
   }
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center pointer-events-none bg-white bg-opacity-30">
-      <div className="flex items-center gap-3 pointer-events-auto">
+    <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-30">
+      <div className="flex items-center gap-3">
         <InvestigatorCardStack ids={addedCards} />
         <div
           className={cn(

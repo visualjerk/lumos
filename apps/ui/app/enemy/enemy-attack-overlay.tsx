@@ -31,7 +31,7 @@ export function EnemyAttackOverlay() {
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
         <div className="relative grid gap-3 p-4 text-stone-100">
-          <h2 className="text-2xl text-center">You Are Attacked</h2>
+          <h2 className="text-2xl text-center">You Get Attacked</h2>
           <div className="flex justify-center">
             <EnemyCard card={enemyCard} />
           </div>

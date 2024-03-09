@@ -23,7 +23,7 @@ export default function GameUI() {
       <div className="flex-grow grid place-items-center">
         <LocationMap />
       </div>
-      <div className="relative">
+      <div className="relative z-10">
         <InvestigatorOverview />
       </div>
       <SkillCheckOverlay />
