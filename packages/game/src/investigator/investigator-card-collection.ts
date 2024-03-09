@@ -32,9 +32,9 @@ export const BearStrength: InvestigatorCard = {
   id: 'ic-bear-strength',
   type: 'action',
   name: 'Bear Strength',
-  description: 'Deal 1 damage to an enemy at any location.',
+  description: 'Deal 2 damage to an enemy at your current location.',
   skillModifier: { agility: 1, strength: 2 },
-  effect: { type: 'damageEnemy', amount: 1, target: 'any' },
+  effect: { type: 'damageEnemy', amount: 2, target: 'currentLocation' },
 }
 
 export const Serenity: InvestigatorCard = {

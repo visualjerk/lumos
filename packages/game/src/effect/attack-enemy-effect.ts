@@ -1,7 +1,11 @@
 import { PhaseBase, PhaseResult } from '../phase'
 import { SkillCheck, createSkillCheckPhase } from '../skill-check'
 import { GamePhaseCoordinator } from '../game'
-import { EnemyTarget, createEnemyTargetPhase } from '../target'
+import {
+  EnemyTarget,
+  createEnemyTargetPhase,
+  hasAnyEnemyTargets,
+} from '../target'
 import { CreateEffect } from './effect'
 import { Context } from '../context'
 import { InvestigatorId, Skill } from '../investigator'
@@ -65,11 +69,5 @@ export function canUseAttackEnemyEffect(
   investigatorId: InvestigatorId,
   effect: AttackEnemyEffect
 ) {
-  const enemyIndexes = context.getEnemyIndexes()
-
-  if (enemyIndexes.length === 0) {
-    return false
-  }
-
-  return true
+  return hasAnyEnemyTargets(context, investigatorId, effect.target)
 }

@@ -1,4 +1,8 @@
-import { EnemyTarget, createEnemyTargetPhase } from '../target'
+import {
+  EnemyTarget,
+  createEnemyTargetPhase,
+  hasAnyEnemyTargets,
+} from '../target'
 import { CreateEffect } from './effect'
 import { GamePhaseCoordinator } from '../game'
 import { PhaseBase, PhaseResult } from '../phase'
@@ -55,11 +59,5 @@ export function canUseDamageEnemyEffect(
   investigatorId: InvestigatorId,
   effect: DamageEnemyEffect
 ) {
-  const enemyIndexes = context.getEnemyIndexes()
-
-  if (enemyIndexes.length === 0) {
-    return false
-  }
-
-  return true
+  return hasAnyEnemyTargets(context, investigatorId, effect.target)
 }

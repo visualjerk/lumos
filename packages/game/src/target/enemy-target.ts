@@ -3,7 +3,7 @@ import { GamePhaseCoordinator } from '../game'
 import { InvestigatorId } from '../investigator'
 import { PhaseAction, PhaseBase } from '../phase'
 
-export type EnemyTarget = EnemyTargetResult | 'any'
+export type EnemyTarget = EnemyTargetResult | 'any' | 'currentLocation'
 
 export type EnemyTargetResult = {
   enemyIndex: number
@@ -43,6 +43,23 @@ export class EnemyTargetPhase implements PhaseBase<EnemyTargetResult> {
   get actions() {
     const actions: PhaseAction<EnemyTargetResult>[] = []
 
+    if (this.enemyTarget === 'currentLocation') {
+      const currentLocation = this.context.getInvestigatorLocation(
+        this.investigatorId
+      )
+      const enemyIndexes = this.context.getLocationEnemies(currentLocation.id)
+
+      enemyIndexes.forEach((enemyIndex) => {
+        actions.push({
+          type: 'choose',
+          enemyIndex,
+          execute(coordinator) {
+            coordinator.applyToParent(() => ({ enemyIndex }))
+          },
+        })
+      })
+    }
+
     if (this.enemyTarget === 'any') {
       const enemyIndexes = this.context.getEnemyIndexes()
 
@@ -58,5 +75,24 @@ export class EnemyTargetPhase implements PhaseBase<EnemyTargetResult> {
     }
 
     return actions
+  }
+}
+
+export function hasAnyEnemyTargets(
+  context: Context,
+  investigatorId: InvestigatorId,
+  target: EnemyTarget
+) {
+  if (isEnemyTargetResult(target)) {
+    return true
+  }
+
+  if (target === 'currentLocation') {
+    const location = context.getInvestigatorLocation(investigatorId)
+    return context.getLocationEnemies(location.id).length > 0
+  }
+
+  if (target === 'any') {
+    return context.getEnemyIndexes().length > 0
   }
 }
