@@ -82,11 +82,7 @@ export function hasAnyEnemyTargets(
   context: Context,
   investigatorId: InvestigatorId,
   target: EnemyTarget
-) {
-  if (isEnemyTargetResult(target)) {
-    return true
-  }
-
+): boolean {
   if (target === 'currentLocation') {
     const location = context.getInvestigatorLocation(investigatorId)
     return context.getLocationEnemies(location.id).length > 0
@@ -95,4 +91,6 @@ export function hasAnyEnemyTargets(
   if (target === 'any') {
     return context.getEnemyIndexes().length > 0
   }
+
+  return isEnemyTargetResult(target)
 }

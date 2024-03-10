@@ -58,6 +58,6 @@ export function canUseDamageEnemyEffect(
   context: Context,
   investigatorId: InvestigatorId,
   effect: DamageEnemyEffect
-) {
+): boolean {
   return hasAnyEnemyTargets(context, investigatorId, effect.target)
 }

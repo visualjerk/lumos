@@ -68,6 +68,6 @@ export function canUseAttackEnemyEffect(
   context: Context,
   investigatorId: InvestigatorId,
   effect: AttackEnemyEffect
-) {
+): boolean {
   return hasAnyEnemyTargets(context, investigatorId, effect.target)
 }
