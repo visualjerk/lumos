@@ -1,3 +1,5 @@
+import { randomNumber } from './utils'
+
 export type FateSymbol = 'skull' | 'cultist' | 'autoFail' | 'autoSuccess'
 
 export type Fate = {
@@ -22,6 +24,6 @@ export const PlusOne = createNumberFate(1)
 export type FateWheel = Fate[]
 
 export function spinFateWheel(fateWheel: FateWheel): Fate {
-  const index = Math.floor(Math.random() * fateWheel.length)
+  const index = randomNumber(0, fateWheel.length - 1)
   return fateWheel[index]
 }

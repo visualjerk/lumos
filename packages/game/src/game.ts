@@ -2,15 +2,18 @@ import { Context, createInitialContext } from './context'
 import { Investigator, createInvestigatorPhase } from './investigator'
 import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 import { Scenario } from './scenario'
+import { createSeed, setRngSeed } from './utils'
 
 export function createInitialGame(
   scenario: Scenario,
   investigators: Investigator[],
-  history: GameHistory = []
+  history: GameHistory = [],
+  seed: number = createSeed()
 ) {
+  setRngSeed(seed)
   const context = createInitialContext(scenario, investigators)
   const phase = createInvestigatorPhase(context)
-  return new Game(context, phase, history)
+  return new Game(context, phase, history, seed)
 }
 
 export type GamePhase = {
@@ -32,7 +35,8 @@ export class Game {
   constructor(
     public context: Context,
     phase: Phase,
-    initialHistory: GameHistory
+    initialHistory: GameHistory,
+    public seed: number
   ) {
     this.addPhase(phase)
     this.applyHistory(initialHistory)
@@ -110,7 +114,8 @@ export class Game {
     return createInitialGame(
       this.context.scenario,
       this.context.investigators,
-      newHistory
+      newHistory,
+      this.seed
     )
   }
 }

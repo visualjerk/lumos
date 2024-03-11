@@ -34,7 +34,7 @@ function executeAction(
 
 function createTestGameFromPhase(createPhase: (context: Context) => Phase) {
   const context = createTestContext()
-  return new Game(context, createPhase(context))
+  return new Game(context, createPhase(context), [], 42)
 }
 
 export function createGameTestUtils(createPhase: (context: Context) => Phase) {
