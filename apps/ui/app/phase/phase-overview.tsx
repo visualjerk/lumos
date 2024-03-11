@@ -4,7 +4,7 @@ import Artwork from '@/shared/artwork'
 import { getMatchingAction } from '@lumos/game'
 
 export function PhaseOverview() {
-  const { phase, parentPhase, actions } = useGame()
+  const { phase, parentPhase, actions, undo, canUndo } = useGame()
 
   const action = getMatchingAction(actions, [
     {
@@ -38,21 +38,15 @@ export function PhaseOverview() {
             <p>{3 - parentPhase.actionsMade} actions left</p>
           )}
         </div>
-        <ActionButton onClick={action?.execute} disabled={!action}>
-          Next
-        </ActionButton>
+        <div className="grid gap-2">
+          <ActionButton onClick={action?.execute} disabled={!action}>
+            Next
+          </ActionButton>
+          <ActionButton onClick={undo} disabled={!canUndo}>
+            Undo
+          </ActionButton>
+        </div>
       </div>
-      {/* <div className="relative flex gap-2 flex-wrap">
-        {actions.map((action, index) => (
-          <button
-            onClick={action.execute}
-            key={index}
-            className="text-xs font-semibold"
-          >
-            {action.type}
-          </button>
-        ))}
-      </div> */}
     </div>
   )
 }

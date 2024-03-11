@@ -97,11 +97,21 @@ export class PublicGame {
             },
           }))
         }
+
         return target[prop as keyof GamePhase]
       },
     })
 
     return phaseProxy as PublicPhase
+  }
+
+  undo() {
+    this.game = this.game.undo()
+    this.notifyObservers()
+  }
+
+  get canUndo() {
+    return this.game.canUndo
   }
 
   private notifyObservers() {

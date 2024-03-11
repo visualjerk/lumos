@@ -5,11 +5,12 @@ import { Scenario } from './scenario'
 
 export function createInitialGame(
   scenario: Scenario,
-  investigators: Investigator[]
+  investigators: Investigator[],
+  history: GameHistory = []
 ) {
   const context = createInitialContext(scenario, investigators)
   const phase = createInvestigatorPhase(context)
-  return new Game(context, phase)
+  return new Game(context, phase, history)
 }
 
 export type GamePhase = {
@@ -22,11 +23,19 @@ export type GameAction = Omit<PhaseAction, 'execute'> & {
   execute: () => void
 }
 
+export type GameHistory = number[]
+
 export class Game {
   private phases: GamePhase[] = []
+  private history: GameHistory = []
 
-  constructor(public context: Context, phase: Phase) {
+  constructor(
+    public context: Context,
+    phase: Phase,
+    initialHistory: GameHistory
+  ) {
     this.addPhase(phase)
+    this.applyHistory(initialHistory)
   }
 
   get phase(): GamePhase {
@@ -68,9 +77,15 @@ export class Game {
       get: (target, prop) => {
         if (prop === 'actions') {
           // Convert actions to GameAction objects on-the-fly
-          return target[prop].map((action) =>
-            this.convertToGameAction(action, awaitedPhaseResult)
-          )
+          return target.actions.map((action, index) => ({
+            ...action,
+            execute: () => {
+              this.history.push(index)
+              action.execute(
+                new GamePhaseCoordinator(this, [], awaitedPhaseResult)
+              )
+            },
+          }))
         }
         return target[prop as keyof Phase]
       },
@@ -79,15 +94,24 @@ export class Game {
     return phaseProxy as GamePhase
   }
 
-  private convertToGameAction(
-    action: PhaseAction,
-    awaitedPhaseResult?: PendingPhaseResult
-  ): GameAction {
-    return {
-      ...action,
-      execute: () =>
-        action.execute(new GamePhaseCoordinator(this, [], awaitedPhaseResult)),
-    }
+  undo() {
+    return this.resetToHistory(this.history.slice(0, -1))
+  }
+
+  get canUndo() {
+    return this.history.length > 0
+  }
+
+  private applyHistory(initialHistory: GameHistory) {
+    initialHistory.forEach((index) => this.phase.actions[index].execute())
+  }
+
+  private resetToHistory(newHistory: GameHistory) {
+    return createInitialGame(
+      this.context.scenario,
+      this.context.investigators,
+      newHistory
+    )
   }
 }
 

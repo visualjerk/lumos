@@ -38,17 +38,21 @@ export type ProjectedGame = {
   parentPhase: PublicPhase
   actions: PublicPhaseAction[]
   context: Context
+  undo: () => void
+  canUndo: boolean
   investigator: Investigator
 }
 
 function projectGame(game: PublicGame): ProjectedGame {
-  const { phase, parentPhase, actions, context } = game
+  const { phase, parentPhase, actions, context, canUndo } = game
 
   return {
     phase,
     parentPhase,
     actions,
     context,
+    undo: () => game.undo(),
+    canUndo,
     // TODO: Investigator should be selected by the user
     investigator: context.investigators[0],
   }
