@@ -41,6 +41,7 @@ export default function InvestigatorOverview() {
           />
           <Artwork
             id={investigator.id}
+            key={investigator.id}
             className="relative w-full h-full rounded-full object-cover border-2 border-stone-800 shadow-lg"
           />
         </div>

@@ -40,6 +40,7 @@ export type GetPhaseResult<TPhase extends Phase> = TPhase extends PhaseBase<
 
 export type PhaseActionFilterParams = {
   type: string
+  controllerId?: InvestigatorId
   investigatorId?: InvestigatorId
   locationId?: LocationId
   cardIndex?: number

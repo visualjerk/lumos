@@ -119,7 +119,7 @@ export class CommitSkillCheckPhase implements PhaseBase {
 
     actions.push({
       type: 'endSkillCheck',
-      investigatorId,
+      controllerId: investigatorId,
       execute: (coordinator) => {
         const action = difficulty <= this.totalSkill ? onSuccess : onFailure
 

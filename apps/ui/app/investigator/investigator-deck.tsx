@@ -10,7 +10,6 @@ export default function InvestigatorDeck() {
 
   const drawAction = getMatchingAction(actions, {
     type: 'draw',
-    investigatorId: investigator.id,
   })
 
   return (

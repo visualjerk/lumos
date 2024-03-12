@@ -71,7 +71,7 @@ export class EnemyAttackEffectPhase implements PhaseBase {
 
     actions.push({
       type: 'confirm',
-      investigatorId,
+      controllerId: investigatorId,
       execute: (coordinator) =>
         coordinator
           .waitFor(

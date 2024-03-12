@@ -64,6 +64,7 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
       revealedLocations.forEach((locationId) => {
         actions.push({
           type: 'choose',
+          controllerId: this.investigatorId,
           locationId,
           execute(coordinator) {
             coordinator.applyToParent(() => ({ locationId }))
@@ -76,6 +77,7 @@ export class LocationTargetPhase implements PhaseBase<LocationTargetResult> {
       this.context.locationStates.forEach((_, locationId) => {
         actions.push({
           type: 'choose',
+          controllerId: this.investigatorId,
           locationId,
           execute(coordinator) {
             coordinator.applyToParent(() => ({ locationId }))

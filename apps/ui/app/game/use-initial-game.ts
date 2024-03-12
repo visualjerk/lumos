@@ -6,12 +6,14 @@ import {
   Scenario,
   createInitialPublicGame,
   Context,
+  InvestigatorId,
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 
 export function useInitialGame(
   scenario: Scenario,
-  investigators: Investigator[]
+  investigators: Investigator[],
+  controllerId: InvestigatorId
 ) {
   const game = useRef<PublicGame>()
   if (!game.current) {
@@ -19,16 +21,20 @@ export function useInitialGame(
   }
 
   const [gameProjection, setGameProjection] = useState(
-    projectGame(game.current)
+    projectGame(game.current, controllerId)
   )
 
   useEffect(
     () =>
       game.current!.onChange(() => {
-        setGameProjection(projectGame(game.current!))
+        setGameProjection(projectGame(game.current!, controllerId))
       }),
-    []
+    [controllerId]
   )
+
+  useEffect(() => {
+    setGameProjection(projectGame(game.current!, controllerId))
+  }, [controllerId])
 
   return gameProjection
 }
@@ -43,17 +49,22 @@ export type ProjectedGame = {
   investigator: Investigator
 }
 
-function projectGame(game: PublicGame): ProjectedGame {
+function projectGame(
+  game: PublicGame,
+  controllerId: InvestigatorId
+): ProjectedGame {
   const { phase, parentPhase, actions, context, canUndo } = game
 
   return {
     phase,
     parentPhase,
-    actions,
+    actions: actions.filter(
+      (action) =>
+        action.controllerId == null || action.controllerId === controllerId
+    ),
     context,
     undo: () => game.undo(),
     canUndo,
-    // TODO: Investigator should be selected by the user
-    investigator: context.investigators[0],
+    investigator: context.getInvestigator(controllerId),
   }
 }

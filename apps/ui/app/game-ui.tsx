@@ -11,7 +11,7 @@ import { EnemyAttackOverlay } from './enemy'
 
 export default function GameUI() {
   return (
-    <div className="h-screen flex flex-col bg-stone-400 overflow-hidden">
+    <div className="relative flex flex-col bg-stone-400 overflow-hidden">
       <Artwork
         id="bg-table"
         className="absolute inset-0 w-full h-full object-cover opacity-90"

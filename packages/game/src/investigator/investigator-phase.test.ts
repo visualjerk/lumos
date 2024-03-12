@@ -13,6 +13,7 @@ import {
   MOCK_INVESTIGATOR_ONE,
   mockGetEncounterCard,
   START_LOCATION,
+  MOCK_INVESTIGATOR_TWO,
 } from '../test'
 import { EnemyCard, EnemyState } from '../enemy'
 
@@ -45,10 +46,12 @@ describe('InvestigatorPhase', () => {
 
   it('can end phase', () => {
     t.executeAction({ type: 'end' })
+    t.executeAction({ type: 'end' })
     t.expectPhase('upkeep')
   })
 
   it('investigator draws in upkeep', () => {
+    t.executeAction({ type: 'end' })
     t.executeAction({ type: 'end' })
     expect(investigatorState.cardsInHand.length).toBe(1)
   })
@@ -59,6 +62,15 @@ describe('InvestigatorPhase', () => {
     }
     t.expectPhase('investigator')
     t.expectOnlyActions({ type: 'end' })
+  })
+
+  it('each investigator can only perfom his actions', () => {
+    t.expectNoAction({ type: 'end', controllerId: MOCK_INVESTIGATOR_TWO.id })
+    t.executeAction({ type: 'end' })
+    t.expectPhase('investigator')
+
+    t.executeAction({ type: 'end', controllerId: MOCK_INVESTIGATOR_TWO.id })
+    t.expectPhase('upkeep')
   })
 
   it('can move to location', () => {

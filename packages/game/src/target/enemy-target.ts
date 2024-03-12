@@ -52,6 +52,7 @@ export class EnemyTargetPhase implements PhaseBase<EnemyTargetResult> {
       enemyIndexes.forEach((enemyIndex) => {
         actions.push({
           type: 'choose',
+          controllerId: this.investigatorId,
           enemyIndex,
           execute(coordinator) {
             coordinator.applyToParent(() => ({ enemyIndex }))

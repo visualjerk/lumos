@@ -56,7 +56,7 @@ export class DrawEncounterEffectPhase implements PhaseBase {
     if (encounterCard.type === 'trap') {
       actions.push({
         type: 'confirm',
-        investigatorId,
+        controllerId: investigatorId,
         execute: (coordinator) =>
           coordinator
             .waitFor(
@@ -76,7 +76,7 @@ export class DrawEncounterEffectPhase implements PhaseBase {
     if (encounterCard.type === 'enemy') {
       actions.push({
         type: 'confirm',
-        investigatorId,
+        controllerId: investigatorId,
         execute: (coordinator) =>
           coordinator
             .apply(() => {

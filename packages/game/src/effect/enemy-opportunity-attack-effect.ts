@@ -22,8 +22,6 @@ export class EnemyOpportunityAttackEffectPhase implements PhaseBase {
   type = 'enemyOpportunityAttackEffect' as const
   actions = []
 
-  FOOO = 'BAR'
-
   constructor(
     public context: Context,
     public investigatorId: InvestigatorId,

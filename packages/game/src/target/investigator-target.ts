@@ -66,6 +66,7 @@ export class InvestigatorTargetPhase
       this.context.investigators.forEach((investigator) => {
         actions.push({
           type: 'select',
+          controllerId: this.investigatorId,
           investigatorId: investigator.id,
           execute: (coordinator) => {
             coordinator.applyToParent(() => ({
