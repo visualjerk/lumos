@@ -1,0 +1,20 @@
+{
+  "name": "@lumos/multiplayer",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest",
+    "typecheck": "tsc",
+    "lint": "pnpm eslint ."
+  },
+  "devDependencies": {
+    "@lumos/eslint-config": "workspace:*",
+    "@lumos/game": "workspace:*",
+    "@lumos/tsconfig": "workspace:*",
+    "@types/uuid": "9.0.8"
+  },
+  "dependencies": {
+    "uuid": "9.0.1"
+  }
+}

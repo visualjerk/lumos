@@ -66,6 +66,7 @@ export const SECOND_SCENE_CARD: SceneCard = {
 }
 
 export const MOCK_SCENARIO: Scenario = {
+  id: 'mock-scenario',
   locationCards: [START_LOCATION, SECOND_LOCATION, THIRD_LOCATION],
   startLocation: START_LOCATION.id,
   layout: new Map([

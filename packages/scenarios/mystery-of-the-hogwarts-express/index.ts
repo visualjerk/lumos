@@ -117,6 +117,7 @@ const StormWyvern: SceneCard = {
 }
 
 export const MisteryOfTheHogwartsExpress: Scenario = {
+  id: 'mystery-of-the-hogwarts-express',
   locationCards: [
     Aisle2,
     Compartment24,

@@ -4,7 +4,10 @@ import { DoomCard } from '../doom'
 import { SceneCard } from '../scene'
 import { EncounterCardId } from '../encounter'
 
+export type ScenarioId = string
+
 export type Scenario = {
+  id: ScenarioId
   locationCards: LocationCard[]
   startLocation: LocationId
   layout: Layout

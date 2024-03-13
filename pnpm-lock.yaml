@@ -137,6 +137,25 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
+  packages/multiplayer:
+    dependencies:
+      uuid:
+        specifier: 9.0.1
+        version: 9.0.1
+    devDependencies:
+      '@lumos/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@lumos/game':
+        specifier: workspace:*
+        version: link:../game
+      '@lumos/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/uuid':
+        specifier: 9.0.8
+        version: 9.0.8
+
   packages/scenarios:
     dependencies:
       '@lumos/game':
@@ -1520,6 +1539,10 @@ packages:
 
   /@types/semver@7.5.8:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+    dev: true
+
+  /@types/uuid@9.0.8:
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
     dev: true
 
   /@typescript-eslint/eslint-plugin@7.2.0(@typescript-eslint/parser@7.2.0)(eslint@8.56.0)(typescript@5.3.3):
@@ -4628,6 +4651,11 @@ packages:
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+    dev: false
 
   /vite-node@1.2.2:
     resolution: {integrity: sha512-1as4rDTgVWJO3n1uHmUYqq7nsFgINQ9u+mRcXpjeOMJUmviqNKjcZB7UfRZrlM7MjYXMKpuWp5oGkjaFLnjawg==}
