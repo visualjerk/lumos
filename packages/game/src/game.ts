@@ -256,7 +256,7 @@ export class GamePhaseCoordinator<
 
     this.enqueueOrExecute(() => {
       this.game.popCurrentPhase()
-      this.awaitedPhaseResult?.resolve(undefined as any)
+      this.awaitedPhaseResult?.resolve(undefined)
     })
   }
 

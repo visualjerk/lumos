@@ -28,7 +28,7 @@ export function getMatchingAction(
   )
 }
 
-type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends any
+type ReplacePropInUnion<T, Prop extends keyof T, PropType> = T extends unknown
   ? Omit<T, Prop> & { [K in Prop]: PropType }
   : never
 

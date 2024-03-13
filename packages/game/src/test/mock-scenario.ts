@@ -81,7 +81,7 @@ export const MOCK_SCENARIO: Scenario = {
     Zero,
     Zero,
     PlusOne,
-    { symbol: 'autoFail', modifySkillCheck: (skill) => 0 },
+    { symbol: 'autoFail', modifySkillCheck: () => 0 },
     { symbol: 'cultist', modifySkillCheck: (skill) => skill - 3 },
   ],
   doomCards: [FIRST_DOOM_CARD, SECOND_DOOM_CARD],

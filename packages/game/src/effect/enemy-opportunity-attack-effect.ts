@@ -1,7 +1,7 @@
 import { InvestigatorTarget, createInvestigatorTargetPhase } from '../target'
 import { CreateEffect, createEffectPhase } from './effect'
 import { GamePhaseCoordinator } from '../game'
-import { Phase, PhaseBase, PhaseResult } from '../phase'
+import { PhaseBase, PhaseResult } from '../phase'
 import { Context } from '../context'
 import { InvestigatorId } from '../investigator'
 

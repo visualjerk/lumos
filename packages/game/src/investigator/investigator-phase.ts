@@ -213,12 +213,13 @@ export class InvestigatorPhase implements PhaseBase {
         cardIndex: index,
         execute: (coordinator) => {
           if (provokesOpportunityAttack(card.effect)) {
-            // TODO: Fix typing
             coordinator = coordinator.waitFor(
               createEffectPhase(this.context, this.controllerId, {
                 type: 'enemyOpportunityAttack',
                 target: 'self',
               })
+              // TODO: fix typing
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any
           }
 

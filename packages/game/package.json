@@ -1,13 +1,16 @@
 {
   "name": "@lumos/game",
   "private": true,
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "lint": "pnpm eslint ."
   },
   "devDependencies": {
-    "@lumos/tsconfig": "workspace:*"
+    "@lumos/tsconfig": "workspace:*",
+    "@lumos/eslint-config": "workspace:*"
   },
   "dependencies": {
     "pure-rand": "6.0.4"

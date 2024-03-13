@@ -1,15 +1,18 @@
 {
   "name": "@lumos/scenarios",
   "private": true,
+  "type": "module",
   "main": "index.ts",
   "scripts": {
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "lint": "pnpm eslint ."
   },
   "dependencies": {
     "@lumos/game": "workspace:*"
   },
   "devDependencies": {
-    "@lumos/tsconfig": "workspace:*"
+    "@lumos/tsconfig": "workspace:*",
+    "@lumos/eslint-config": "workspace:*"
   }
 }
