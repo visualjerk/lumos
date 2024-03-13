@@ -3,13 +3,16 @@ import { isAuthenticated } from '@/auth'
 import { createGame } from './actions'
 import ActionButton from '@/shared/action-button'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function NewGameForm() {
   const router = useRouter()
 
-  if (!isAuthenticated()) {
-    router.push('/new-player')
-  }
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/new-player')
+    }
+  }, [router])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
