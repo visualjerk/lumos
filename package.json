@@ -11,6 +11,6 @@
     "lint": "pnpm -r lint"
   },
   "volta": {
-    "node": "v18.18.0"
+    "node": "18.18.0"
   }
 }
