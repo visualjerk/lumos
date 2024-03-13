@@ -7,6 +7,10 @@
   },
   "scripts": {
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  },
+  "volta": {
+    "node": "v18.18.0"
   }
 }
