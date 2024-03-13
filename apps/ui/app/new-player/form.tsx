@@ -1,5 +1,5 @@
 'use client'
-import { isAuthenticated, setPlayerId } from '@/auth'
+import { useAuth } from '@/auth'
 import { createPlayer } from './actions'
 import ActionButton from '@/shared/action-button'
 import { useRouter } from 'next/navigation'
@@ -7,17 +7,18 @@ import { useEffect } from 'react'
 
 export default function NewPlayerForm() {
   const router = useRouter()
+  const { isAuthenticated, setPlayerId } = useAuth()
 
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (isAuthenticated) {
       router.push('/new-game')
     }
-  }, [router])
+  }, [router, isAuthenticated])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (isAuthenticated()) {
+    if (isAuthenticated) {
       return
     }
 

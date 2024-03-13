@@ -1,23 +1,26 @@
 'use client'
-import { isAuthenticated } from '@/auth'
+import { useAuth } from '@/auth'
 import { createGame } from './actions'
 import ActionButton from '@/shared/action-button'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
+import { IsabelBrimble } from '@lumos/game'
 
 export default function NewGameForm() {
   const router = useRouter()
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       router.push('/new-player')
     }
-  }, [router])
+  }, [router, isAuthenticated])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       return
     }
 
@@ -25,8 +28,8 @@ export default function NewGameForm() {
 
     const game = await createGame({
       playerId,
-      scenarioId: 'scenario-id',
-      investigatorId: 'investigator-id',
+      scenarioId: MisteryOfTheHogwartsExpress.id,
+      investigatorId: IsabelBrimble.id,
     })
 
     console.log('created game', game)
