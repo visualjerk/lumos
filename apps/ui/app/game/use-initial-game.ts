@@ -1,12 +1,12 @@
 import {
+  Context,
   Investigator,
+  InvestigatorId,
   PublicGame,
   PublicPhase,
   PublicPhaseAction,
   Scenario,
   createInitialPublicGame,
-  Context,
-  InvestigatorId,
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 

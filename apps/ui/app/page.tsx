@@ -1,12 +1,12 @@
 'use client'
 import GameUI from '@/game-ui'
 import {
-  Investigator,
-  ForceOfWill,
-  LightningStrike,
   BearStrength,
-  Serenity,
+  ForceOfWill,
+  Investigator,
+  LightningStrike,
   Scry,
+  Serenity,
 } from '@lumos/game'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
 import { useInitialGame } from './game/use-initial-game'

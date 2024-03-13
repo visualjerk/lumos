@@ -1,5 +1,5 @@
 import { PublicPhaseAction } from '@lumos/game'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 
 export type ActionTooltipProps = {
   action?: PublicPhaseAction
