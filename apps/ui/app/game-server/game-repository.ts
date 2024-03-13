@@ -1,5 +1,6 @@
 import { Game, GameRepository } from '@lumos/game-server'
 
+// TODO: Use a real database
 const Games = new Map<string, Game>()
 
 export function createGameRepository(): GameRepository {
