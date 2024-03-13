@@ -1,5 +1,5 @@
 {
-  "name": "@lumos/multiplayer",
+  "name": "@lumos/game-server",
   "private": true,
   "type": "module",
   "main": "src/index.ts",

@@ -20,12 +20,18 @@ importers:
       '@lumos/game':
         specifier: workspace:*
         version: link:../../packages/game
+      '@lumos/game-server':
+        specifier: workspace:*
+        version: link:../../packages/game-server
       '@lumos/scenarios':
         specifier: workspace:*
         version: link:../../packages/scenarios
       '@radix-ui/react-select':
         specifier: 2.0.0
         version: 2.0.0(@types/react-dom@18.2.18)(@types/react@18.2.54)(react-dom@18.2.0)(react@18.2.0)
+      '@radix-ui/react-slot':
+        specifier: 1.0.2
+        version: 1.0.2(@types/react@18.2.54)(react@18.2.0)
       '@radix-ui/react-tooltip':
         specifier: 1.0.7
         version: 1.0.7(@types/react-dom@18.2.18)(@types/react@18.2.54)(react-dom@18.2.0)(react@18.2.0)
@@ -137,7 +143,7 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
-  packages/multiplayer:
+  packages/game-server:
     dependencies:
       uuid:
         specifier: 9.0.1
