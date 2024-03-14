@@ -1,13 +1,13 @@
 import { Card } from '@/shared/card'
-import { Page } from '@/shared/page'
+import { BasePage } from '@/shared/base-page'
 import NewPlayerForm from './form'
 
 export default function NewPlayer() {
   return (
-    <Page>
+    <BasePage>
       <Card>
         <NewPlayerForm />
       </Card>
-    </Page>
+    </BasePage>
   )
 }

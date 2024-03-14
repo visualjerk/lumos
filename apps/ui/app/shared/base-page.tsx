@@ -1,9 +1,9 @@
 import { cn } from '@/utils'
 import Artwork from './artwork'
 
-export type PageProps = React.HTMLAttributes<HTMLDivElement>
+export type BasePageProps = React.HTMLAttributes<HTMLDivElement>
 
-export function Page({ children, className, ...props }: PageProps) {
+export function BasePage({ children, className, ...props }: BasePageProps) {
   return (
     <div
       className={cn(
