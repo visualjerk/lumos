@@ -54,11 +54,11 @@ type GameContentProps = {
 }
 
 function GameContent({ game, playerId, onAction }: GameContentProps) {
-  const initialGame = useClientGameFromSavedGame(game, playerId, onAction)
+  const clientGame = useClientGameFromSavedGame(game, playerId, onAction)
 
   return (
     <main>
-      <GameProvider game={initialGame}>
+      <GameProvider game={clientGame}>
         <div className="h-screen">
           <GameUI />
         </div>
