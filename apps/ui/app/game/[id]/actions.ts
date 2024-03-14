@@ -11,7 +11,7 @@ export async function performAction(
   playerId: PlayerId,
   gameId: GameId,
   index: number
-) {
+): Promise<SavedGame> {
   const gameServer = getGameServer()
   return await gameServer.performAction({ playerId, gameId, index })
 }

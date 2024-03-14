@@ -4,10 +4,11 @@ import GameUI from '@/game/game-ui'
 import { GameProvider } from '../use-game'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { getSavedGame } from './actions'
+import { getSavedGame, performAction } from './actions'
 import { SavedGame, PlayerId } from '@lumos/game-server'
 import { useAuth } from '@/auth'
 import { useClientGameFromSavedGame } from '../use-client-game-from-saved-game'
+import { HandleGameAction } from '..'
 
 export default function Game() {
   const { playerId } = useAuth()
@@ -23,12 +24,24 @@ export default function Game() {
     loadGame()
   }, [gameId])
 
+  async function executeAction(index: number) {
+    if (!playerId || !gameId) {
+      return
+    }
+    const newGame = await performAction(playerId, gameId, index)
+    setSavedGame(newGame)
+  }
+
   return (
     <main>
       {!savedGame || !playerId ? (
         <div>Loading game ...</div>
       ) : (
-        <GameContent game={savedGame} playerId={playerId} />
+        <GameContent
+          game={savedGame}
+          playerId={playerId}
+          onAction={executeAction}
+        />
       )}
     </main>
   )
@@ -37,10 +50,11 @@ export default function Game() {
 type GameContentProps = {
   game: SavedGame
   playerId: PlayerId
+  onAction: HandleGameAction
 }
 
-function GameContent({ game, playerId }: GameContentProps) {
-  const initialGame = useClientGameFromSavedGame(game, playerId)
+function GameContent({ game, playerId, onAction }: GameContentProps) {
+  const initialGame = useClientGameFromSavedGame(game, playerId, onAction)
 
   return (
     <main>

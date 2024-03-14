@@ -8,7 +8,56 @@ import {
   Scenario,
   createPublicGame,
 } from '@lumos/game'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
+export type HandleGameAction = (index: number) => Promise<void>
+
+export function useClientGame(
+  publicGame: PublicGame,
+  controllerId: InvestigatorId,
+  onAction: HandleGameAction
+) {
+  return useMemo(
+    () => mapPublicGameToClientGame(publicGame, controllerId, onAction),
+    [publicGame, controllerId]
+  )
+}
+
+export type ClientGame = {
+  phase: PublicPhase
+  parentPhase: PublicPhase
+  actions: PublicPhaseAction[]
+  context: Context
+  undo: () => void
+  canUndo: boolean
+  investigator: Investigator
+}
+
+function mapPublicGameToClientGame(
+  game: PublicGame,
+  controllerId: InvestigatorId,
+  onAction: HandleGameAction
+): ClientGame {
+  const { phase, parentPhase, actions, context, canUndo } = game
+
+  return {
+    phase,
+    parentPhase,
+    actions: actions
+      .map((action, index) => ({
+        ...action,
+        execute: () => onAction(index),
+      }))
+      .filter(
+        (action) =>
+          action.controllerId == null || action.controllerId === controllerId
+      ),
+    context,
+    undo: () => game.undo(),
+    canUndo,
+    investigator: context.getInvestigator(controllerId),
+  }
+}
 
 export function useClientGame_DEPRECATED(
   scenario: Scenario,
@@ -21,63 +70,32 @@ export function useClientGame_DEPRECATED(
   }
 
   const [clientGame, setClientGame] = useState(
-    projectGame(game.current, controllerId)
+    mapPublicGameToClientGame_DEPRECATED(game.current, controllerId)
   )
 
   useEffect(
     () =>
       game.current!.onChange(() => {
-        setClientGame(projectGame(game.current!, controllerId))
+        setClientGame(
+          mapPublicGameToClientGame_DEPRECATED(game.current!, controllerId)
+        )
       }),
     [controllerId]
   )
 
   useEffect(() => {
-    setClientGame(projectGame(game.current!, controllerId))
+    setClientGame(
+      mapPublicGameToClientGame_DEPRECATED(game.current!, controllerId)
+    )
   }, [controllerId])
 
   return clientGame
 }
 
-export function useClientGame(
-  initialGame: PublicGame,
-  controllerId: InvestigatorId
-) {
-  const game = useRef<PublicGame>(initialGame)
-
-  const [clientGame, setClientGame] = useState(
-    projectGame(game.current, controllerId)
-  )
-
-  useEffect(
-    () =>
-      game.current!.onChange(() => {
-        setClientGame(projectGame(game.current!, controllerId))
-      }),
-    [initialGame, controllerId]
-  )
-
-  useEffect(() => {
-    setClientGame(projectGame(game.current!, controllerId))
-  }, [initialGame, controllerId])
-
-  return clientGame
-}
-
-export type ProjectedGame = {
-  phase: PublicPhase
-  parentPhase: PublicPhase
-  actions: PublicPhaseAction[]
-  context: Context
-  undo: () => void
-  canUndo: boolean
-  investigator: Investigator
-}
-
-function projectGame(
+function mapPublicGameToClientGame_DEPRECATED(
   game: PublicGame,
   controllerId: InvestigatorId
-): ProjectedGame {
+): ClientGame {
   const { phase, parentPhase, actions, context, canUndo } = game
 
   return {

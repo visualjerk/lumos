@@ -4,12 +4,13 @@ import {
   createGameFromSavedGame,
   getInvestigatorIdFromSavedGame,
 } from '@lumos/game-server'
-import { useClientGame } from './use-client-game'
+import { HandleGameAction, useClientGame } from './use-client-game'
 import { useMemo } from 'react'
 
 export function useClientGameFromSavedGame(
   savedGame: SavedGame,
-  playerId: PlayerId
+  playerId: PlayerId,
+  onAction: HandleGameAction
 ) {
   const game = useMemo(() => createGameFromSavedGame(savedGame), [savedGame])
   const investigatorId = useMemo(
@@ -17,5 +18,5 @@ export function useClientGameFromSavedGame(
     [savedGame, playerId]
   )
 
-  return useClientGame(game, investigatorId)
+  return useClientGame(game, investigatorId, onAction)
 }
