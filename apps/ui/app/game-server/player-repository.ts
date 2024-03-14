@@ -4,7 +4,8 @@ import { PlayerRepository } from '@lumos/game-server'
 export function createPlayerRepository(): PlayerRepository {
   return {
     async create(player) {
-      kv.set(player.id, player)
+      await kv.set(player.id, player)
+      return player
     },
 
     async findById(id) {

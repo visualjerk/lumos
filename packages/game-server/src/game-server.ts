@@ -15,6 +15,12 @@ export type JoinGameData = {
   investigatorId: InvestigatorId
 }
 
+export type PerformActionData = {
+  playerId: PlayerId
+  gameId: GameId
+  index: number
+}
+
 export class GameServer {
   constructor(
     private gameRepository: GameRepository,
@@ -72,12 +78,27 @@ export class GameServer {
     return this.gameRepository.findById(gameId)
   }
 
-  async performAction(gameId: GameId, index: number): Promise<void> {
-    const game = await this.getGame(gameId)
+  async performAction({
+    playerId,
+    gameId,
+    index,
+  }: PerformActionData): Promise<SavedGame> {
+    // TODO: Check if player is allowed to perform action
+    // TODO: Check if last player state is the same as the current state
+    await this.ensurePlayerExists(playerId)
 
-    await this.gameRepository.update(gameId, {
+    const game = await this.getGame(gameId)
+    this.ensurePlayerIsInGame(playerId, game)
+
+    return this.gameRepository.update(gameId, {
       history: [...game.history, index],
     })
+  }
+
+  private ensurePlayerIsInGame(playerId: PlayerId, game: SavedGame) {
+    if (!game.playerIds.includes(playerId)) {
+      throw new Error('Player not in game')
+    }
   }
 
   private async ensurePlayerExists(playerId: PlayerId): Promise<void> {

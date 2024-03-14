@@ -4,7 +4,8 @@ import { SavedGame, GameRepository } from '@lumos/game-server'
 export function createGameRepository(): GameRepository {
   return {
     async create(game) {
-      kv.set(game.id, game)
+      await kv.set(game.id, game)
+      return game
     },
     async findById(id) {
       return kv.get(id)
@@ -16,7 +17,11 @@ export function createGameRepository(): GameRepository {
         throw new Error(`Game not found: ${id}`)
       }
 
-      kv.set(id, { ...game, ...gameData })
+      const updatedGame = { ...game, ...gameData }
+
+      await kv.set(id, updatedGame)
+
+      return updatedGame
     },
   }
 }

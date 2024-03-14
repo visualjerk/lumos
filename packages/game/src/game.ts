@@ -4,7 +4,7 @@ import { Phase, PhaseResult, GetPhaseResult, PhaseAction } from './phase'
 import { Scenario } from './scenario'
 import { createSeed, setRngSeed } from './utils'
 
-export function createInitialGame(
+export function createGame(
   scenario: Scenario,
   investigators: Investigator[],
   history: GameHistory = [],
@@ -111,7 +111,7 @@ export class Game {
   }
 
   private resetToHistory(newHistory: GameHistory) {
-    return createInitialGame(
+    return createGame(
       this.context.scenario,
       this.context.investigators,
       newHistory,

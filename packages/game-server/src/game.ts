@@ -5,7 +5,7 @@ import {
   InvestigatorId,
   PublicGame,
   ScenarioId,
-  createInitialPublicGame,
+  createPublicGame,
 } from '@lumos/game'
 import { PlayerId } from './player'
 import { ScenarioCollection } from '@lumos/scenarios'
@@ -26,8 +26,8 @@ export type GameUpdateData = Partial<Omit<SavedGame, 'id'>>
 
 export type GameRepository = {
   findById(id: GameId): Promise<SavedGame | null>
-  create(game: SavedGame): Promise<void>
-  update(id: GameId, gameData: GameUpdateData): Promise<void>
+  create(game: SavedGame): Promise<SavedGame>
+  update(id: GameId, gameData: GameUpdateData): Promise<SavedGame>
 }
 
 export function createGameFromSavedGame(savedGame: SavedGame): PublicGame {
@@ -48,7 +48,7 @@ export function createGameFromSavedGame(savedGame: SavedGame): PublicGame {
 
     investigators.push(investigator)
   }
-  return createInitialPublicGame(
+  return createPublicGame(
     scenario,
     investigators,
     savedGame.history,

@@ -6,7 +6,7 @@ import {
   PublicPhase,
   PublicPhaseAction,
   Scenario,
-  createInitialPublicGame,
+  createPublicGame,
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 
@@ -17,7 +17,7 @@ export function useClientGame_DEPRECATED(
 ) {
   const game = useRef<PublicGame>()
   if (!game.current) {
-    game.current = createInitialPublicGame(scenario, investigators)
+    game.current = createPublicGame(scenario, investigators)
   }
 
   const [clientGame, setClientGame] = useState(
