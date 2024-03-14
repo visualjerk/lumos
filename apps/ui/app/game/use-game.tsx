@@ -4,13 +4,12 @@ import { ProjectedGame } from './use-client-game'
 
 const GameContext = createContext<ProjectedGame | null>(null)
 
-export function GameProvider({
-  children,
-  game,
-}: {
+export type GameProviderProps = {
   children: React.ReactNode
   game: ProjectedGame
-}) {
+}
+
+export function GameProvider({ children, game }: GameProviderProps) {
   return <GameContext.Provider value={game}>{children}</GameContext.Provider>
 }
 

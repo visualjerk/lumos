@@ -72,6 +72,14 @@ export class GameServer {
     return this.gameRepository.findById(gameId)
   }
 
+  async performAction(gameId: GameId, index: number): Promise<void> {
+    const game = await this.getGame(gameId)
+
+    await this.gameRepository.update(gameId, {
+      history: [...game.history, index],
+    })
+  }
+
   private async ensurePlayerExists(playerId: PlayerId): Promise<void> {
     const player = await this.playerRepository.findById(playerId)
 
