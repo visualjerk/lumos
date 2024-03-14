@@ -10,7 +10,7 @@ import {
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 
-export function useClientGame(
+export function useClientGame_DEPRECATED(
   scenario: Scenario,
   investigators: Investigator[],
   controllerId: InvestigatorId
@@ -35,6 +35,31 @@ export function useClientGame(
   useEffect(() => {
     setClientGame(projectGame(game.current!, controllerId))
   }, [controllerId])
+
+  return clientGame
+}
+
+export function useClientGame(
+  initialGame: PublicGame,
+  controllerId: InvestigatorId
+) {
+  const game = useRef<PublicGame>(initialGame)
+
+  const [clientGame, setClientGame] = useState(
+    projectGame(game.current, controllerId)
+  )
+
+  useEffect(
+    () =>
+      game.current!.onChange(() => {
+        setClientGame(projectGame(game.current!, controllerId))
+      }),
+    [initialGame, controllerId]
+  )
+
+  useEffect(() => {
+    setClientGame(projectGame(game.current!, controllerId))
+  }, [initialGame, controllerId])
 
   return clientGame
 }

@@ -10,11 +10,12 @@
   },
   "devDependencies": {
     "@lumos/eslint-config": "workspace:*",
-    "@lumos/game": "workspace:*",
     "@lumos/tsconfig": "workspace:*",
     "@types/uuid": "9.0.8"
   },
   "dependencies": {
-    "uuid": "9.0.1"
+    "uuid": "9.0.1",
+    "@lumos/game": "workspace:*",
+    "@lumos/scenarios": "workspace:*"
   }
 }

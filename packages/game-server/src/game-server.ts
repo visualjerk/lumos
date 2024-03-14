@@ -1,4 +1,4 @@
-import { InvestigatorId, ScenarioId } from '@lumos/game'
+import { InvestigatorId, ScenarioId, createSeed } from '@lumos/game'
 import { SavedGame, GameId, GameRepository } from './game'
 import { Player, PlayerId, PlayerRepository } from './player'
 import { v4 as uuid } from 'uuid'
@@ -42,7 +42,7 @@ export class GameServer {
       investigatorIds: [investigatorId],
       scenarioId,
       history: [],
-      seed: uuid(),
+      seed: createSeed(),
     }
 
     await this.gameRepository.create(game)

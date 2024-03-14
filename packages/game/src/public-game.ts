@@ -1,5 +1,5 @@
 import { Context } from './context'
-import { Game, GamePhase, createInitialGame } from './game'
+import { Game, GameHistory, GamePhase, createInitialGame } from './game'
 import { Investigator } from './investigator'
 import {
   Phase,
@@ -8,12 +8,15 @@ import {
   actionMatches,
 } from './phase'
 import { Scenario } from './scenario'
+import { createSeed } from './utils'
 
 export function createInitialPublicGame(
   scenario: Scenario,
-  investigators: Investigator[]
+  investigators: Investigator[],
+  history: GameHistory = [],
+  seed: number = createSeed()
 ) {
-  const game = createInitialGame(scenario, investigators)
+  const game = createInitialGame(scenario, investigators, history, seed)
   return new PublicGame(game)
 }
 

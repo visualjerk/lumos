@@ -9,7 +9,7 @@ import {
   Serenity,
 } from '@lumos/game'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import { useClientGame } from './game/use-client-game'
+import { useClientGame_DEPRECATED } from './game/use-client-game'
 import { GameProvider } from './game/use-game'
 import { useState } from 'react'
 import {
@@ -81,7 +81,7 @@ const investigators = [investigator, secondInvestigator]
 export default function Home() {
   const [controllerId, setControllerId] = useState(investigator.id)
 
-  const game = useClientGame(
+  const game = useClientGame_DEPRECATED(
     MisteryOfTheHogwartsExpress,
     [investigator, secondInvestigator],
     controllerId

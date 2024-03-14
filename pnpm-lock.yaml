@@ -151,6 +151,12 @@ importers:
 
   packages/game-server:
     dependencies:
+      '@lumos/game':
+        specifier: workspace:*
+        version: link:../game
+      '@lumos/scenarios':
+        specifier: workspace:*
+        version: link:../scenarios
       uuid:
         specifier: 9.0.1
         version: 9.0.1
@@ -158,9 +164,6 @@ importers:
       '@lumos/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@lumos/game':
-        specifier: workspace:*
-        version: link:../game
       '@lumos/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
