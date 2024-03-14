@@ -1,24 +1,22 @@
-import { Game, GameRepository } from '@lumos/game-server'
-
-// TODO: Use a real database
-const Games = new Map<string, Game>()
+import { kv } from '@vercel/kv'
+import { SavedGame, GameRepository } from '@lumos/game-server'
 
 export function createGameRepository(): GameRepository {
   return {
     async create(game) {
-      Games.set(game.id, game)
+      kv.set(game.id, game)
     },
     async findById(id) {
-      return Games.get(id)
+      return kv.get(id)
     },
     async update(id, gameData) {
-      const game = Games.get(id)
+      const game = (await kv.get(id)) as SavedGame
 
       if (!game) {
         throw new Error(`Game not found: ${id}`)
       }
 
-      Games.set(id, { ...game, ...gameData })
+      kv.set(id, { ...game, ...gameData })
     },
   }
 }

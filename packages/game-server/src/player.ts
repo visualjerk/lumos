@@ -5,6 +5,6 @@ export type Player = {
 }
 
 export type PlayerRepository = {
-  findById(id: PlayerId): Promise<Player | undefined>
+  findById(id: PlayerId): Promise<Player | null>
   create(player: Player): Promise<void>
 }

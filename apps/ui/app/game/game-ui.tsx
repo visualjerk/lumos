@@ -2,16 +2,16 @@
 import React from 'react'
 import InvestigatorOverview from '@/investigator/investigator-overview'
 import SkillCheckOverlay from '@/skill-check/skill-check-overlay'
-import { LocationMap } from './location/location-map'
-import Artwork from './shared/artwork'
-import { SceneOverview } from './scene'
-import { DoomOverview } from './doom'
-import { EncounterOverlay } from './encounter'
-import { EnemyAttackOverlay } from './enemy'
+import { LocationMap } from '@/location/location-map'
+import Artwork from '@/shared/artwork'
+import { SceneOverview } from '@/scene'
+import { DoomOverview } from '@/doom'
+import { EncounterOverlay } from '@/encounter'
+import { EnemyAttackOverlay } from '@/enemy'
 
 export default function GameUI() {
   return (
-    <div className="relative flex flex-col bg-stone-400 overflow-hidden">
+    <div className="h-full relative flex flex-col bg-stone-400 overflow-hidden">
       <Artwork
         id="bg-table"
         className="absolute inset-0 w-full h-full object-cover opacity-90"

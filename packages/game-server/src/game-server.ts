@@ -1,5 +1,5 @@
 import { InvestigatorId, ScenarioId } from '@lumos/game'
-import { Game, GameId, GameRepository } from './game'
+import { SavedGame, GameId, GameRepository } from './game'
 import { Player, PlayerId, PlayerRepository } from './player'
 import { v4 as uuid } from 'uuid'
 
@@ -32,10 +32,10 @@ export class GameServer {
     playerId,
     scenarioId,
     investigatorId,
-  }: CreateGameData): Promise<Game> {
+  }: CreateGameData): Promise<SavedGame> {
     await this.ensurePlayerExists(playerId)
 
-    const game: Game = {
+    const game: SavedGame = {
       id: uuid(),
       ownerId: playerId,
       playerIds: [playerId],
@@ -68,7 +68,7 @@ export class GameServer {
     })
   }
 
-  async findGame(gameId: GameId): Promise<Game | undefined> {
+  async findGame(gameId: GameId): Promise<SavedGame | null> {
     return this.gameRepository.findById(gameId)
   }
 
@@ -80,7 +80,7 @@ export class GameServer {
     }
   }
 
-  private async getGame(gameId: GameId): Promise<Game> {
+  private async getGame(gameId: GameId): Promise<SavedGame> {
     const game = await this.gameRepository.findById(gameId)
 
     if (!game) {

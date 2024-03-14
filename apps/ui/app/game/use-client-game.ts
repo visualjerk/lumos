@@ -10,7 +10,7 @@ import {
 } from '@lumos/game'
 import { useEffect, useRef, useState } from 'react'
 
-export function useInitialGame(
+export function useClientGame(
   scenario: Scenario,
   investigators: Investigator[],
   controllerId: InvestigatorId
@@ -20,23 +20,23 @@ export function useInitialGame(
     game.current = createInitialPublicGame(scenario, investigators)
   }
 
-  const [gameProjection, setGameProjection] = useState(
+  const [clientGame, setClientGame] = useState(
     projectGame(game.current, controllerId)
   )
 
   useEffect(
     () =>
       game.current!.onChange(() => {
-        setGameProjection(projectGame(game.current!, controllerId))
+        setClientGame(projectGame(game.current!, controllerId))
       }),
     [controllerId]
   )
 
   useEffect(() => {
-    setGameProjection(projectGame(game.current!, controllerId))
+    setClientGame(projectGame(game.current!, controllerId))
   }, [controllerId])
 
-  return gameProjection
+  return clientGame
 }
 
 export type ProjectedGame = {

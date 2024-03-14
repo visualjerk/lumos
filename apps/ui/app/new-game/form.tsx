@@ -9,7 +9,7 @@ import { IsabelBrimble } from '@lumos/game'
 
 export default function NewGameForm() {
   const router = useRouter()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, playerId } = useAuth()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -20,11 +20,9 @@ export default function NewGameForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !playerId) {
       return
     }
-
-    const playerId = localStorage.getItem('Lumos.PlayerId')!
 
     const game = await createGame({
       playerId,
@@ -32,7 +30,7 @@ export default function NewGameForm() {
       investigatorId: IsabelBrimble.id,
     })
 
-    console.log('created game', game)
+    router.push(`/game/${game.id}`)
   }
 
   return (

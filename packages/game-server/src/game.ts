@@ -3,7 +3,7 @@ import { PlayerId } from './player'
 
 export type GameId = string
 
-export type Game = {
+export type SavedGame = {
   id: GameId
   ownerId: PlayerId
   playerIds: PlayerId[]
@@ -13,10 +13,10 @@ export type Game = {
   seed: string
 }
 
-export type GameUpdateData = Partial<Omit<Game, 'id'>>
+export type GameUpdateData = Partial<Omit<SavedGame, 'id'>>
 
 export type GameRepository = {
-  findById(id: GameId): Promise<Game | undefined>
-  create(game: Game): Promise<void>
+  findById(id: GameId): Promise<SavedGame | null>
+  create(game: SavedGame): Promise<void>
   update(id: GameId, gameData: GameUpdateData): Promise<void>
 }

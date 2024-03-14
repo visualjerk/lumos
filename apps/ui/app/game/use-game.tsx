@@ -1,5 +1,6 @@
+'use client'
 import { createContext, useContext } from 'react'
-import { ProjectedGame } from './use-initial-game'
+import { ProjectedGame } from './use-client-game'
 
 const GameContext = createContext<ProjectedGame | null>(null)
 

@@ -1,5 +1,5 @@
 'use client'
-import GameUI from '@/game-ui'
+import GameUI from '@/game/game-ui'
 import {
   BearStrength,
   ForceOfWill,
@@ -9,7 +9,7 @@ import {
   Serenity,
 } from '@lumos/game'
 import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
-import { useInitialGame } from './game/use-initial-game'
+import { useClientGame } from './game/use-client-game'
 import { GameProvider } from './game/use-game'
 import { useState } from 'react'
 import {
@@ -81,7 +81,7 @@ const investigators = [investigator, secondInvestigator]
 export default function Home() {
   const [controllerId, setControllerId] = useState(investigator.id)
 
-  const game = useInitialGame(
+  const game = useClientGame(
     MisteryOfTheHogwartsExpress,
     [investigator, secondInvestigator],
     controllerId
