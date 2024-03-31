@@ -76,14 +76,14 @@ const secondInvestigator: Investigator = {
   ],
 }
 
-const investigators = [investigator, secondInvestigator]
+const investigators = [investigator]
 
 export default function Home() {
   const [controllerId, setControllerId] = useState(investigator.id)
 
   const game = useInitialGame(
     MisteryOfTheHogwartsExpress,
-    [investigator, secondInvestigator],
+    investigators,
     controllerId
   )
 
