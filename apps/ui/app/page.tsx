@@ -8,7 +8,7 @@ import {
   Scry,
   Serenity,
 } from '@lumos/game'
-import { MisteryOfTheHogwartsExpress } from '@lumos/scenarios'
+import { SilverthornesMagicalCircus } from '@lumos/scenarios'
 import { useInitialGame } from './game/use-initial-game'
 import { GameProvider } from './game/use-game'
 import { useState } from 'react'
@@ -48,41 +48,13 @@ const investigator: Investigator = {
   ],
 }
 
-const secondInvestigator: Investigator = {
-  id: 'brandon-vuncio',
-  name: 'Brandon Vuncio',
-  baseSkills: {
-    intelligence: 3,
-    strength: 4,
-    agility: 5,
-  },
-  health: 8,
-  baseDeck: [
-    Scry.id,
-    Scry.id,
-    Scry.id,
-    ForceOfWill.id,
-    ForceOfWill.id,
-    ForceOfWill.id,
-    LightningStrike.id,
-    LightningStrike.id,
-    LightningStrike.id,
-    BearStrength.id,
-    BearStrength.id,
-    BearStrength.id,
-    Serenity.id,
-    Serenity.id,
-    Serenity.id,
-  ],
-}
-
 const investigators = [investigator]
 
 export default function Home() {
   const [controllerId, setControllerId] = useState(investigator.id)
 
   const game = useInitialGame(
-    MisteryOfTheHogwartsExpress,
+    SilverthornesMagicalCircus,
     investigators,
     controllerId
   )

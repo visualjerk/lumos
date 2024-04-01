@@ -35,7 +35,7 @@ export function LocationCard({ id }: { id: LocationId }) {
     <ActionTooltip action={action}>
       <div
         className={cn(
-          'relative rounded border-2 shadow w-40 h-40 text-stone-800',
+          'relative rounded border-2 shadow w-40 h-52 text-stone-800',
           action
             ? 'cursor-pointer outline outline-blue-400 bg-blue-200 border-blue-400'
             : 'bg-stone-300 border-stone-600'
@@ -47,9 +47,9 @@ export function LocationCard({ id }: { id: LocationId }) {
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
         <div className="relative">
-          <h3 className="p-2 leading-none">{card.name}</h3>
+          <h3 className="p-2 leading-none text-xs">{card.name}</h3>
           <div className="relative">
-            <Artwork id={id} className="object-cover w-full h-16" />
+            <Artwork id={id} className="object-cover w-full h-24" />
           </div>
           {revealed && (
             <div className="p-2 flex justify-between">
